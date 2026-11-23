@@ -3,7 +3,10 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
+# Primary package name on PyPI.
+# If "careerforge" is already claimed, rename to "careerforge-cli"
 name = "careerforge"
+# name = "careerforge-cli"  # Fallback PyPI package name
 version = "0.1.0"
 description = "A universal, local-first, privacy-focused job application and career automation engine."
 readme = "README.md"
@@ -18,7 +21,10 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: Microsoft :: Windows :: Windows 11",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX :: Linux",
     "Topic :: Office/Business",
     "Intended Audience :: End Users/Desktop",
 ]
@@ -43,9 +49,9 @@ dev = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/careerforge/careerforge"
-"Bug Tracker" = "https://github.com/careerforge/careerforge/issues"
-"Documentation" = "https://github.com/careerforge/careerforge#readme"
+"Homepage" = "https://github.com/<username>/careerforge"
+"Bug Tracker" = "https://github.com/<username>/careerforge/issues"
+"Documentation" = "https://github.com/<username>/careerforge#readme"
 
 [project.scripts]
 careerforge = "careerforge.cli:main"
@@ -69,3 +75,6 @@ ignore = ["E501"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra -q"
+markers = [
+    "office: tests requiring local Microsoft Office installation"
+]

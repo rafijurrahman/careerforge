@@ -63,6 +63,11 @@ def cmd_doctor(args):
 
     # 3. Document / PDF Engine Check
     is_win = sys.platform == "win32"
+    is_linux = sys.platform.startswith("linux")
+
+    if is_linux:
+        results["platform_notice"] = "Linux is community-supported; unit tests pass, page-fit is not officially tested."
+
     if is_win:
         try:
             import win32com.client
@@ -75,7 +80,12 @@ def cmd_doctor(args):
                 "Windows Word COM unavailable. For optional fast-path, ensure Microsoft Word is installed and run: pip install pywin32"
             )
 
-    libre_bin = shutil.which("soffice") or shutil.which("libreoffice")
+    try:
+        from careerforge.core.page_optimizer import find_libreoffice_bin
+        libre_bin = find_libreoffice_bin()
+    except Exception:
+        libre_bin = shutil.which("soffice") or shutil.which("libreoffice")
+
     if libre_bin:
         results["pdf_engine"]["libreoffice"] = True
         if not results["pdf_engine"]["active_backend"]:
@@ -119,6 +129,9 @@ def cmd_doctor(args):
 
     py_status = "PASS ✅" if results["python"]["ok"] else "FAIL ❌"
     print(f"[{py_status}] Python Version: {results['python']['version']} (Requires >= 3.10)")
+
+    if is_linux:
+        print("[INFO ℹ️] Platform: Linux (Community-supported; page-fit is best-effort)")
 
     if results["profile"]["found"] and results["profile"]["valid"]:
         print(f"[PASS ✅] Profile: Found 'profile.yaml' (Candidate: {results['profile']['candidate']})")
@@ -200,7 +213,7 @@ def cmd_apply(args):
     pdf_file = os.path.join(out_dir, f"{name_slug}_{role_slug}_CV.pdf")
 
     print(f"\n📄 Building ATS-optimized CV for {profile.get('personal', {}).get('full_name')}...")
-    config = optimize_to_single_page(profile, docx_file, pdf_file, target_pages=args.pages)
+    config = optimize_to_single_page(profile, docx_file, pdf_file, target_pages=args.pages, engine=args.engine)
 
     print("\n" + "=" * 60)
     print("✅ SUCCESS: 1-Page ATS CV generated!")
@@ -289,6 +302,12 @@ def main():
     p_apply.add_argument("--out", type=str, default=None, help="Output directory")
     p_apply.add_argument("--role-tag", type=str, default="Tailored", help="Role tag for file naming")
     p_apply.add_argument("--pages", type=int, default=1, help="Target page count (default: 1)")
+    p_apply.add_argument(
+        "--engine",
+        choices=["auto", "word", "libreoffice"],
+        default="auto",
+        help="PDF conversion & page-fit engine: auto (Word COM on Windows, LibreOffice on macOS), word, or libreoffice",
+    )
     p_apply.set_defaults(func=cmd_apply)
 
     # audit

@@ -4,14 +4,41 @@ This guide walks you through setting up **CareerForge** on your local machine.
 
 ---
 
-## Prerequisites
+## Platform Support
 
-| Requirement | Details | Recommended For |
-|---|---|---|
-| **Python 3.10+** | Required to run the core engine and CLI tools. | All platforms |
-| **Microsoft Word (Windows)** | Powers the Word COM API (`pywin32`) for mathematical 1-page PDF layout verification. | Windows users (Native) |
-| **LibreOffice (Optional)** | Headless PDF export fallback if Word is not installed. | macOS / Linux users |
-| **Git** | For cloning and version control. | All platforms |
+| Operating System | Support Level | PDF Backend Engine | Requirements |
+|---|:---:|:---:|---|
+| **Windows 10 / 11** | **Officially Supported** | Word COM (fast-path) + LibreOffice | Python 3.10+, Microsoft Word (optional) or LibreOffice |
+| **macOS 12+ (Monterey+)** | **Officially Supported** | LibreOffice Headless | Python 3.10+, `brew install --cask libreoffice` |
+| **Linux (Ubuntu, etc.)** | **Community-Supported** | LibreOffice Headless | Python 3.10+, unit tests pass (page-fit untested) |
+
+---
+
+## Prerequisites & Installation
+
+### 1. Document / PDF Engine Setup
+
+* **Windows:**
+  * Option A (Fastest): If you have Microsoft Office / Word installed, install the Windows extra:
+    ```powershell
+    pip install "careerforge[windows]"
+    ```
+  * Option B (Open Source): Install LibreOffice via winget:
+    ```powershell
+    winget install TheDocumentFoundation.LibreOffice
+    ```
+
+* **macOS:**
+  * Install LibreOffice via Homebrew:
+    ```bash
+    brew install --cask libreoffice
+    ```
+
+* **Linux (Community-Supported):**
+  * Install LibreOffice Writer:
+    ```bash
+    sudo apt-get update && sudo apt-get install -y libreoffice-writer
+    ```
 
 ---
 

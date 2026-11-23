@@ -65,9 +65,36 @@ def convert_with_word_com(docx_path: str, output_pdf: str) -> Optional[int]:
         return None
 
 
+def find_libreoffice_bin() -> Optional[str]:
+    """Finds the LibreOffice soffice binary across PATH and standard install directories."""
+    # 1. Check PATH
+    bin_path = shutil.which("soffice") or shutil.which("libreoffice")
+    if bin_path:
+        return bin_path
+
+    # 2. Check standard Windows directories
+    if sys.platform == "win32":
+        standard_windows_paths = [
+            r"C:\Program Files\LibreOffice\program\soffice.exe",
+            r"C:\Program Files (x86)\LibreOffice\program\soffice.exe",
+            os.path.expandvars(r"%LOCALAPPDATA%\Programs\LibreOffice\program\soffice.exe"),
+        ]
+        for p in standard_windows_paths:
+            if os.path.exists(p):
+                return p
+
+    # 3. Check standard macOS directories
+    if sys.platform == "darwin":
+        mac_path = "/Applications/LibreOffice.app/Contents/MacOS/soffice"
+        if os.path.exists(mac_path):
+            return mac_path
+
+    return None
+
+
 def convert_with_libreoffice(docx_path: str, output_pdf: str) -> Optional[int]:
     """Converts docx to PDF via headless LibreOffice (cross-platform default)."""
-    libre_bin = shutil.which("soffice") or shutil.which("libreoffice")
+    libre_bin = find_libreoffice_bin()
     if not libre_bin:
         return None
 
@@ -105,29 +132,55 @@ def convert_with_libreoffice(docx_path: str, output_pdf: str) -> Optional[int]:
     return None
 
 
-def convert_to_pdf_and_count_pages(docx_path: str, pdf_path: str) -> Tuple[int, str]:
+def convert_to_pdf_and_count_pages(docx_path: str, pdf_path: str, engine: str = "auto") -> Tuple[int, str]:
     """
-    Converts docx to PDF and computes page count.
-    Tries Word COM first if on Windows, then falls back to headless LibreOffice.
-    Returns (page_count, backend_used).
+    Converts docx to PDF and computes page count according to specified engine.
+    Engines:
+      - 'auto': Windows uses Word COM if available, else LibreOffice; macOS uses LibreOffice.
+      - 'word': Forces Microsoft Word COM (Windows only).
+      - 'libreoffice': Forces LibreOffice headless.
     """
-    # 1. Try Word COM (Windows fast-path)
+    engine_lower = (engine or "auto").lower()
+
+    if engine_lower == "word":
+        if sys.platform != "win32":
+            raise RuntimeError("Engine 'word' (Microsoft Word COM) is only supported on Windows.")
+        pages = convert_with_word_com(docx_path, pdf_path)
+        if pages is None:
+            raise RuntimeError("Word COM engine failed. Ensure Microsoft Word is installed and pywin32 is available.")
+        return pages, "Word COM"
+
+    if engine_lower == "libreoffice":
+        pages = convert_with_libreoffice(docx_path, pdf_path)
+        if pages is None:
+            hint = "winget install TheDocumentFoundation.LibreOffice"
+            if sys.platform == "darwin":
+                hint = "brew install --cask libreoffice"
+            elif sys.platform.startswith("linux"):
+                hint = "sudo apt-get install -y libreoffice-writer"
+            raise RuntimeError(f"LibreOffice not found or conversion failed. Install it via: {hint}")
+        return pages, "LibreOffice Headless"
+
+    # 'auto' mode
+    if sys.platform.startswith("linux"):
+        print("[Info] Linux is community-supported; page-fit is best-effort.", file=sys.stderr)
+
+    # On Windows, try Word COM first (fast-path)
     if sys.platform == "win32":
         pages = convert_with_word_com(docx_path, pdf_path)
         if pages is not None:
             return pages, "Word COM"
 
-    # 2. Try LibreOffice (Cross-platform default)
+    # Otherwise (or if Word COM unavailable on Windows), try LibreOffice
     pages = convert_with_libreoffice(docx_path, pdf_path)
     if pages is not None:
         return pages, "LibreOffice Headless"
 
-    # 3. No PDF backend available
     return 1, "None (install LibreOffice or Word for exact PDF page verification)"
 
 
 def optimize_to_single_page(
-    profile_data: dict, output_docx: str, output_pdf: str, target_pages: int = 1
+    profile_data: dict, output_docx: str, output_pdf: str, target_pages: int = 1, engine: str = "auto"
 ) -> dict:
     """
     Iterates through font scales and margins to find the best configuration fitting target_pages.
@@ -161,7 +214,7 @@ def optimize_to_single_page(
             bot_m=bottom_m,
         )
 
-        pages, backend = convert_to_pdf_and_count_pages(output_docx, output_pdf)
+        pages, backend = convert_to_pdf_and_count_pages(output_docx, output_pdf, engine=engine)
         last_backend = backend
 
         if backend.startswith("None"):

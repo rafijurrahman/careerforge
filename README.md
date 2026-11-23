@@ -42,11 +42,43 @@ CareerForge is an open-source, local-first alternative. You define one master pr
 
 ---
 
+## 🖥️ Platform Support & PDF Engines
+
+| Operating System | Support Level | Supported PDF Engines | Verification Status |
+|---|:---:|:---:|---|
+| **Windows 10 / 11** | **Officially Supported** | Microsoft Word COM (Fast-path) + LibreOffice | Full 1-page fit & test coverage |
+| **macOS 12+ (Monterey+)** | **Officially Supported** | LibreOffice Headless (Required) | Verified in GitHub Actions CI |
+| **Linux (Ubuntu, Fedora, etc.)** | **Community-Supported** | LibreOffice Headless | Unit tests verified; page-fit community-supported |
+
+### Installing LibreOffice (Required for macOS & Non-Word Windows setups)
+* **Windows (via winget):**
+  ```powershell
+  winget install TheDocumentFoundation.LibreOffice
+  ```
+* **macOS (via Homebrew):**
+  ```bash
+  brew install --cask libreoffice
+  ```
+* **Linux (Debian/Ubuntu):**
+  ```bash
+  sudo apt-get update && sudo apt-get install -y libreoffice-writer
+  ```
+
+---
+
 ## Terminal Demo
+
+<div align="center">
+
+![CareerForge Intro](demo/intro.gif)
+
+<br/>
 
 ![CareerForge Demo](demo/demo.gif)
 
-*(To record or update this demo locally, run `vhs demo/demo.tape`)*
+</div>
+
+*(To record or update terminal demos locally, run `vhs demo/demo.tape`)*
 
 ---
 
