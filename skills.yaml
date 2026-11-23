@@ -1,0 +1,82 @@
+# CareerForge Skill Ontology & Alias Dictionary
+# Maps common industry variations, acronyms, and aliases to standardized canonical skill names.
+
+data_and_analytics:
+  sql:
+    canonical: "SQL"
+    aliases: ["structured query language", "tsql", "t-sql", "plsql", "pl-sql", "postgres", "postgresql", "mysql", "sqlite", "sqlite3"]
+    category: "database"
+  power_bi:
+    canonical: "Power BI"
+    aliases: ["powerbi", "dax", "power query", "power-bi", "m query", "pbi"]
+    category: "bi_tool"
+  tableau:
+    canonical: "Tableau"
+    aliases: ["tableau desktop", "tableau server", "tableau prep"]
+    category: "bi_tool"
+  excel:
+    canonical: "Excel"
+    aliases: ["advanced excel", "ms excel", "microsoft excel", "vlookup", "xlookup", "pivot tables", "spreadsheet"]
+    category: "spreadsheet"
+  python:
+    canonical: "Python"
+    aliases: ["python3", "py", "pandas", "numpy", "scipy"]
+    category: "programming"
+  r_lang:
+    canonical: "R"
+    aliases: ["r programming", "r-project", "tidyverse", "ggplot2", "dplyr"]
+    category: "statistical_computing"
+  spss:
+    canonical: "SPSS"
+    aliases: ["ibm spss", "spss statistics"]
+    category: "statistical_software"
+  looker:
+    canonical: "Looker"
+    aliases: ["lookml", "google looker", "looker studio", "google data studio"]
+    category: "bi_tool"
+  dbt:
+    canonical: "dbt"
+    aliases: ["data build tool", "dbt core", "dbt cloud"]
+    category: "data_engineering"
+  snowflake:
+    canonical: "Snowflake"
+    aliases: ["snowpark", "snowflake data cloud"]
+    category: "data_warehouse"
+  bigquery:
+    canonical: "BigQuery"
+    aliases: ["google bigquery", "gbq", "bq"]
+    category: "data_warehouse"
+
+software_engineering:
+  javascript:
+    canonical: "JavaScript"
+    aliases: ["js", "es6", "ecmascript"]
+    category: "frontend"
+  typescript:
+    canonical: "TypeScript"
+    aliases: ["ts"]
+    category: "frontend"
+  react:
+    canonical: "React"
+    aliases: ["reactjs", "react.js", "react native"]
+    category: "frontend"
+  nodejs:
+    canonical: "Node.js"
+    aliases: ["node", "nodejs", "express", "expressjs"]
+    category: "backend"
+  docker:
+    canonical: "Docker"
+    aliases: ["dockerfile", "docker-compose", "containerization", "containers"]
+    category: "devops"
+  kubernetes:
+    canonical: "Kubernetes"
+    aliases: ["k8s", "kubectl", "helm"]
+    category: "devops"
+  aws:
+    canonical: "AWS"
+    aliases: ["amazon web services", "ec2", "s3", "lambda", "rds", "cloudformation"]
+    category: "cloud"
+  git:
+    canonical: "Git"
+    aliases: ["github", "gitlab", "version control", "git flow"]
+    category: "tools"

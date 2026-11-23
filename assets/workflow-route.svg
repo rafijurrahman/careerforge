@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="routeLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="50%" stop-color="#818CF8" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1100" height="240" fill="#090D16" rx="12" />
+
+  <!-- Connecting Path Line -->
+  <path d="M 100,120 L 1000,120" stroke="url(#routeLine)" stroke-width="4" stroke-dasharray="8 6" opacity="0.6" />
+
+  <!-- Node 1: Setup Profile -->
+  <g transform="translate(110, 120)">
+    <circle cx="0" cy="0" r="32" fill="url(#cardGrad)" stroke="#38BDF8" stroke-width="2.5" />
+    <text x="0" y="7" text-anchor="middle" font-size="20">⚙️</text>
+    <text x="0" y="55" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#F8FAFC">1. Setup Profile</text>
+    <text x="0" y="72" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#94A3B8">profile.yaml</text>
+  </g>
+
+  <!-- Node 2: Multi-Board Scrape -->
+  <g transform="translate(290, 120)">
+    <circle cx="0" cy="0" r="32" fill="url(#cardGrad)" stroke="#60A5FA" stroke-width="2.5" />
+    <text x="0" y="7" text-anchor="middle" font-size="20">🔍</text>
+    <text x="0" y="55" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#F8FAFC">2. Scrape Portals</text>
+    <text x="0" y="72" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#94A3B8">Greenhouse / Ashby</text>
+  </g>
+
+  <!-- Node 3: Fit Evaluation -->
+  <g transform="translate(470, 120)">
+    <circle cx="0" cy="0" r="32" fill="url(#cardGrad)" stroke="#818CF8" stroke-width="2.5" />
+    <text x="0" y="7" text-anchor="middle" font-size="20">⚖️</text>
+    <text x="0" y="55" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#F8FAFC">3. Fit Evaluation</text>
+    <text x="0" y="72" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#94A3B8">Honest Score &amp; Gaps</text>
+  </g>
+
+  <!-- Node 4: Tailored Drafting -->
+  <g transform="translate(650, 120)">
+    <circle cx="0" cy="0" r="32" fill="url(#cardGrad)" stroke="#A78BFA" stroke-width="2.5" />
+    <text x="0" y="7" text-anchor="middle" font-size="20">✍️</text>
+    <text x="0" y="55" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#F8FAFC">4. Anti-AI Drafter</text>
+    <text x="0" y="72" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#94A3B8">Active Human Voice</text>
+  </g>
+
+  <!-- Node 5: 1-Page Optimizer -->
+  <g transform="translate(830, 120)">
+    <circle cx="0" cy="0" r="32" fill="url(#cardGrad)" stroke="#34D399" stroke-width="2.5" />
+    <text x="0" y="7" text-anchor="middle" font-size="20">📐</text>
+    <text x="0" y="55" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#F8FAFC">5. 1-Page Optimizer</text>
+    <text x="0" y="72" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#94A3B8">Word COM Auto-Scale</text>
+  </g>
+
+  <!-- Node 6: Interview & Track -->
+  <g transform="translate(990, 120)">
+    <circle cx="0" cy="0" r="32" fill="url(#cardGrad)" stroke="#10B981" stroke-width="2.5" />
+    <text x="0" y="7" text-anchor="middle" font-size="20">🎯</text>
+    <text x="0" y="55" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#F8FAFC">6. Interview &amp; Track</text>
+    <text x="0" y="72" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#94A3B8">STAR Roleplay &amp; Logs</text>
+  </g>
+</svg>

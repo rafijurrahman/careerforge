@@ -1,0 +1,26 @@
+name: New Anti-AI Rule Proposal
+description: Propose a new linguistic rule based on research
+labels: ["rules", "linguistics"]
+body:
+  - type: input
+    id: term
+    attributes:
+      label: Target Word or Pattern
+      placeholder: e.g. "burgeoning" or "testament to"
+    validations:
+      required: true
+  - type: textarea
+    id: citation
+    attributes:
+      label: Research Citation / Evidence
+      description: Peer-reviewed paper, corpus study, or documented frequency spike.
+      placeholder: e.g. Kobak et al., Science Advances 2024
+    validations:
+      required: true
+  - type: input
+    id: replacement
+    attributes:
+      label: Recommended Human Replacement
+      placeholder: e.g. "growing" or "shows that"
+    validations:
+      required: true

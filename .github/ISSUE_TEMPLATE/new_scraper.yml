@@ -1,0 +1,23 @@
+name: New Job Scraper Request / Contribution
+description: Propose or submit a new ATS or job board scanner
+labels: ["enhancement", "scraper"]
+body:
+  - type: input
+    id: board-name
+    attributes:
+      label: Job Board / ATS Name
+      placeholder: e.g. Lever, Workable, SmartRecruiters
+    validations:
+      required: true
+  - type: input
+    id: api-endpoint
+    attributes:
+      label: Public API Endpoint or RSS URL
+      placeholder: e.g. https://api.lever.co/v0/postings/{company}
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Rate Limits or Special Considerations
+      description: Does this platform require special headers or query parameters?

@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+
+# Environments
+.env
+.venv
+.venv/
+env/
+venv/
+ENV/
+
+# Output documents & databases
+output/
+*.docx
+*.pdf
+*.db
+*.sqlite
+*.sqlite3
+
+# User private profile data
+profile.yaml
+profile.yml
+
+# Personal CV files (privacy)
+cv/*.pdf
+cv/*.docx
+
+# Git keep file for empty cv folder is tracked — not the CV itself
+!cv/.gitkeep
+!cv/README.md
+
+# Examples and test fixtures are tracked
+!examples/**
+
+# IDE files
+.vscode/
+.idea/
+*.swp

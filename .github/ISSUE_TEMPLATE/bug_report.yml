@@ -1,0 +1,29 @@
+name: Bug Report
+description: Report a broken scraper, CV layout error, or CLI issue
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting an issue! Run `careerforge doctor` before submitting.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug clearly.
+    validations:
+      required: true
+  - type: textarea
+    id: doctor-output
+    attributes:
+      label: Output of `careerforge doctor`
+      description: Paste the diagnostic output here.
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: os-version
+    attributes:
+      label: Operating System
+      placeholder: e.g. Windows 11, macOS Sequoia, Ubuntu 24.04
+    validations:
+      required: true

@@ -1,0 +1,100 @@
+# ==============================================================================
+# CareerForge: Candidate Master Profile Template
+# Copy this file to 'profile.yaml' and fill in your details.
+# 'profile.yaml' is listed in .gitignore to protect your personal information.
+# ==============================================================================
+
+personal:
+  full_name: "Alex Morgan"
+  header_title: "Senior Full-Stack Engineer | Distributed Systems & Cloud Infrastructure"
+  email: "alex.morgan.dev@example.com"
+  phone: "+1 (555) 234-5678"
+  location: "Austin, TX (Remote-ready | GMT-6)"
+  linkedin: "https://linkedin.com/in/alexmorgan-dev"
+  github: "https://github.com/alexmorgan-dev"
+  portfolio: "https://alexmorgan.dev"
+
+target_preferences:
+  target_roles:
+    - "Full-Stack Engineer"
+    - "Backend Engineer"
+    - "Software Engineer"
+  preferred_work_modes:
+    - "Remote"
+    - "Hybrid"
+  locations:
+    - "Worldwide"
+    - "United States"
+
+# Professional summary tailored for your general domain
+professional_summary: >
+  Full-Stack Software Engineer with 4+ years of experience designing and deploying high-scale distributed systems and RESTful microservices.
+  Proficient in Python, TypeScript, React, and PostgreSQL, with hands-on experience architecting cloud infrastructure on AWS.
+  Proven track record of improving system uptime to 99.98% and optimizing database query latency by 45%.
+  Focused on clean code architecture, automated testing, and collaborating with cross-functional product teams.
+
+technical_skills:
+  - category: "Languages & Frameworks"
+    skills: "Python (FastAPI, Django), TypeScript, React, Node.js, Go, HTML5/CSS3"
+  - category: "Cloud & DevOps"
+    skills: "Docker, Kubernetes, AWS (ECS, S3, RDS), Terraform, GitHub Actions, CI/CD"
+  - category: "Databases & Storage"
+    skills: "PostgreSQL, Redis, MySQL, DynamoDB, Query Optimization, Schema Migration"
+  - category: "Architecture & Practices"
+    skills: "Microservices Architecture, RESTful APIs, Event-Driven Systems, Unit & Integration Testing"
+
+work_experience:
+  - title: "Software Engineer (Backend & Cloud)"
+    company: "CloudScale Technologies"
+    location: "Austin, TX (Hybrid)"
+    employment_type: "Full-time"
+    duration: "Jan 2024 - Present"
+    bullets:
+      - bold_prefix: "Microservices Architecture: "
+        text: "Engineered 8 asynchronous microservices using FastAPI and Kafka, supporting 2.5M daily active requests with sub-50ms latency."
+      - bold_prefix: "Database Optimization: "
+        text: "Refactored PostgreSQL relational schemas and indexing strategies, eliminating slow queries and reducing average query response time by 42%."
+      - bold_prefix: "CI/CD Pipeline Automation: "
+        text: "Built GitHub Actions workflows for automated linting, unit testing, and zero-downtime container deployments to AWS ECS."
+      - bold_prefix: "Cross-Functional Collaboration: "
+        text: "Authored technical RFCs and API specifications for frontend and mobile engineering teams, accelerating feature delivery cycles by 3 weeks."
+
+  - title: "Junior Software Developer"
+    company: "Apex Systems Labs"
+    location: "Dallas, TX (Remote)"
+    employment_type: "Full-time"
+    duration: "Jun 2022 - Dec 2023"
+    bullets:
+      - bold_prefix: "Web Application Development: "
+        text: "Developed responsive customer-facing dashboard features using React and TypeScript, serving over 50,000 active business users."
+      - bold_prefix: "API Integration: "
+        text: "Implemented secure OAuth2 authentication flows and third-party payment gateways, cutting checkout drop-off rates by 18%."
+      - bold_prefix: "Code Quality & Testing: "
+        text: "Maintained 90%+ unit test code coverage using PyTest and Jest, catching critical regression issues prior to staging releases."
+
+featured_projects:
+  - title: "Distributed Task Scheduler"
+    tech_stack: "Python, Redis, Docker, FastAPI"
+    live_url: "https://github.com/alexmorgan-dev/distributed-scheduler"
+    description: "Designed a fault-tolerant job scheduler handling concurrent task queues with automatic exponential-backoff retries and real-time WebSocket monitoring."
+
+  - title: "Real-Time Collaborative Canvas"
+    tech_stack: "TypeScript, React, WebSockets, Node.js"
+    live_url: "https://canvas.alexmorgan.dev"
+    description: "Built an interactive browser-based drawing application supporting multi-user synchronization with operational transformation logic."
+
+academic_background:
+  - degree: "Bachelor of Science in Computer Science"
+    institution: "University of Texas at Austin"
+    duration: "2018 - 2022"
+    result: "GPA: 3.82 / 4.00 (Magna Cum Laude)"
+
+certifications:
+  - name: "AWS Certified Solutions Architect – Associate"
+    issuer: "Amazon Web Services"
+    date: "2024"
+    verify_url: "https://aws.amazon.com/verification"
+  - name: "HashiCorp Certified: Terraform Associate"
+    issuer: "HashiCorp"
+    date: "2023"
+    verify_url: "https://www.credly.com"

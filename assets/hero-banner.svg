@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090D16" />
+      <stop offset="50%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#1E293B" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="50%" stop-color="#818CF8" />
+      <stop offset="100%" stop-color="#C084FC" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#FCD34D" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="30" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="1200" height="400" fill="url(#bgGrad)" rx="16" />
+
+  <!-- Background Ambient Glow Circles -->
+  <circle cx="200" cy="100" r="150" fill="#0284C7" opacity="0.18" filter="url(#glow)" />
+  <circle cx="1000" cy="300" r="180" fill="#7C3AED" opacity="0.15" filter="url(#glow)" />
+
+  <!-- Subtle Grid Pattern -->
+  <g opacity="0.06" stroke="#FFFFFF" stroke-width="1">
+    <path d="M 0,50 L 1200,50 M 0,100 L 1200,100 M 0,150 L 1200,150 M 0,200 L 1200,200 M 0,250 L 1200,250 M 0,300 L 1200,300 M 0,350 L 1200,350" />
+    <path d="M 100,0 L 100,400 M 200,0 L 200,400 M 300,0 L 300,400 M 400,0 L 400,400 M 500,0 L 500,400 M 600,0 L 600,400 M 700,0 L 700,400 M 800,0 L 800,400 M 900,0 L 900,400 M 1000,0 L 1000,400 M 1100,0 L 1100,400" />
+  </g>
+
+  <!-- Central Emblem / Icon Graphic -->
+  <g transform="translate(600, 110)">
+    <!-- Outer Shield / Hexagon -->
+    <polygon points="0,-55 48,-28 48,28 0,55 -48,28 -48,-28" fill="#1E293B" stroke="url(#accentGrad)" stroke-width="3" />
+    <!-- Inner Stylized Rocket / Quiver -->
+    <path d="M 0,-35 L 18,-5 L 10,25 L 0,18 L -10,25 L -18,-5 Z" fill="url(#accentGrad)" opacity="0.9" />
+    <!-- Target Sparkle -->
+    <circle cx="0" cy="-5" r="4" fill="#FFFFFF" />
+  </g>
+
+  <!-- Title & Subtitle -->
+  <text x="600" y="215" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="800" font-size="44" fill="#FFFFFF" letter-spacing="1.5">
+    CareerForge <tspan fill="url(#accentGrad)">AI</tspan>
+  </text>
+
+  <text x="600" y="255" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="400" font-size="19" fill="#94A3B8" letter-spacing="0.5">
+    The Universal, Role-Agnostic Job Search &amp; Application Framework
+  </text>
+
+  <text x="600" y="285" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="500" font-size="14.5" fill="#38BDF8">
+    Zero LaTeX Overhead • Guaranteed 1-Page ATS CVs • Research-Backed Anti-AI Voice • 100% Local
+  </text>
+
+  <!-- Bottom Badges / Feature Pills -->
+  <g transform="translate(600, 335)">
+    <!-- Pill 1: Role-Agnostic -->
+    <g transform="translate(-360, 0)">
+      <rect x="-85" y="-16" width="170" height="32" rx="16" fill="#1E293B" stroke="#334155" stroke-width="1.2" />
+      <text x="0" y="5" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#E2E8F0">🌐 For Any Profession</text>
+    </g>
+
+    <!-- Pill 2: 1-Page Word COM -->
+    <g transform="translate(-120, 0)">
+      <rect x="-85" y="-16" width="170" height="32" rx="16" fill="#1E293B" stroke="#0284C7" stroke-width="1.2" />
+      <text x="0" y="5" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#38BDF8">📄 Verified 1-Page CV</text>
+    </g>
+
+    <!-- Pill 3: Anti-AI Writing -->
+    <g transform="translate(120, 0)">
+      <rect x="-85" y="-16" width="170" height="32" rx="16" fill="#1E293B" stroke="#818CF8" stroke-width="1.2" />
+      <text x="0" y="5" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#A5B4FC">🛡️ PNAS Anti-AI Voice</text>
+    </g>
+
+    <!-- Pill 4: Private & Local -->
+    <g transform="translate(360, 0)">
+      <rect x="-85" y="-16" width="170" height="32" rx="16" fill="#1E293B" stroke="#F59E0B" stroke-width="1.2" />
+      <text x="0" y="5" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#FCD34D">🔒 100% Local &amp; Private</text>
+    </g>
+  </g>
+</svg>

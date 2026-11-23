@@ -1,0 +1,29 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.8
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.2
+    hooks:
+      - id: gitleaks
+
+  - repo: local
+    hooks:
+      - id: block-profile-yaml
+        name: Block committing user profile.yaml
+        entry: bash -c 'for file in "$@"; do if [[ "$file" =~ (^|/)profile\.ya?ml$ ]]; then echo "ERROR: Refusing to commit personal profile.yaml! Keep it local."; exit 1; fi; done' --
+        language: system
+        files: 'profile\.ya?ml$'
