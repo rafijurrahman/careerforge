@@ -49,9 +49,9 @@ dev = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/<username>/careerforge"
-"Bug Tracker" = "https://github.com/<username>/careerforge/issues"
-"Documentation" = "https://github.com/<username>/careerforge#readme"
+"Homepage" = "https://github.com/rafijurrahman/careerforge"
+"Bug Tracker" = "https://github.com/rafijurrahman/careerforge/issues"
+"Documentation" = "https://github.com/rafijurrahman/careerforge#readme"
 
 [project.scripts]
 careerforge = "careerforge.cli:main"
