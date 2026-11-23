@@ -46,7 +46,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
       - name: Checkout repository
@@ -58,11 +58,24 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
+      - name: Install LibreOffice on Ubuntu
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libreoffice-writer
+
       - name: Install LibreOffice on Windows
         if: runner.os == 'Windows'
+        shell: powershell
         run: |
-          choco install libreoffice-fresh -y --no-progress
-          echo "C:\Program Files\LibreOffice\program" >> $env:GITHUB_PATH
+          choco install libreoffice-fresh -y --no-progress --ignore-package-exit-codes=3010,1641
+          $loPath = "C:\Program Files\LibreOffice\program"
+          if (Test-Path $loPath) {
+            Add-Content -Path $env:GITHUB_PATH -Value $loPath
+          }
+          if (Test-Path "C:\ProgramData\chocolatey\bin") {
+            Add-Content -Path $env:GITHUB_PATH -Value "C:\ProgramData\chocolatey\bin"
+          }
 
       - name: Install LibreOffice on macOS
         if: runner.os == 'macOS'

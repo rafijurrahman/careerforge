@@ -100,6 +100,7 @@ def find_libreoffice_bin() -> Optional[str]:
         standard_windows_paths = [
             r"C:\Program Files\LibreOffice\program\soffice.exe",
             r"C:\Program Files (x86)\LibreOffice\program\soffice.exe",
+            r"C:\ProgramData\chocolatey\bin\soffice.exe",
             os.path.expandvars(r"%LOCALAPPDATA%\Programs\LibreOffice\program\soffice.exe"),
         ]
         for p in standard_windows_paths:
