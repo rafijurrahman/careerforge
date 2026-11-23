@@ -1,82 +1,1840 @@
-# CareerForge Skill Ontology & Alias Dictionary
-# Maps common industry variations, acronyms, and aliases to standardized canonical skill names.
-
 data_and_analytics:
   sql:
-    canonical: "SQL"
-    aliases: ["structured query language", "tsql", "t-sql", "plsql", "pl-sql", "postgres", "postgresql", "mysql", "sqlite", "sqlite3"]
-    category: "database"
+    canonical: SQL
+    aliases:
+    - structured query language
+    - tsql
+    - t-sql
+    - plsql
+    - pl-sql
+    - postgres
+    - postgresql
+    - mysql
+    - sqlite
+    - sqlite3
+    category: database
   power_bi:
-    canonical: "Power BI"
-    aliases: ["powerbi", "dax", "power query", "power-bi", "m query", "pbi"]
-    category: "bi_tool"
+    canonical: Power BI
+    aliases:
+    - powerbi
+    - dax
+    - power query
+    - power-bi
+    - m query
+    - pbi
+    category: bi_tool
   tableau:
-    canonical: "Tableau"
-    aliases: ["tableau desktop", "tableau server", "tableau prep"]
-    category: "bi_tool"
+    canonical: Tableau
+    aliases:
+    - tableau desktop
+    - tableau server
+    - tableau prep
+    category: bi_tool
   excel:
-    canonical: "Excel"
-    aliases: ["advanced excel", "ms excel", "microsoft excel", "vlookup", "xlookup", "pivot tables", "spreadsheet"]
-    category: "spreadsheet"
+    canonical: Excel
+    aliases:
+    - advanced excel
+    - ms excel
+    - microsoft excel
+    - vlookup
+    - xlookup
+    - pivot tables
+    - spreadsheet
+    category: spreadsheet
   python:
-    canonical: "Python"
-    aliases: ["python3", "py", "pandas", "numpy", "scipy"]
-    category: "programming"
+    canonical: Python
+    aliases:
+    - python3
+    - py
+    - pandas
+    - numpy
+    - scipy
+    category: programming
   r_lang:
-    canonical: "R"
-    aliases: ["r programming", "r-project", "tidyverse", "ggplot2", "dplyr"]
-    category: "statistical_computing"
+    canonical: R
+    aliases:
+    - r programming
+    - r-project
+    - tidyverse
+    - ggplot2
+    - dplyr
+    category: statistical_computing
   spss:
-    canonical: "SPSS"
-    aliases: ["ibm spss", "spss statistics"]
-    category: "statistical_software"
+    canonical: SPSS
+    aliases:
+    - ibm spss
+    - spss statistics
+    category: statistical_software
   looker:
-    canonical: "Looker"
-    aliases: ["lookml", "google looker", "looker studio", "google data studio"]
-    category: "bi_tool"
+    canonical: Looker
+    aliases:
+    - lookml
+    - google looker
+    - looker studio
+    - google data studio
+    category: bi_tool
   dbt:
-    canonical: "dbt"
-    aliases: ["data build tool", "dbt core", "dbt cloud"]
-    category: "data_engineering"
+    canonical: dbt
+    aliases:
+    - data build tool
+    - dbt core
+    - dbt cloud
+    category: data_engineering
   snowflake:
-    canonical: "Snowflake"
-    aliases: ["snowpark", "snowflake data cloud"]
-    category: "data_warehouse"
+    canonical: Snowflake
+    aliases:
+    - snowpark
+    - snowflake data cloud
+    category: data_warehouse
   bigquery:
-    canonical: "BigQuery"
-    aliases: ["google bigquery", "gbq", "bq"]
-    category: "data_warehouse"
-
+    canonical: BigQuery
+    aliases:
+    - google bigquery
+    - gbq
+    - bq
+    category: data_warehouse
 software_engineering:
   javascript:
-    canonical: "JavaScript"
-    aliases: ["js", "es6", "ecmascript"]
-    category: "frontend"
+    canonical: JavaScript
+    aliases:
+    - js
+    - es6
+    - ecmascript
+    category: frontend
   typescript:
-    canonical: "TypeScript"
-    aliases: ["ts"]
-    category: "frontend"
+    canonical: TypeScript
+    aliases:
+    - ts
+    category: frontend
   react:
-    canonical: "React"
-    aliases: ["reactjs", "react.js", "react native"]
-    category: "frontend"
+    canonical: React
+    aliases:
+    - reactjs
+    - react.js
+    - react native
+    category: frontend
   nodejs:
-    canonical: "Node.js"
-    aliases: ["node", "nodejs", "express", "expressjs"]
-    category: "backend"
+    canonical: Node.js
+    aliases:
+    - node
+    - nodejs
+    - express
+    - expressjs
+    category: backend
   docker:
-    canonical: "Docker"
-    aliases: ["dockerfile", "docker-compose", "containerization", "containers"]
-    category: "devops"
+    canonical: Docker
+    aliases:
+    - dockerfile
+    - docker-compose
+    - containerization
+    - containers
+    category: devops
   kubernetes:
-    canonical: "Kubernetes"
-    aliases: ["k8s", "kubectl", "helm"]
-    category: "devops"
+    canonical: Kubernetes
+    aliases:
+    - k8s
+    - kubectl
+    - helm
+    category: devops
   aws:
-    canonical: "AWS"
-    aliases: ["amazon web services", "ec2", "s3", "lambda", "rds", "cloudformation"]
-    category: "cloud"
+    canonical: AWS
+    aliases:
+    - amazon web services
+    - ec2
+    - s3
+    - lambda
+    - rds
+    - cloudformation
+    category: cloud
   git:
-    canonical: "Git"
-    aliases: ["github", "gitlab", "version control", "git flow"]
-    category: "tools"
+    canonical: Git
+    aliases:
+    - github
+    - gitlab
+    - version control
+    - git flow
+    category: tools
+marketing:
+  seo:
+    canonical: SEO
+    aliases:
+    - search engine optimization
+    - organic search
+    - technical seo
+    - on-page seo
+    category: marketing
+  sem:
+    canonical: SEM
+    aliases:
+    - search engine marketing
+    - paid search
+    - google ads
+    - adwords
+    - bing ads
+    category: marketing
+  content_marketing:
+    canonical: Content Marketing
+    aliases:
+    - content strategy
+    - copywriting
+    - blogging
+    - article writing
+    category: marketing
+  social_media_marketing:
+    canonical: Social Media Marketing
+    aliases:
+    - smm
+    - social media management
+    - instagram marketing
+    - tiktok marketing
+    category: marketing
+  email_marketing:
+    canonical: Email Marketing
+    aliases:
+    - newsletter marketing
+    - mailchimp
+    - klaviyo
+    - drip campaigns
+    category: marketing
+  google_analytics:
+    canonical: Google Analytics
+    aliases:
+    - ga4
+    - universal analytics
+    - web analytics
+    category: marketing
+  facebook_ads:
+    canonical: Meta Ads
+    aliases:
+    - facebook ads
+    - fb ads
+    - instagram ads
+    - meta business suite
+    category: marketing
+  copywriting:
+    canonical: Copywriting
+    aliases:
+    - ad copy
+    - landing page copy
+    - direct response copy
+    category: marketing
+  conversion_rate_optimization:
+    canonical: Conversion Rate Optimization
+    aliases:
+    - cro
+    - a/b testing
+    - split testing
+    - multivariate testing
+    category: marketing
+  marketing_automation:
+    canonical: Marketing Automation
+    aliases:
+    - hubspot
+    - marketo
+    - activecampaign
+    - pardot
+    category: marketing
+  influencer_marketing:
+    canonical: Influencer Marketing
+    aliases:
+    - influencer outreach
+    - creator partnerships
+    - brand ambassadors
+    category: marketing
+  affiliate_marketing:
+    canonical: Affiliate Marketing
+    aliases:
+    - affiliate management
+    - referral programs
+    - partner marketing
+    category: marketing
+  public_relations:
+    canonical: Public Relations
+    aliases:
+    - pr
+    - press releases
+    - media relations
+    - brand communications
+    category: marketing
+  brand_strategy:
+    canonical: Brand Strategy
+    aliases:
+    - brand positioning
+    - brand identity
+    - brand guidelines
+    category: marketing
+  market_research:
+    canonical: Market Research
+    aliases:
+    - competitive analysis
+    - consumer insights
+    - survey design
+    - focus groups
+    category: marketing
+  lead_generation:
+    canonical: Lead Generation
+    aliases:
+    - lead gen
+    - outbound marketing
+    - prospecting
+    - mql
+    category: marketing
+  product_marketing:
+    canonical: Product Marketing
+    aliases:
+    - go-to-market
+    - gtm
+    - product launches
+    - positioning
+    category: marketing
+  event_marketing:
+    canonical: Event Marketing
+    aliases:
+    - webinars
+    - trade shows
+    - conference planning
+    - virtual events
+    category: marketing
+  video_marketing:
+    canonical: Video Marketing
+    aliases:
+    - youtube seo
+    - video advertising
+    - reels marketing
+    category: marketing
+  semrush:
+    canonical: SEMrush
+    aliases:
+    - sem rush
+    - keyword research
+    - competitor keyword analysis
+    category: marketing
+  ahrefs:
+    canonical: Ahrefs
+    aliases:
+    - backlink analysis
+    - rank tracking
+    category: marketing
+  community_management:
+    canonical: Community Management
+    aliases:
+    - discord moderation
+    - online community building
+    - forum management
+    category: marketing
+  mobile_marketing:
+    canonical: Mobile Marketing
+    aliases:
+    - aso
+    - app store optimization
+    - push notifications
+    category: marketing
+  retargeting:
+    canonical: Retargeting
+    aliases:
+    - remarketing
+    - display ads
+    - google display network
+    category: marketing
+  crm_marketing:
+    canonical: CRM Marketing
+    aliases:
+    - customer retention marketing
+    - lifecycle marketing
+    - churn reduction
+    category: marketing
+accounting_and_finance:
+  financial_modeling:
+    canonical: Financial Modeling
+    aliases:
+    - dcf modeling
+    - lbo modeling
+    - 3-statement model
+    category: accounting_and_finance
+  budgeting:
+    canonical: Budgeting & Forecasting
+    aliases:
+    - financial forecasting
+    - variance analysis
+    - annual budget
+    category: accounting_and_finance
+  gaap:
+    canonical: GAAP
+    aliases:
+    - us gaap
+    - generally accepted accounting principles
+    category: accounting_and_finance
+  ifrs:
+    canonical: IFRS
+    aliases:
+    - international financial reporting standards
+    category: accounting_and_finance
+  quickbooks:
+    canonical: QuickBooks
+    aliases:
+    - quickbooks online
+    - qbo
+    - quickbooks desktop
+    category: accounting_and_finance
+  xero:
+    canonical: Xero
+    aliases:
+    - xero accounting
+    category: accounting_and_finance
+  accounts_payable:
+    canonical: Accounts Payable
+    aliases:
+    - ap
+    - invoice processing
+    - vendor payments
+    category: accounting_and_finance
+  accounts_receivable:
+    canonical: Accounts Receivable
+    aliases:
+    - ar
+    - billing collections
+    - aging reports
+    category: accounting_and_finance
+  general_ledger:
+    canonical: General Ledger
+    aliases:
+    - gl
+    - journal entries
+    - chart of accounts
+    - trial balance
+    category: accounting_and_finance
+  financial_reporting:
+    canonical: Financial Reporting
+    aliases:
+    - balance sheet preparation
+    - income statements
+    - cash flow statements
+    category: accounting_and_finance
+  auditing:
+    canonical: Auditing
+    aliases:
+    - internal audit
+    - external audit
+    - statutory audit
+    - sox compliance
+    category: accounting_and_finance
+  tax_preparation:
+    canonical: Tax Preparation
+    aliases:
+    - corporate tax
+    - vat returns
+    - gst filing
+    - income tax filing
+    category: accounting_and_finance
+  payroll:
+    canonical: Payroll Accounting
+    aliases:
+    - adp
+    - gusto
+    - payroll processing
+    - withholding tax
+    category: accounting_and_finance
+  cash_flow_management:
+    canonical: Cash Flow Management
+    aliases:
+    - working capital management
+    - treasury management
+    - cash forecasting
+    category: accounting_and_finance
+  sap_fi:
+    canonical: SAP FICO
+    aliases:
+    - sap fi
+    - sap co
+    - sap finance
+    category: accounting_and_finance
+  netsuite:
+    canonical: NetSuite
+    aliases:
+    - oracle netsuite
+    - netsuite erp
+    category: accounting_and_finance
+  cost_accounting:
+    canonical: Cost Accounting
+    aliases:
+    - job costing
+    - standard costing
+    - activity-based costing
+    category: accounting_and_finance
+  risk_management:
+    canonical: Financial Risk Management
+    aliases:
+    - credit risk
+    - market risk
+    - hedging
+    - var analysis
+    category: accounting_and_finance
+  mergers_and_acquisitions:
+    canonical: M&A
+    aliases:
+    - mergers and acquisitions
+    - due diligence
+    - valuation analysis
+    category: accounting_and_finance
+  capital_budgeting:
+    canonical: Capital Budgeting
+    aliases:
+    - npv analysis
+    - irr calculation
+    - payback period
+    category: accounting_and_finance
+  reconciliation:
+    canonical: Account Reconciliation
+    aliases:
+    - bank reconciliation
+    - intercompany reconciliation
+    category: accounting_and_finance
+  excel_financial:
+    canonical: Financial Excel
+    aliases:
+    - financial formulas
+    - xirr
+    - irr
+    - npv
+    - index match financial
+    category: accounting_and_finance
+  wealth_management:
+    canonical: Wealth Management
+    aliases:
+    - portfolio management
+    - asset allocation
+    - financial planning
+    category: accounting_and_finance
+  equity_research:
+    canonical: Equity Research
+    aliases:
+    - financial statement analysis
+    - stock valuation
+    category: accounting_and_finance
+  corporate_finance:
+    canonical: Corporate Finance
+    aliases:
+    - capital structure
+    - debt financing
+    - working capital optimization
+    category: accounting_and_finance
+sales:
+  cold_calling:
+    canonical: Cold Calling
+    aliases:
+    - cold outreach
+    - phone sales
+    - telemarketing
+    category: sales
+  cold_emailing:
+    canonical: Cold Emailing
+    aliases:
+    - email outreach
+    - sales prospecting emails
+    category: sales
+  b2b_sales:
+    canonical: B2B Sales
+    aliases:
+    - business to business sales
+    - enterprise sales
+    category: sales
+  b2c_sales:
+    canonical: B2C Sales
+    aliases:
+    - retail sales
+    - direct-to-consumer sales
+    category: sales
+  salesforce:
+    canonical: Salesforce CRM
+    aliases:
+    - sfdc
+    - salesforce lightning
+    category: sales
+  hubspot_crm:
+    canonical: HubSpot CRM
+    aliases:
+    - hubspot sales hub
+    - pipeline management
+    category: sales
+  deal_closing:
+    canonical: Deal Closing
+    aliases:
+    - contract closing
+    - closing techniques
+    - final negotiations
+    category: sales
+  objection_handling:
+    canonical: Objection Handling
+    aliases:
+    - rebuttal strategies
+    - sales objection management
+    category: sales
+  sales_prospecting:
+    canonical: Sales Prospecting
+    aliases:
+    - lead qualification
+    - prospect identification
+    category: sales
+  account_management:
+    canonical: Account Management
+    aliases:
+    - client retention
+    - account growth
+    - upselling
+    - cross-selling
+    category: sales
+  solution_selling:
+    canonical: Solution Selling
+    aliases:
+    - consultative selling
+    - challenger sale
+    category: sales
+  pipeline_management:
+    canonical: Pipeline Management
+    aliases:
+    - deal flow
+    - sales forecasting
+    - quota management
+    category: sales
+  sales_presentations:
+    canonical: Sales Demos
+    aliases:
+    - product demos
+    - client pitches
+    - pitch deck presentations
+    category: sales
+  contract_negotiation:
+    canonical: Contract Negotiation
+    aliases:
+    - commercial negotiation
+    - pricing terms
+    - sla agreement
+    category: sales
+  relationship_building:
+    canonical: Client Relationship Building
+    aliases:
+    - rapport building
+    - stakeholder engagement
+    category: sales
+  outbound_sales:
+    canonical: Outbound Sales
+    aliases:
+    - sdr
+    - sales development
+    - outbound calling
+    category: sales
+  inbound_sales:
+    canonical: Inbound Sales
+    aliases:
+    - bdr
+    - lead follow-up
+    - inbound discovery
+    category: sales
+  value_selling:
+    canonical: Value-Based Selling
+    aliases:
+    - roi selling
+    - value proposition delivery
+    category: sales
+  key_account_management:
+    canonical: Key Account Management
+    aliases:
+    - kam
+    - strategic accounts
+    - tier 1 accounts
+    category: sales
+  sales_enablement:
+    canonical: Sales Enablement
+    aliases:
+    - sales battlecards
+    - sales collateral
+    - playbooks
+    category: sales
+  territory_management:
+    canonical: Territory Management
+    aliases:
+    - geographic territory planning
+    - account assignment
+    category: sales
+  revenue_operations:
+    canonical: Revenue Operations
+    aliases:
+    - revops
+    - sales ops
+    - sales compensation
+    category: sales
+  zoho_crm:
+    canonical: Zoho CRM
+    aliases:
+    - zoho sales
+    - zoho crm plus
+    category: sales
+  pipedrive:
+    canonical: Pipedrive
+    aliases:
+    - pipedrive crm
+    category: sales
+  social_selling:
+    canonical: Social Selling
+    aliases:
+    - linkedin sales navigator
+    - social outreach
+    category: sales
+customer_support:
+  ticket_management:
+    canonical: Ticket Management
+    aliases:
+    - zendesk ticketing
+    - help desk tickets
+    - ticket resolution
+    category: customer_support
+  zendesk:
+    canonical: Zendesk
+    aliases:
+    - zendesk support
+    - zendesk guide
+    - zendesk explore
+    category: customer_support
+  intercom:
+    canonical: Intercom
+    aliases:
+    - intercom chat
+    - intercom inbox
+    category: customer_support
+  freshdesk:
+    canonical: Freshdesk
+    aliases:
+    - freshworks support
+    - freshchat
+    category: customer_support
+  live_chat_support:
+    canonical: Live Chat Support
+    aliases:
+    - web chat
+    - real-time messaging support
+    category: customer_support
+  email_support:
+    canonical: Email Support
+    aliases:
+    - inbox management
+    - customer email inquiries
+    category: customer_support
+  phone_support:
+    canonical: Phone Support
+    aliases:
+    - call center support
+    - inbound call handling
+    - telephony
+    category: customer_support
+  customer_satisfaction:
+    canonical: Customer Satisfaction (CSAT)
+    aliases:
+    - csat scoring
+    - nps surveys
+    - ces metric
+    category: customer_support
+  technical_support:
+    canonical: Technical Support
+    aliases:
+    - tier 1 support
+    - tier 2 support
+    - troubleshooting guides
+    category: customer_support
+  conflict_resolution:
+    canonical: Customer Conflict Resolution
+    aliases:
+    - de-escalation techniques
+    - complaint resolution
+    category: customer_support
+  knowledge_base_authoring:
+    canonical: Knowledge Base Management
+    aliases:
+    - help center documentation
+    - faq creation
+    - canned responses
+    category: customer_support
+  sla_management:
+    canonical: SLA Adherence
+    aliases:
+    - service level agreements
+    - first response time
+    - mttr
+    category: customer_support
+  empathy:
+    canonical: Empathetic Communication
+    aliases:
+    - active listening
+    - customer empathy
+    - tactful phrasing
+    category: customer_support
+  bug_triage:
+    canonical: Bug Reporting & Triage
+    aliases:
+    - customer bug replication
+    - jira ticket creation
+    category: customer_support
+  crm_navigation:
+    canonical: Customer Data Lookup
+    aliases:
+    - user profile verification
+    - account history review
+    category: customer_support
+  customer_onboarding:
+    canonical: Customer Onboarding
+    aliases:
+    - welcome calls
+    - initial setup assistance
+    - walkthroughs
+    category: customer_support
+  remote_desktop_support:
+    canonical: Remote Desktop Support
+    aliases:
+    - teamviewer
+    - anydesk
+    - screen sharing assistance
+    category: customer_support
+  multilingual_support:
+    canonical: Multilingual Support
+    aliases:
+    - bilingual customer service
+    - language translation support
+    category: customer_support
+  omnichannel_support:
+    canonical: Omnichannel Support
+    aliases:
+    - cross-channel ticketing
+    - social media support triage
+    category: customer_support
+  retention_support:
+    canonical: Customer Retention
+    aliases:
+    - cancellation save attempts
+    - churn prevention dialogues
+    category: customer_support
+  refund_processing:
+    canonical: Billing & Refund Inquiries
+    aliases:
+    - payment dispute resolution
+    - chargeback support
+    category: customer_support
+  salesforce_service_cloud:
+    canonical: Salesforce Service Cloud
+    aliases:
+    - service cloud console
+    - case management
+    category: customer_support
+  quality_assurance_support:
+    canonical: Support QA
+    aliases:
+    - call monitoring
+    - ticket scoring
+    - feedback calibration
+    category: customer_support
+  kustomer:
+    canonical: Kustomer CRM
+    aliases:
+    - kustomer platform
+    category: customer_support
+  voice_of_customer:
+    canonical: Voice of Customer (VoC)
+    aliases:
+    - feedback aggregation
+    - customer pain point reporting
+    category: customer_support
+human_resources:
+  recruitment:
+    canonical: Full-Cycle Recruiting
+    aliases:
+    - talent acquisition
+    - sourcing candidates
+    - job postings management
+    category: human_resources
+  applicant_tracking_systems:
+    canonical: ATS Platforms
+    aliases:
+    - greenhouse ats
+    - lever ats
+    - workday recruiting
+    - bamboohr recruiting
+    category: human_resources
+  onboarding:
+    canonical: Employee Onboarding
+    aliases:
+    - new hire orientation
+    - onboarding checklists
+    - i-9 verification
+    category: human_resources
+  offboarding:
+    canonical: Employee Offboarding
+    aliases:
+    - exit interviews
+    - severance processing
+    - knowledge handover
+    category: human_resources
+  performance_management:
+    canonical: Performance Management
+    aliases:
+    - performance reviews
+    - okr tracking
+    - kpi evaluation
+    - pip management
+    category: human_resources
+  employee_relations:
+    canonical: Employee Relations
+    aliases:
+    - workplace conflict resolution
+    - grievance handling
+    - internal investigations
+    category: human_resources
+  hr_compliance:
+    canonical: HR Compliance
+    aliases:
+    - labor law compliance
+    - eeoc
+    - flsa regulations
+    - fmla policies
+    category: human_resources
+  compensation_and_benefits:
+    canonical: Compensation & Benefits
+    aliases:
+    - total rewards
+    - salary benchmarking
+    - health insurance administration
+    category: human_resources
+  hris_systems:
+    canonical: HRIS Administration
+    aliases:
+    - workday hris
+    - bamboohr
+    - rippling
+    - gusto hr
+    category: human_resources
+  talent_development:
+    canonical: Learning & Development (L&D)
+    aliases:
+    - training programs
+    - employee upskilling
+    - workshop facilitation
+    category: human_resources
+  diversity_equity_inclusion:
+    canonical: DEI Initiatives
+    aliases:
+    - diversity and inclusion
+    - equal opportunity hiring
+    - unconscious bias training
+    category: human_resources
+  workforce_planning:
+    canonical: Workforce Planning
+    aliases:
+    - headcount forecasting
+    - succession planning
+    - org chart design
+    category: human_resources
+  employer_branding:
+    canonical: Employer Branding
+    aliases:
+    - recruitment marketing
+    - glassdoor management
+    - career page optimization
+    category: human_resources
+  hr_analytics:
+    canonical: HR Analytics
+    aliases:
+    - people analytics
+    - retention rate analysis
+    - turnover rate tracking
+    category: human_resources
+  policy_writing:
+    canonical: HR Policy Creation
+    aliases:
+    - employee handbook authoring
+    - code of conduct design
+    category: human_resources
+  job_description_design:
+    canonical: Job Description Authoring
+    aliases:
+    - jd creation
+    - role benchmarking
+    - competency mapping
+    category: human_resources
+  payroll_coordination:
+    canonical: Payroll Coordination
+    aliases:
+    - payroll audits
+    - overtime calculations
+    - timesheet verification
+    category: human_resources
+  background_checks:
+    canonical: Background Screening
+    aliases:
+    - reference checks
+    - criminal background checks
+    - employment verification
+    category: human_resources
+  visa_sponsorship:
+    canonical: Immigration & Visas
+    aliases:
+    - h-1b processing
+    - work authorization verification
+    - relocation assistance
+    category: human_resources
+  culture_building:
+    canonical: Company Culture Initiatives
+    aliases:
+    - team building activities
+    - employee engagement surveys
+    category: human_resources
+  health_and_safety:
+    canonical: Occupational Health & Safety
+    aliases:
+    - osha compliance
+    - workplace safety protocols
+    - ergonomics
+    category: human_resources
+  leadership_coaching:
+    canonical: Executive & Leadership Coaching
+    aliases:
+    - manager training
+    - 1-on-1 coaching
+    category: human_resources
+  remote_work_policies:
+    canonical: Remote Work Management
+    aliases:
+    - distributed team policies
+    - remote employee engagement
+    category: human_resources
+  vendor_management_hr:
+    canonical: HR Vendor Management
+    aliases:
+    - benefit broker negotiations
+    - staffing agency coordination
+    category: human_resources
+  union_relations:
+    canonical: Labor Relations
+    aliases:
+    - collective bargaining
+    - union contract compliance
+    category: human_resources
+healthcare_and_nursing:
+  patient_assessment:
+    canonical: Patient Assessment
+    aliases:
+    - triage assessment
+    - physical examination
+    - vital signs monitoring
+    category: healthcare_and_nursing
+  electronic_health_records:
+    canonical: EHR / EMR Systems
+    aliases:
+    - epic systems
+    - cerner
+    - meditech
+    - allscripts
+    category: healthcare_and_nursing
+  medication_administration:
+    canonical: Medication Administration
+    aliases:
+    - iv therapy
+    - pharmacology compliance
+    - dosage calculation
+    - med pass
+    category: healthcare_and_nursing
+  infection_control:
+    canonical: Infection Prevention & Control
+    aliases:
+    - aseptic technique
+    - isolation precautions
+    - ppe protocols
+    category: healthcare_and_nursing
+  wound_care:
+    canonical: Wound Care
+    aliases:
+    - dressing changes
+    - wound staging
+    - negative pressure wound therapy
+    category: healthcare_and_nursing
+  bls_certification:
+    canonical: BLS Certification
+    aliases:
+    - basic life support
+    - cpr certified
+    - aed operation
+    category: healthcare_and_nursing
+  acls_certification:
+    canonical: ACLS Certification
+    aliases:
+    - advanced cardiac life support
+    - arrhythmia recognition
+    category: healthcare_and_nursing
+  phlebotomy:
+    canonical: Phlebotomy
+    aliases:
+    - venipuncture
+    - blood draw
+    - specimen collection
+    category: healthcare_and_nursing
+  care_planning:
+    canonical: Nursing Care Planning
+    aliases:
+    - nursing diagnoses
+    - patient goals
+    - discharge planning
+    category: healthcare_and_nursing
+  patient_education:
+    canonical: Patient & Family Education
+    aliases:
+    - post-operative instructions
+    - chronic disease education
+    - dietary guidance
+    category: healthcare_and_nursing
+  hipaa_compliance:
+    canonical: HIPAA Compliance
+    aliases:
+    - patient privacy protection
+    - phi confidentiality
+    category: healthcare_and_nursing
+  icu_critical_care:
+    canonical: Critical Care Nursing
+    aliases:
+    - intensive care
+    - ventilator management
+    - telemetry monitoring
+    category: healthcare_and_nursing
+  pediatric_care:
+    canonical: Pediatric Nursing
+    aliases:
+    - infant assessment
+    - pediatric dosing
+    category: healthcare_and_nursing
+  geriatric_care:
+    canonical: Geriatric Care
+    aliases:
+    - elderly care
+    - fall prevention
+    - dementia management
+    category: healthcare_and_nursing
+  catheterization:
+    canonical: Catheter Insertion & Care
+    aliases:
+    - foley catheter
+    - urinary catheter management
+    category: healthcare_and_nursing
+  emergency_triage:
+    canonical: Emergency Room Triage
+    aliases:
+    - esi triage scale
+    - acute trauma management
+    category: healthcare_and_nursing
+  surgical_prep:
+    canonical: Pre-op & Post-op Care
+    aliases:
+    - pacu recovery
+    - surgical site monitoring
+    category: healthcare_and_nursing
+  vital_signs:
+    canonical: Vital Signs Recording
+    aliases:
+    - blood pressure measurement
+    - pulse oximetry
+    - temperature monitoring
+    category: healthcare_and_nursing
+  pain_management:
+    canonical: Pain Assessment & Management
+    aliases:
+    - pain scoring scales
+    - analgesic administration
+    category: healthcare_and_nursing
+  palliative_care:
+    canonical: Hospice & Palliative Care
+    aliases:
+    - end-of-life care
+    - comfort measures
+    category: healthcare_and_nursing
+  clinical_documentation:
+    canonical: Clinical Charting
+    aliases:
+    - soap notes
+    - nursing notes
+    - shift handoff reports
+    category: healthcare_and_nursing
+  specimen_handling:
+    canonical: Lab Specimen Processing
+    aliases:
+    - urinalysis
+    - swab collection
+    - blood sample labeling
+    category: healthcare_and_nursing
+  rehabilitation_nursing:
+    canonical: Rehabilitation Support
+    aliases:
+    - mobility assistance
+    - physical therapy support
+    category: healthcare_and_nursing
+  mental_health_nursing:
+    canonical: Psychiatric Nursing
+    aliases:
+    - crisis intervention
+    - mental status exam
+    category: healthcare_and_nursing
+  case_management_health:
+    canonical: Clinical Case Management
+    aliases:
+    - utilization review
+    - care coordination
+    - insurance authorization
+    category: healthcare_and_nursing
+design_and_creative:
+  figma:
+    canonical: Figma
+    aliases:
+    - figma design
+    - figjam
+    - figma components
+    - auto-layout
+    category: design_and_creative
+  ui_design:
+    canonical: User Interface Design
+    aliases:
+    - visual design
+    - web design layout
+    - mobile ui
+    category: design_and_creative
+  ux_design:
+    canonical: User Experience Design
+    aliases:
+    - wireframing
+    - user journeys
+    - user persona creation
+    category: design_and_creative
+  adobe_photoshop:
+    canonical: Adobe Photoshop
+    aliases:
+    - photoshop editing
+    - photo retouching
+    - raster graphics
+    category: design_and_creative
+  adobe_illustrator:
+    canonical: Adobe Illustrator
+    aliases:
+    - vector illustration
+    - logo design
+    - iconography
+    category: design_and_creative
+  adobe_indesign:
+    canonical: Adobe InDesign
+    aliases:
+    - page layout design
+    - brochure layout
+    - typesetting
+    category: design_and_creative
+  prototyping:
+    canonical: Interactive Prototyping
+    aliases:
+    - invision
+    - framer prototypes
+    - high-fidelity prototypes
+    category: design_and_creative
+  user_research:
+    canonical: UX Research
+    aliases:
+    - usability testing
+    - user interviews
+    - heuristic evaluation
+    category: design_and_creative
+  design_systems:
+    canonical: Design Systems
+    aliases:
+    - component libraries
+    - design tokens
+    - atomic design
+    category: design_and_creative
+  typography:
+    canonical: Typography
+    aliases:
+    - font pairing
+    - hierarchy typesetting
+    - editorial typography
+    category: design_and_creative
+  color_theory:
+    canonical: Color Theory
+    aliases:
+    - palette design
+    - color accessibility
+    - contrast ratios
+    category: design_and_creative
+  branding_design:
+    canonical: Brand Identity Design
+    aliases:
+    - brand collateral
+    - style guide creation
+    - brand assets
+    category: design_and_creative
+  adobe_after_effects:
+    canonical: Motion Graphics
+    aliases:
+    - after effects
+    - lottie animations
+    - video title cards
+    category: design_and_creative
+  premiere_pro:
+    canonical: Video Editing
+    aliases:
+    - adobe premiere
+    - timeline editing
+    - color grading
+    category: design_and_creative
+  3d_modeling:
+    canonical: 3D Design
+    aliases:
+    - blender 3d
+    - cinema 4d
+    - 3d rendering
+    - maya
+    category: design_and_creative
+  responsive_design:
+    canonical: Responsive Web Design
+    aliases:
+    - mobile-first design
+    - adaptive layouts
+    category: design_and_creative
+  accessibility_design:
+    canonical: Accessibility (a11y) Design
+    aliases:
+    - wcag 2.1 compliance
+    - screen reader consideration
+    category: design_and_creative
+  information_architecture:
+    canonical: Information Architecture
+    aliases:
+    - sitemap creation
+    - content organization
+    - card sorting
+    category: design_and_creative
+  print_production:
+    canonical: Print Design & Production
+    aliases:
+    - cmyk separation
+    - prepress
+    - bleed and trim
+    category: design_and_creative
+  framer:
+    canonical: Framer
+    aliases:
+    - framer web design
+    - framer interactive
+    category: design_and_creative
+  sketch:
+    canonical: Sketch App
+    aliases:
+    - sketch design
+    category: design_and_creative
+  art_direction:
+    canonical: Art Direction
+    aliases:
+    - visual storytelling
+    - creative direction
+    - campaign concepting
+    category: design_and_creative
+  illustration:
+    canonical: Digital Illustration
+    aliases:
+    - procreate
+    - hand-drawn vectors
+    - editorial illustration
+    category: design_and_creative
+  packaging_design:
+    canonical: Packaging Design
+    aliases:
+    - dieline design
+    - label design
+    category: design_and_creative
+  micro_interactions:
+    canonical: Micro-Interactions
+    aliases:
+    - ui animations
+    - hover states
+    - transition physics
+    category: design_and_creative
+project_management:
+  agile_methodology:
+    canonical: Agile Project Management
+    aliases:
+    - agile delivery
+    - agile framework
+    category: project_management
+  scrum:
+    canonical: Scrum Framework
+    aliases:
+    - sprint planning
+    - daily standups
+    - sprint retrospectives
+    - scrum master
+    category: project_management
+  kanban:
+    canonical: Kanban Methodology
+    aliases:
+    - kanban boards
+    - wip limits
+    - cycle time tracking
+    category: project_management
+  jira:
+    canonical: Jira
+    aliases:
+    - jira software
+    - jira workflows
+    - atlassian jira
+    category: project_management
+  trello:
+    canonical: Trello
+    aliases:
+    - trello board management
+    category: project_management
+  confluence:
+    canonical: Confluence
+    aliases:
+    - atlassian confluence
+    - team documentation wiki
+    category: project_management
+  asana:
+    canonical: Asana
+    aliases:
+    - asana task management
+    category: project_management
+  monday_com:
+    canonical: Monday.com
+    aliases:
+    - monday workspace
+    category: project_management
+  clickup:
+    canonical: ClickUp
+    aliases:
+    - clickup tasks
+    category: project_management
+  waterfall:
+    canonical: Waterfall Methodology
+    aliases:
+    - gantt chart planning
+    - sequential project delivery
+    category: project_management
+  risk_management_pm:
+    canonical: Project Risk Management
+    aliases:
+    - raid logs
+    - risk mitigation strategies
+    category: project_management
+  stakeholder_management:
+    canonical: Stakeholder Communication
+    aliases:
+    - executive status updates
+    - steering committee presentations
+    category: project_management
+  budget_tracking_pm:
+    canonical: Project Budget Tracking
+    aliases:
+    - cost baseline
+    - burn rate monitoring
+    - project budget variance
+    category: project_management
+  resource_allocation:
+    canonical: Resource Management
+    aliases:
+    - capacity planning
+    - team bandwidth allocation
+    category: project_management
+  scope_management:
+    canonical: Scope Management
+    aliases:
+    - scope baseline
+    - change order control
+    - preventing scope creep
+    category: project_management
+  pmp_framework:
+    canonical: PMP / PMI Standards
+    aliases:
+    - project management institute
+    - project charter authoring
+    category: project_management
+  prince2:
+    canonical: PRINCE2
+    aliases:
+    - prince2 methodology
+    category: project_management
+  okr_goal_setting:
+    canonical: OKR & KPI Alignment
+    aliases:
+    - objectives and key results
+    - milestone tracking
+    category: project_management
+  vendor_management_pm:
+    canonical: Vendor & Contract Management
+    aliases:
+    - rfp development
+    - external vendor oversight
+    category: project_management
+  change_management:
+    canonical: Change Management
+    aliases:
+    - prosci
+    - change enablement
+    - adkar model
+    category: project_management
+  retrospective_facilitation:
+    canonical: Retrospective Facilitation
+    aliases:
+    - continuous improvement meetings
+    - blameless postmortems
+    category: project_management
+  cross_functional_coordination:
+    canonical: Cross-Functional Leadership
+    aliases:
+    - engineering-product-design alignment
+    category: project_management
+  project_scheduling:
+    canonical: Project Scheduling
+    aliases:
+    - critical path method
+    - cpm
+    - pert charts
+    category: project_management
+  quality_assurance_pm:
+    canonical: Quality Assurance Planning
+    aliases:
+    - acceptance criteria definition
+    - sign-off criteria
+    category: project_management
+  notion_pm:
+    canonical: Notion Workspace
+    aliases:
+    - notion databases
+    - project dashboards in notion
+    category: project_management
+education_and_training:
+  curriculum_development:
+    canonical: Curriculum Design
+    aliases:
+    - syllabus planning
+    - course outline creation
+    - instructional scope
+    category: education_and_training
+  lesson_planning:
+    canonical: Lesson Planning
+    aliases:
+    - daily lesson plans
+    - learning objectives
+    category: education_and_training
+  classroom_management:
+    canonical: Classroom Management
+    aliases:
+    - student discipline
+    - classroom routines
+    category: education_and_training
+  instructional_design:
+    canonical: Instructional Design
+    aliases:
+    - addie model
+    - bloom's taxonomy
+    - backward design
+    category: education_and_training
+  differentiated_instruction:
+    canonical: Differentiated Instruction
+    aliases:
+    - adaptive teaching
+    - individual learning plans
+    category: education_and_training
+  formative_assessment:
+    canonical: Formative Assessment
+    aliases:
+    - quizzes
+    - exit tickets
+    - informal checks for understanding
+    category: education_and_training
+  summative_assessment:
+    canonical: Summative Assessment
+    aliases:
+    - standardized exams
+    - final projects
+    - rubric creation
+    category: education_and_training
+  learning_management_systems:
+    canonical: LMS Administration
+    aliases:
+    - canvas lms
+    - blackboard
+    - moodle
+    - google classroom
+    category: education_and_training
+  special_education:
+    canonical: Special Education (SPED)
+    aliases:
+    - iep management
+    - individualized education programs
+    - 504 plans
+    category: education_and_training
+  student_engagement:
+    canonical: Student Engagement Strategies
+    aliases:
+    - gamified learning
+    - active learning exercises
+    category: education_and_training
+  educational_technology:
+    canonical: EdTech Integration
+    aliases:
+    - smartboards
+    - kahoot
+    - nearpod
+    - padlet
+    category: education_and_training
+  parent_teacher_communication:
+    canonical: Parent Communication
+    aliases:
+    - parent-teacher conferences
+    - progress reporting
+    category: education_and_training
+  esl_instruction:
+    canonical: ESL / ELL Teaching
+    aliases:
+    - teaching english as a second language
+    - tesol
+    - tefl
+    category: education_and_training
+  stem_education:
+    canonical: STEM Education
+    aliases:
+    - hands-on science experiments
+    - robotics teaching
+    category: education_and_training
+  peer_tutoring:
+    canonical: One-on-One Tutoring
+    aliases:
+    - individual student mentoring
+    - academic coaching
+    category: education_and_training
+  grading_and_feedback:
+    canonical: Constructive Feedback & Grading
+    aliases:
+    - assignment evaluation
+    - rubric scoring
+    category: education_and_training
+  social_emotional_learning:
+    canonical: Social-Emotional Learning (SEL)
+    aliases:
+    - emotional regulation skills
+    - restorative justice
+    category: education_and_training
+  adult_education:
+    canonical: Andragogy & Adult Learning
+    aliases:
+    - corporate training workshops
+    - professional development
+    category: education_and_training
+  early_childhood_education:
+    canonical: Early Childhood Development
+    aliases:
+    - montessori methods
+    - phonics teaching
+    category: education_and_training
+  higher_education_instruction:
+    canonical: University Lecturing
+    aliases:
+    - academic lecturing
+    - seminar facilitation
+    - thesis advising
+    category: education_and_training
+  education_research:
+    canonical: Educational Research
+    aliases:
+    - pedagogical studies
+    - learning outcome analysis
+    category: education_and_training
+  standardized_test_prep:
+    canonical: Test Preparation
+    aliases:
+    - sat prep
+    - act prep
+    - ielts prep
+    - gre prep
+    category: education_and_training
+  behavior_intervention:
+    canonical: Behavior Intervention Plans
+    aliases:
+    - bip
+    - positive behavior support
+    category: education_and_training
+  blended_learning:
+    canonical: Blended Learning
+    aliases:
+    - hybrid course facilitation
+    - flipped classroom
+    category: education_and_training
+  academic_advising:
+    canonical: Academic Advising
+    aliases:
+    - degree audit counseling
+    - course selection guidance
+    category: education_and_training
+operations_and_logistics:
+  supply_chain_management:
+    canonical: Supply Chain Management
+    aliases:
+    - end-to-end supply chain
+    - scm
+    category: operations_and_logistics
+  inventory_management:
+    canonical: Inventory Control
+    aliases:
+    - stock audits
+    - reorder points
+    - cycle counts
+    - safety stock
+    category: operations_and_logistics
+  logistics_coordination:
+    canonical: Logistics Planning
+    aliases:
+    - freight coordination
+    - shipping routes
+    - carrier management
+    category: operations_and_logistics
+  warehouse_management:
+    canonical: Warehouse Management (WMS)
+    aliases:
+    - warehouse layouts
+    - forklift operations
+    - picking and packing
+    category: operations_and_logistics
+  procurement:
+    canonical: Procurement & Sourcing
+    aliases:
+    - supplier negotiations
+    - purchase orders
+    - po processing
+    category: operations_and_logistics
+  vendor_relationship_management:
+    canonical: Supplier Relationship Management
+    aliases:
+    - vendor kpi monitoring
+    - supplier scorecards
+    category: operations_and_logistics
+  erp_operations:
+    canonical: ERP Operations
+    aliases:
+    - sap erp
+    - oracle scm
+    - microsoft dynamics 365 supply chain
+    category: operations_and_logistics
+  fleet_management:
+    canonical: Fleet Management
+    aliases:
+    - driver scheduling
+    - vehicle maintenance tracking
+    - gps dispatching
+    category: operations_and_logistics
+  demand_forecasting:
+    canonical: Demand Planning
+    aliases:
+    - sales and operations planning
+    - s&op
+    - forecast accuracy
+    category: operations_and_logistics
+  route_optimization:
+    canonical: Route Optimization
+    aliases:
+    - dispatch routing
+    - last-mile delivery optimization
+    category: operations_and_logistics
+  quality_control_ops:
+    canonical: Quality Control (QC)
+    aliases:
+    - incoming inspection
+    - six sigma
+    - iso 9001 compliance
+    category: operations_and_logistics
+  lean_operations:
+    canonical: Lean Methodology
+    aliases:
+    - 5s methodology
+    - kaizen continuous improvement
+    - waste elimination
+    category: operations_and_logistics
+  freight_forwarding:
+    canonical: Freight Forwarding
+    aliases:
+    - ocean freight
+    - air cargo handling
+    - customs brokerage
+    category: operations_and_logistics
+  customs_compliance:
+    canonical: Import / Export Compliance
+    aliases:
+    - harmonized tariff codes
+    - hs codes
+    - incoterms
+    category: operations_and_logistics
+  safety_compliance_ops:
+    canonical: Facility Safety Standards
+    aliases:
+    - osha compliance facility
+    - hazard identification
+    category: operations_and_logistics
+  cold_chain_logistics:
+    canonical: Cold Chain Management
+    aliases:
+    - temperature-controlled shipping
+    - perishable logistics
+    category: operations_and_logistics
+  order_fulfillment:
+    canonical: E-commerce Fulfillment
+    aliases:
+    - pick pack ship
+    - fulfillment center ops
+    - shopify fulfillment
+    category: operations_and_logistics
+  reverse_logistics:
+    canonical: Reverse Logistics
+    aliases:
+    - returns processing
+    - rma handling
+    - refurbishment triage
+    category: operations_and_logistics
+  cost_reduction_ops:
+    canonical: Operational Cost Optimization
+    aliases:
+    - freight cost reduction
+    - packaging optimization
+    category: operations_and_logistics
+  contract_manufacturing:
+    canonical: Contract Manufacturing Oversight
+    aliases:
+    - oem oversight
+    - production line scheduling
+    category: operations_and_logistics
+  capacity_planning_ops:
+    canonical: Plant Capacity Planning
+    aliases:
+    - machine uptime analysis
+    - oee metric
+    category: operations_and_logistics
+  packaging_engineering:
+    canonical: Industrial Packaging
+    aliases:
+    - protective packaging design
+    - box palletization
+    category: operations_and_logistics
+  standard_operating_procedures:
+    canonical: SOP Development
+    aliases:
+    - standard operating procedures authoring
+    - process documentation
+    category: operations_and_logistics
+  cross_docking:
+    canonical: Cross-Docking
+    aliases:
+    - direct transshipment
+    - inbound-to-outbound dock transfers
+    category: operations_and_logistics
+  material_requirements_planning:
+    canonical: MRP
+    aliases:
+    - material requirements planning
+    - bill of materials management
+    - bom
+    category: operations_and_logistics

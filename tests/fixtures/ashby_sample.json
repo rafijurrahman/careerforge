@@ -1,0 +1,18 @@
+{
+  "jobs": [
+    {
+      "id": "ashby-job-001",
+      "title": "Data Analyst, Product Operations",
+      "jobUrl": "https://jobs.ashbyhq.com/linear/ashby-job-001",
+      "location": "Remote - Worldwide",
+      "department": "Analytics"
+    },
+    {
+      "id": "ashby-job-002",
+      "title": "Lead Design Systems Architect",
+      "jobUrl": "https://jobs.ashbyhq.com/linear/ashby-job-002",
+      "location": "San Francisco, CA",
+      "department": "Design"
+    }
+  ]
+}

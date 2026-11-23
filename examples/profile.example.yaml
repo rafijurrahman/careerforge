@@ -1,0 +1,78 @@
+# CareerForge Example Profile
+# Fictional Persona: Alex Rivera (Senior Backend & Platform Engineer)
+# 100% fictional data for demonstration and testing purposes.
+
+personal:
+  full_name: "Alex Rivera"
+  email: "alex.rivera@example.com"
+  phone: "+1 (555) 019-2834"
+  location: "Austin, Texas, USA"
+  linkedin: "linkedin.com/in/alexrivera-fictional"
+  github: "github.com/alexrivera-demo"
+  portfolio: "alexrivera.dev"
+
+target_preferences:
+  target_roles:
+    - "Backend Engineer"
+    - "Platform Engineer"
+    - "Systems Engineer"
+  preferred_work_modes:
+    - "Remote"
+  preferred_locations:
+    - "Worldwide"
+    - "United States"
+  base_cv_path: "cv/alex_rivera_base.pdf"
+
+summary: >
+  Backend engineer with 6 years building distributed APIs and data pipelines using Python,
+  Go, and PostgreSQL. Focused on low-latency caching and automated CI/CD deployments.
+
+experience:
+  - title: "Senior Backend Engineer"
+    company: "Apex Cloud Systems"
+    duration: "Jan 2023 – Present"
+    location: "Remote (USA)"
+    bullets:
+      - "Reduced p95 API response times from 840ms to 210ms by introducing Redis caching and query indexing."
+      - "Architected event-driven ingestion pipeline in Go and Kafka processing 14,000 messages per second."
+      - "Automated deployment verification across 8 microservices using GitHub Actions and Docker."
+      - "Mentored 4 junior engineers through weekly architecture reviews and code audits."
+
+  - title: "Software Engineer"
+    company: "Beacon Data Labs"
+    duration: "Aug 2020 – Dec 2022"
+    location: "Austin, TX (Hybrid)"
+    bullets:
+      - "Built REST and GraphQL endpoints in Python and FastAPI serving 120,000 daily active users."
+      - "Migrated monolithic user management service to standalone PostgreSQL cluster with zero downtime."
+      - "Wrote comprehensive integration test suites cutting production regression bugs by 35%."
+
+education:
+  - degree: "Bachelor of Science in Computer Science"
+    institution: "University of Texas at Austin"
+    duration: "2016 – 2020"
+    grade: "GPA: 3.8 / 4.0"
+
+skills:
+  programming_languages:
+    - "Python"
+    - "Go"
+    - "SQL"
+    - "Bash"
+  frameworks_and_tools:
+    - "FastAPI"
+    - "PostgreSQL"
+    - "Redis"
+    - "Kafka"
+    - "Docker"
+    - "Kubernetes"
+    - "Git"
+    - "Linux"
+
+projects:
+  - name: "CacheForge"
+    description: "Lightweight in-memory key-value cache engine written in Go with LRU eviction."
+    link: "github.com/alexrivera-demo/cacheforge"
+  - name: "AsyncQuery"
+    description: "Asynchronous SQL query runner and performance profiler for PostgreSQL."
+    link: "github.com/alexrivera-demo/asyncquery"

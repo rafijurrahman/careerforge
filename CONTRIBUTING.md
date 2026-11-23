@@ -1,110 +1,81 @@
 # Contributing to CareerForge
 
-Thanks for taking the time to contribute.
+Thank you for your interest in contributing to CareerForge! We welcome contributions to our scrapers, anti-AI linguistic engine, ATS templates, and documentation.
 
 ---
 
-## Ways to Contribute
+## 🛠️ Development Setup
 
-- Add a new job portal scanner (see below)
-- Improve the CV builder templates
-- Extend the Anti-AI audit engine with new patterns
-- Fix bugs or improve error handling
-- Improve documentation
+1. **Fork and Clone:**
+   ```bash
+   git clone https://github.com/careerforge/careerforge.git
+   cd careerforge
+   ```
+
+2. **Create a Virtual Environment:**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+
+3. **Install Editable Package with Dev Dependencies:**
+   ```bash
+   pip install -e ".[dev]"
+   ```
+
+4. **Install Pre-Commit Hooks:**
+   ```bash
+   pre-commit install
+   ```
 
 ---
 
-## Adding a New Job Portal Scanner
+## 🧪 Running Tests & Quality Checks
 
-CareerForge scanners live in `scrapers/`. Each scanner is a standalone Python file that returns a list of job dicts.
+Run the automated test suite locally before pushing:
+```bash
+# Run pytest with network disabled (tests run completely offline)
+pytest -v
 
-### Standard Job Dict Format
+# Run linter
+ruff check .
 
-Every scanner must return a list where each item has these keys:
-
-```python
-{
-    "title":    "Data Analyst",
-    "company":  "Acme Corp",
-    "url":      "https://jobs.example.com/apply/123",
-    "location": "Remote / Worldwide",
-    "source":   "MyPortal",         # or use "platform" key
-}
+# Run diagnostics
+forge doctor
 ```
 
-Optional keys: `tags`, `published_at`, `description_snippet`
+---
 
-### Minimum Scanner Template
+## 📝 How to Add an Anti-AI Linguistic Rule
 
-```python
-# scrapers/myportal_scanner.py
+All linguistic rules are stored as data in [`careerforge/data/anti_ai_rules.yaml`](careerforge/data/anti_ai_rules.yaml).
 
-import requests
-from typing import List, Dict
-
-API_URL = "https://api.myportal.com/jobs"
-
-def scan_myportal(target_roles: List[str], limit: int = 20) -> List[Dict]:
-    results = []
-    try:
-        resp = requests.get(API_URL, params={"limit": limit}, timeout=10)
-        resp.raise_for_status()
-        for job in resp.json().get("jobs", []):
-            title = job.get("title", "")
-            if any(role.lower() in title.lower() for role in target_roles):
-                results.append({
-                    "title":    title,
-                    "company":  job.get("company", ""),
-                    "url":      job.get("url", ""),
-                    "location": job.get("location", "Remote"),
-                    "source":   "MyPortal",
-                })
-    except requests.RequestException as e:
-        print(f"[myportal] Error: {e}")
-    return results
-```
-
-### Wire It Into the CLI
-
-In `cli.py`, import your scanner and call it inside `cmd_scrape`:
-
-```python
-from scrapers.myportal_scanner import scan_myportal
-
-# inside cmd_scrape:
-myportal_matches = scan_myportal(target_roles=keywords, limit=args.limit)
-all_matches = gh_matches + ashby_matches + rem_matches + myportal_matches
-```
-
-### Add It to the Portal List
-
-Update `scrapers/portal_list.md` with the portal name, URL, and scanner status.
+### Requirements for New Rules:
+1. **Rule ID:** Must be unique (e.g. `AI-006`).
+2. **Category:** e.g. `puffery`, `copula_avoidance`, `transition_signposts`, `participial_suffix`.
+3. **Severity:** `warn` or `error`.
+4. **Citation (Mandatory):** Must cite a peer-reviewed paper (*PNAS*, *ACL*, *Science Advances*), corpus study, or Wikipedia AI Cleanup finding. Speculative or subjective rules will not be accepted.
+5. **Pattern:** Valid Python regex string.
+6. **Suggestions:** Practical, natural human phrasing alternatives.
+7. **Test Cases:** Add positive and negative test cases in `tests/test_audit.py`.
 
 ---
 
-## Code Style
+## 🌐 How to Add a Job Board Scraper
 
-- Python 3.9+ compatible
-- Type hints where practical
-- Docstrings for all public functions
-- No external dependencies beyond what is in `requirements.txt` unless necessary
+See the full worked tutorial in [`docs/ADDING_A_SCRAPER.md`](docs/ADDING_A_SCRAPER.md).
 
----
-
-## Submitting a Pull Request
-
-1. Fork the repository
-2. Create a branch: `git checkout -b add-lever-scanner`
-3. Make your changes
-4. Test locally: `python cli.py scrape --roles "Engineer" --limit 5`
-5. Open a pull request with a clear description of what you added
+### Scraping Ethics & Politeness Policy:
+* **Official APIs Preferred:** Scrapers should query public, unauthenticated JSON endpoints (e.g., Greenhouse or Ashby public posting APIs).
+* **Respect Robots.txt & ToS:** We do not bypass paywalls, solve CAPTCHAs, or scrape authenticated user portals.
+* **Politeness Headers:** Every scraper must inherit from `BaseScraper`, which injects the `CareerForge/<version>` User-Agent, timeouts, and rate limits.
+* **Contract Fixtures Required:** Every scraper PR must include a recorded JSON fixture in `tests/fixtures/` and an offline test in `tests/test_scrapers.py`.
 
 ---
 
-## Reporting Issues
+## 🔒 Privacy & Safety Guarantee
 
-Open a GitHub Issue with:
-- Python version (`python --version`)
-- Operating system
-- Command you ran
-- Full error output
+CareerForge is strictly privacy-first.
+* Never commit `profile.yaml` or real personal documents.
+* Never add telemetry or analytics tracking.
+* All PRs must pass the offline `pytest-socket` test suite.

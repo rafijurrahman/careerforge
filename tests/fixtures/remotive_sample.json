@@ -1,0 +1,32 @@
+{
+  "0-legal-notice": "Remotive API",
+  "job-count": 2,
+  "jobs": [
+    {
+      "id": 9901,
+      "url": "https://remotive.com/remote-jobs/data/bi-analyst-9901",
+      "title": "Business Intelligence Analyst",
+      "company_name": "CloudMetrics",
+      "category": "data",
+      "tags": ["sql", "tableau", "bi"],
+      "job_type": "full_time",
+      "publication_date": "2026-11-21T08:00:00",
+      "candidate_required_location": "Worldwide",
+      "salary": "$70,000 - $90,000",
+      "description": "<p>Looking for a BI Analyst proficient in SQL and Power BI.</p>"
+    },
+    {
+      "id": 9902,
+      "url": "https://remotive.com/remote-jobs/software-dev/frontend-dev-9902",
+      "title": "Frontend React Engineer",
+      "company_name": "WebScale",
+      "category": "software-dev",
+      "tags": ["react", "typescript"],
+      "job_type": "contract",
+      "publication_date": "2026-11-22T09:00:00",
+      "candidate_required_location": "Europe / LATAM",
+      "salary": "",
+      "description": "<p>Contract React developer needed.</p>"
+    }
+  ]
+}

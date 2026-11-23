@@ -4,287 +4,161 @@
 
 <br/>
 
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue?style=flat-square&logo=python)
+[![CI](https://github.com/careerforge/careerforge/actions/workflows/ci.yml/badge.svg)](https://github.com/careerforge/careerforge/actions)
+![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue?style=flat-square&logo=python)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=flat-square)
-![Remote First](https://img.shields.io/badge/Mode-Remote%20First-orange?style=flat-square)
-![No Cloud](https://img.shields.io/badge/Privacy-100%25%20Local-purple?style=flat-square)
+![Privacy](https://img.shields.io/badge/Telemetry-Zero%20%28100%25%20Local%29-purple?style=flat-square)
 
-**A local, open-source job application engine. Works for any role. Runs on your machine. Your data stays yours.**
+**A local, open-source job application and career automation engine. Works for any role. Runs on your machine. Your data stays yours.**
 
-[Quick Start](#quick-start) · [Commands](#commands) · [Free Job Portals](#free-job-portals) · [Base CV Setup](#base-cv-setup) · [How It Works](#how-it-works) · [Contributing](#contributing)
+[Quick Start](#quick-start) · [Available Now](#-available-now) · [Roadmap](#-planned-features-roadmap) · [Portals](#job-portals) · [Architecture](docs/ARCHITECTURE.md) · [Research](docs/RESEARCH.md) · [Contributing](CONTRIBUTING.md)
 
 </div>
 
 ---
 
-## What CareerForge Does
+## What is CareerForge?
 
-You fill out one YAML profile. CareerForge handles the rest:
+Most career tools are closed cloud services that lock your resume behind monthly subscriptions, sell candidate data, and generate synthetic text full of recognizable AI buzzwords (*delve*, *pivotal*, *seamless*, *tapestry*).
 
-- Scans public job boards and ATS platforms automatically
-- Builds a tailored, 1-page ATS-safe `.docx` and `.pdf` for each application
-- Audits your CV and cover letter text against research-backed Anti-AI standards
-- Runs 100% locally — no subscriptions, no cloud, no data leaving your machine
+CareerForge is an open-source, local-first alternative. You define one master profile in local YAML, and CareerForge optimizes clean, single-page ATS-readable resumes (`.docx` and `.pdf`), audits your writing against empirical computational linguistics papers, and scans public job boards without requiring third-party accounts or cloud APIs.
 
-It works for any profession: data analyst, software engineer, designer, marketer, researcher, or anything else. The profile is yours to define.
+```
+                  ┌─────────────────────────────────────────┐
+                  │          Local profile.yaml             │
+                  └────────────────────┬────────────────────┘
+                                       │
+                ┌──────────────────────┼──────────────────────┐
+                ▼                      ▼                      ▼
+       ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+       │   forge apply   │    │   forge audit   │    │  forge scrape   │
+       │  1-Page Fitting │    │ Research Anti-AI│    │ Greenhouse/Ashby│
+       │ LibreOffice/COM │    │ PNAS & ACL Rules│    │    Remotive     │
+       └────────┬────────┘    └────────┬────────┘    └────────┬────────┘
+                ▼                      ▼                      ▼
+         1-Page ATS CV          Clean Human Voice       Targeted Roles
+```
 
 ---
 
-## How It Works
+## Terminal Demo
 
-<img src="assets/workflow-route.svg" width="100%" alt="CareerForge Workflow" />
+![CareerForge Demo](demo/demo.gif)
 
-1. Run `python cli.py setup` — wizard creates your `profile.yaml`
-2. Place your base CV PDF in `cv/my_base_cv.pdf` (see [Base CV Setup](#base-cv-setup))
-3. Run `python cli.py scrape` — scans Greenhouse, Ashby, and Remotive for matching roles
-4. Run `python cli.py apply` — generates a tailored 1-page CV from your profile + job description
-5. Run `python cli.py audit` — checks your writing against PNAS/ACL anti-AI standards
+*(To record or update this demo locally, run `vhs demo/demo.tape`)*
 
 ---
 
-## Quick Start
+## ⚡ 3-Command Quick Start
 
-### Requirements
-
-- Python 3.9 or higher
-- Windows: Microsoft Word installed (for 1-page PDF verification via COM)
-- macOS / Linux: LibreOffice installed (headless fallback)
-
-### Install
-
+### 1. Install CareerForge
 ```bash
-git clone https://github.com/YOUR_USERNAME/CareerForge.git
-cd CareerForge
-pip install -r requirements.txt
+git clone https://github.com/careerforge/careerforge.git
+cd careerforge
+pip install -e .
 ```
+*(On Windows with Microsoft Word installed, run `pip install -e ".[windows]"` for the optional Word COM fast-path).*
 
-### Initialize Your Profile
-
+### 2. Verify System Dependencies
 ```bash
-python cli.py setup
+forge doctor
 ```
 
-The setup wizard walks you through your name, contact details, work experience, education, skills, and target roles. It saves everything to `profile.yaml` (which is excluded from git).
-
-### Build Your First CV
-
+### 3. Initialize Your Profile and Build Your First CV
 ```bash
-python cli.py apply --role-tag "Data_Analyst"
+forge init
+forge apply --role-tag "Universal"
 ```
-
-Output goes to `output/YourName_Data_Analyst_CV.docx` and `.pdf`. Verified to exactly 1 page.
-
-### Search for Jobs
-
-```bash
-python cli.py scrape --roles "Data Analyst" "BI Analyst" --limit 10
-```
-
-Scans Greenhouse, Ashby, and Remotive simultaneously. Filters by your preferred work mode (Remote by default).
+Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `.pdf`.
 
 ---
 
-## Commands
+## ⚖️ CareerForge vs. Cloud Resume Tools
 
-| Command | What It Does |
-|---------|-------------|
-| `python cli.py setup` | Interactive wizard to create `profile.yaml` |
-| `python cli.py scrape` | Search job boards for roles matching your profile |
-| `python cli.py scrape --roles "X" "Y"` | Search specific role keywords |
-| `python cli.py scrape --include-senior` | Include senior / lead / director titles |
-| `python cli.py scrape --save results.json` | Save job results to a JSON file |
-| `python cli.py apply` | Build + verify a 1-page ATS CV |
-| `python cli.py apply --role-tag "Engineer"` | Tag the output file with a role name |
-| `python cli.py apply --out ./my_output` | Custom output directory |
-| `python cli.py audit --file cover_letter.txt` | Run Anti-AI linguistic audit |
+| Feature | CareerForge | Cloud AI Resume Builders |
+|---|:---:|:---:|
+| **Cost** | **100% Free & Open Source (MIT)** | $15 – $40 / month subscription |
+| **Privacy** | **100% Local (Zero Telemetry)** | Resumes stored on company servers |
+| **Document Fit** | **Guaranteed 1-Page Layout** | Often overflows to accidental 2nd page |
+| **Writing Style** | **Research-Backed Anti-AI Voice** | Generic synthetic LLM puffery |
+| **Job Search** | **Direct Public ATS (Greenhouse, Ashby)** | Middleman affiliate job boards |
+| **Extensibility** | **Plugin Scrapers & Modular Rules** | Closed proprietary platform |
 
 ---
 
-## Free Job Portals
+## 📦 Features
 
-CareerForge targets **remote jobs by default**. The scanner hits these sources automatically:
+### ✅ Available Now (v0.1.0)
 
-| Source | Type | CareerForge Support |
-|--------|------|---------------------|
-| **Greenhouse** | ATS Direct | Auto-scanned |
-| **Ashby** | ATS Direct | Auto-scanned |
-| **Remotive** | Remote Board | Auto-scanned |
-| **We Work Remotely** | Remote Board | Manual |
-| **Remote OK** | Remote Board | Manual |
-| **Jobicy** | Remote Board | Manual |
-| **Himalayas** | Remote Board | Manual |
-| **Wellfound** | Startup Board | Manual |
-| **Working Nomads** | Remote Board | Manual |
-| **Hacker News Hiring** | Community | Manual |
-| **LinkedIn Jobs** | Multi-purpose | Manual |
+*   **Automated 1-Page Document Optimizer (`forge apply`):**  
+    Uses an iterative grid-search to adjust font scaling, spacing, and margins until your resume strictly fits exactly 1 page. Uses headless LibreOffice as the cross-platform default, with Microsoft Word COM as a Windows fast-path.
+*   **Empirical Anti-AI Linguistic Audit (`forge audit`):**  
+    Scans cover letters and resumes against peer-reviewed computational linguistics findings (*PNAS 2025*, *Science Advances 2024*, *ACL 2025*) to eradicate AI puffery (`AI-001`), copula avoidance (`AI-002`), robotic transitions (`AI-003`), participial suffixes (`AI-004`), and low-burstiness cadence (`CADENCE-001`).
+*   **Public ATS & Remote Job Scrapers (`forge scrape`):**  
+    Concurrently scans Greenhouse public APIs, Ashby APIs, and Remotive for matching opportunities with built-in politeness (User-Agent headers, rate limiting, and exponential backoff).
+*   **System Diagnostics (`forge doctor`):**  
+    Inspects your local environment for Python version, Word COM / LibreOffice availability, profile syntax, and bundled rules. Supports `--json` output with stable exit codes.
+*   **Universal Skills Ontology (`careerforge/data/skills.yaml`):**  
+    250+ canonical skills and aliases across 12 professional disciplines (Software, Data, Marketing, Accounting/Finance, Sales, Customer Support, HR, Healthcare/Nursing, Design, Project Management, Education, and Operations/Logistics).
+*   **Provable Offline Privacy:**  
+    Enforced by automated `pytest-socket` tests proving that audit, profile loading, and CV generation execute completely offline without opening network sockets.
 
-Full directory with URLs and guides: [`JOB_PLATFORMS.md`](JOB_PLATFORMS.md) (or [`scrapers/portal_list.md`](scrapers/portal_list.md))
+### 🗺️ Planned Features (Roadmap)
 
-### Switch From Remote to Hybrid or On-site
+The following advanced utilities are currently under active design. See [`ROADMAP.md`](ROADMAP.md) for milestones:
 
-Edit `profile.yaml`:
-
-```yaml
-target_preferences:
-  preferred_work_modes:
-    - Remote       # keep this
-    - Hybrid       # add for hybrid roles
-    - On-site      # add for on-site roles
-```
-
-Re-run `python cli.py scrape` and the location filter updates automatically.
-
----
-
-## Base CV Setup
-
-Before running CareerForge, build a clean base CV using any free tool:
-
-| Tool | URL | Notes |
-|------|-----|-------|
-| **FlowCV** | [flowcv.com](https://flowcv.com) | Clean ATS templates, free PDF export |
-| **Reactive Resume** | [rxresu.me](https://rxresu.me) | 100% free and open-source |
-| **Canva** | [canva.com/resumes](https://www.canva.com/resumes) | Design-friendly, free |
-| **OpenResume** | [open-resume.com](https://www.open-resume.com) | ATS optimized, open-source |
-
-Save the exported PDF to:
-
-```
-CareerForge/
-└── cv/
-    └── my_base_cv.pdf
-```
-
-CareerForge reads this as a reference when tailoring your CV. It never modifies the original. The `cv/` folder is in `.gitignore` — your personal files stay private.
-
-Full instructions: [`cv/README.md`](cv/README.md)
+*   **`forge tailor` (Budgeted Knapsack Auto-Tailoring):**  
+    Selects the optimal subset of bullet points from your master profile to maximize relevance to a specific Job Description while strictly fitting the 1-page line budget.
+*   **`forge ats-sim` (ATS Parser Simulator):**  
+    Extracts text and evaluates section recognition, reading order, ligature sanitization, and contact extraction to generate a pre-application ATS Readability Score (0-100).
+*   **`forge track` (Offline SQLite Kanban):**  
+    A local terminal UI (TUI) powered by `Textual` for tracking applications (`Saved`, `Applied`, `Interview`, `Offer`, `Ghosted`) with zero cloud dependencies.
+*   **`forge ghost` (Stale / Ghost Job Detector):**  
+    Calculates Ghost Risk scores based on posting age and repost frequency from ATS APIs.
+*   **`forge salary` (Salary Range Intelligence):**  
+    Aggregates pay transparency disclosures into local SQLite with currency conversion.
+*   **`forge interview` (STAR Story Bank):**  
+    Transforms master profile achievement bullets into structured Situation-Task-Action-Result interview talking points with behavioral category coverage tracking.
 
 ---
 
-## Profile Setup
+## 🌐 Job Portals
 
-Your `profile.yaml` controls everything. After running `python cli.py setup`, it looks like:
+CareerForge defaults to **100% Remote / Worldwide** opportunities so you don't waste time on geo-restricted listings. To add Hybrid or On-site roles in your area, edit `preferred_work_modes` in `profile.yaml`.
 
-```yaml
-personal:
-  full_name: "Jane Smith"
-  email: "jane@example.com"
-  phone: "+1 555-0101"
-  location: "New York, USA"
-  linkedin: "linkedin.com/in/janesmith"
-  github: "github.com/janesmith"
-
-target_preferences:
-  target_roles:
-    - "Data Analyst"
-    - "Business Intelligence Analyst"
-  preferred_work_modes:
-    - Remote
-  base_cv_path: "cv/my_base_cv.pdf"
-
-experience:
-  - title: "Data Analyst"
-    company: "Acme Corp"
-    duration: "Jan 2023 – Present"
-    location: "Remote"
-    bullets:
-      - "Built Power BI dashboards tracking 12 KPIs across 5 departments"
-      - "Wrote SQL queries processing 50,000+ records monthly"
-```
-
-Full template: [`templates/profile.template.yaml`](templates/profile.template.yaml)
+For our complete directory of 30+ free remote portals, search dorks, and startup networks, see [`JOB_PLATFORMS.md`](JOB_PLATFORMS.md).
 
 ---
 
-## Anti-AI Writing Standards
+## 🤝 Contributing & Good First Issues
 
-CareerForge includes a linguistic audit engine built from peer-reviewed research:
+We actively welcome contributions!
 
-- Kobak et al. (*Science Advances*, 2024) — detects AI vocabulary inflation
-- Reinhart et al. (*PNAS*, 2025) — catches abstract nominalization and participial suffix abuse
-- Juzek & Ward (*ACL*, 2025) — flags RLHF-forced formality patterns
+*   **Want to add a new job board scraper?** Read [`docs/ADDING_A_SCRAPER.md`](docs/ADDING_A_SCRAPER.md).
+*   **Want to propose a new linguistic rule?** Open an issue using our [New Rule Template](.github/ISSUE_TEMPLATE/new_audit_rule.yml).
+*   **See general guidelines:** Check [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 
-Run an audit on any text file:
-
-```bash
-python cli.py audit --file my_cover_letter.txt
-```
-
-The engine checks for banned terms (`delve`, `leverage`, `seamless`, `pivotal`, etc.), copula inflation, sentence burstiness, and participial clause abuse.
-
-Full standards reference: [`rules/anti_ai_standards.md`](rules/anti_ai_standards.md)
-
----
-
-## Project Structure
-
-```
-CareerForge/
-├── assets/
-│   ├── hero-banner.svg          # Visual banner
-│   └── workflow-route.svg       # Workflow diagram
-├── core/
-│   ├── cv_builder.py            # Universal CV generator (python-docx)
-│   ├── page_optimizer.py        # Word COM 1-page enforcer
-│   ├── anti_ai_engine.py        # PNAS/ACL linguistic audit engine
-│   ├── profile_loader.py        # YAML profile reader + validator
-│   └── link_embedder.py         # Hyperlink helper for docx
-├── scrapers/
-│   ├── greenhouse_scanner.py    # Greenhouse public API scanner
-│   ├── ashby_scanner.py         # Ashby public API scanner
-│   ├── remotive_scanner.py      # Remotive public API scanner
-│   ├── board_registry.py        # 70+ company slugs (Greenhouse + Ashby)
-│   ├── work_mode_config.py      # Remote / Hybrid / On-site filter
-│   └── portal_list.md           # Full curated free job portal directory
-├── templates/
-│   └── profile.template.yaml    # Sample profile for any role
-├── rules/
-│   └── anti_ai_standards.md     # Research-backed writing standards
-├── cv/
-│   └── README.md                # Instructions for base CV placement
-├── cli.py                       # Main CLI entry point
-├── setup_wizard.py              # Interactive profile setup wizard
-├── requirements.txt             # Python dependencies
-├── SETUP.md                     # Full installation guide
-├── AGENTS.md                    # AI tool compatibility notes
-├── CONTRIBUTING.md              # How to add scanners and features
-└── .gitignore                   # Excludes profile.yaml, cv/, output/
-```
+### Good First Issues for New Contributors:
+1. `scraper`: Add Lever public postings API scraper (`jobs.lever.co`)
+2. `scraper`: Add Workable public API scanner (`apply.workable.com`)
+3. `scraper`: Add SmartRecruiters public API integration
+4. `skills`: Expand DevOps skill aliases in `careerforge/data/skills.yaml`
+5. `skills`: Expand Healthcare specialized certifications in `skills.yaml`
+6. `rules`: Add detection rule for passive voice over-reliance
+7. `rules`: Add rule for corporate buzzword nominalizations (`utilization of`)
+8. `docs`: Translate README into Bengali, Spanish, and Hindi
+9. `cli`: Add colored diff output for `forge audit` using Rich
+10. `cli`: Add `--export-csv` flag to `forge scrape`
 
 ---
 
-## Privacy
+## 🔒 Security & Privacy
 
-CareerForge runs entirely on your machine.
-
-- `profile.yaml` — excluded from git
-- `cv/` folder — excluded from git
-- `output/` folder — excluded from git
-
-No data is sent anywhere. No accounts. No API keys required for core functionality.
+Read our complete [Privacy Model](docs/PRIVACY_MODEL.md) and [Security Policy](SECURITY.md). CareerForge will never collect analytics or transmit your profile to external servers.
 
 ---
 
-## Requirements
+## 📄 License
 
-```
-python-docx>=0.8.11
-pyyaml>=6.0
-requests>=2.31.0
-pywin32>=306        # Windows only, for Word COM PDF verification
-```
-
-Install: `pip install -r requirements.txt`
-
----
-
-## Contributing
-
-Contributions are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to add a new job portal scanner, improve the CV builder, or extend the Anti-AI engine.
-
----
-
-## License
-
-MIT License. See [`LICENSE`](LICENSE).
+CareerForge is distributed under the [MIT License](LICENSE).

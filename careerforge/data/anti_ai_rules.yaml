@@ -1,0 +1,128 @@
+# CareerForge Anti-AI Linguistic Audit Ruleset
+# Derived from peer-reviewed research:
+# - Dmitry Kobak et al., Science Advances (2024)
+# - Alex Reinhart et al., PNAS (2025)
+# - Tom S. Juzek & Zina B. Ward, ACL (2025)
+# - Wikipedia AI Cleanup Project (WP:AIVOCAB, WP:AINOCOPULA, WP:SUPERFICIAL)
+
+version: "1.0"
+
+rules:
+  # ============================================================================
+  # 1. AI PUFFERY & SYNTHETIC VOCABULARY (WP:AIVOCAB)
+  # ============================================================================
+  - id: AI-001
+    category: puffery
+    severity: warn
+    source: "Kobak et al., Science Advances 2024; Paul Graham 2024"
+    description: "Synthetic academic buzzwords with 300%-1000% excess frequency spikes post-2022."
+    patterns:
+      - '\bdelve\w*\b'
+      - '\btestament\b'
+      - '\bbeacon\b'
+      - '\btapestry\b'
+      - '\brealm\b'
+      - '\bburgeoning\b'
+      - '\bunderscore\w*\b'
+      - '\bintricate\w*\b'
+      - '\bmeticulous\w*\b'
+      - '\bpivotal\b'
+      - '\bbolster\w*\b'
+      - '\bfoster\w*\b'
+      - '\bcultivate\w*\b'
+      - '\bunrivaled\b'
+      - '\bgroundbreaking\b'
+      - '\bparamount\b'
+      - '\bresonate\w*\b'
+      - '\bseamless\w*\b'
+      - '\bshowcase\w*\b'
+      - '\btransformative\b'
+      - '\bindelible mark\b'
+      - '\bdeeply rooted\b'
+      - '\bcornerstone\b'
+      - '\bmultifaceted\b'
+      - '\bdynamic\b'
+      - '\bevolving\b'
+      - '\bleverage\w*\b'
+      - '\bcomplexities\b'
+      - '\binterplay\b'
+    suggest:
+      delve: "explore, study, analyze"
+      underscore: "highlight, show"
+      leverage: "use, apply, build with"
+      seamless: "smooth, direct"
+      pivotal: "important, critical"
+      bolster: "strengthen, support"
+      foster: "encourage, build"
+
+  # ============================================================================
+  # 2. COPULA AVOIDANCE INFLATION (WP:AINOCOPULA)
+  # ============================================================================
+  - id: AI-002
+    category: copula_avoidance
+    severity: error
+    source: "Geng & Trotta, SISSA & Imperial College London 2024"
+    description: "Inflation of simple copular verbs (is/are) into pretentious pseudo-academic phrases."
+    patterns:
+      - '\bserves as (a|an|the)\b'
+      - '\bmarks the\b'
+      - '\bstands as (a|an|the)\b'
+      - '\bacts as (a|an|the)\b'
+      - '\bfunctions as (a|an|the)\b'
+    suggest:
+      "serves as": "is"
+      "stands as": "is"
+      "functions as": "is"
+      "acts as": "is"
+
+  # ============================================================================
+  # 3. ROBOTIC TRANSITION SIGNPOSTS
+  # ============================================================================
+  - id: AI-003
+    category: transition_signposts
+    severity: warn
+    source: "Juzek & Ward, ACL 2025"
+    description: "Mechanical essay transitions typical of synthetic RLHF training data."
+    patterns:
+      - '\bfurthermore\b'
+      - '\bmoreover\b'
+      - '\badditionally\b'
+      - '\bconsequently\b'
+      - '\bit is worth noting that\b'
+      - '\bit is important to remember that\b'
+      - '\bin conclusion\b'
+      - '\bto summarize\b'
+      - '\bwhen it comes to\b'
+    suggest:
+      furthermore: "also, and"
+      moreover: "also"
+      additionally: "also"
+
+  # ============================================================================
+  # 4. SUPERFICIAL PRESENT PARTICIPLE CLAUSE ENDINGS (WP:SUPERFICIAL)
+  # ============================================================================
+  - id: AI-004
+    category: participial_suffix
+    severity: warn
+    source: "Reinhart, Markey, Yurko et al., PNAS 2025"
+    description: "Appending participial -ing clauses at sentence ends at unnatural statistical rates."
+    patterns:
+      - ',\s*(highlighting|ensuring|reflecting|contributing to|showcasing|underscoring)\b'
+    suggest:
+      ", ensuring": ". This helped"
+      ", highlighting": ". This showed"
+
+  # ============================================================================
+  # 5. NEGATIVE PARALLELISMS (WP:AIPARALLEL)
+  # ============================================================================
+  - id: AI-005
+    category: negative_parallelism
+    severity: warn
+    source: "Wikipedia AI Cleanup Project"
+    description: "Pseudo-mythbusting contrast templates (not X, but Y)."
+    patterns:
+      - '\bnot only\b.*?\bbut also\b'
+      - '\bit is not about\b.*?\bbut\b'
+      - '\brather than\b'
+    suggest:
+      "not only X but also Y": "State facts directly and affirmatively."

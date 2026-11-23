@@ -7,10 +7,11 @@ import docx
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 
+
 def add_hyperlink(paragraph, url, text, font_name="Calibri", font_size=8.5, color_rgb=(2, 132, 199), bold=False, underline=False):
     """
     Inserts a clickable external hyperlink into a python-docx paragraph.
-    
+
     :param paragraph: Target docx paragraph
     :param url: Destination URL string
     :param text: Visible anchor text

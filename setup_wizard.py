@@ -4,7 +4,7 @@ Guides the user through creating their personal profile.yaml file.
 """
 
 import os
-import shutil
+
 import yaml
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))

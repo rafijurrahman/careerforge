@@ -4,13 +4,17 @@ Builds single-page, ATS-compliant docx documents for ANY professional role using
 """
 
 import os
+
 import docx
-from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement, parse_xml
 from docx.oxml.ns import qn
+from docx.shared import Inches, Pt, RGBColor
 
-from core.link_embedder import add_hyperlink
+try:
+    from careerforge.core.link_embedder import add_hyperlink
+except ImportError:
+    from core.link_embedder import add_hyperlink
 
 def set_cell_margins(cell, top=6, bottom=6, left=10, right=10):
     """Sets internal cell padding in docx tables."""
@@ -36,7 +40,7 @@ def build_universal_cv(profile_data: dict, output_path: str, font_scale=1.0, spa
     Builds a professional, ATS-optimized Word CV tailored from the profile dictionary.
     """
     doc = docx.Document()
-    
+
     # Page Setup - Strictly 1 Page layout, fully utilizes page space
     sec = doc.sections[0]
     sec.top_margin = Inches(top_m)
@@ -45,7 +49,7 @@ def build_universal_cv(profile_data: dict, output_path: str, font_scale=1.0, spa
     sec.right_margin = Inches(0.48)
     sec.page_width = Inches(8.5)
     sec.page_height = Inches(11.0)
-    
+
     # Palette
     PRIMARY = RGBColor(0x0F, 0x17, 0x2A)    # Deep Slate
     SECONDARY = RGBColor(0x02, 0x84, 0xC7)  # Slate Blue
@@ -229,7 +233,13 @@ def build_universal_cv(profile_data: dict, output_path: str, font_scale=1.0, spa
                 r_bullet.font.size = Pt(8.5 * font_scale)
                 r_bullet.font.color.rgb = SECONDARY
 
-                prefix = b.get("bold_prefix", "")
+                if isinstance(b, str):
+                    prefix = ""
+                    text_content = b
+                else:
+                    prefix = b.get("bold_prefix", "")
+                    text_content = b.get("text", "")
+
                 if prefix:
                     r_bold = p_b.add_run(prefix)
                     r_bold.font.name = "Calibri"
@@ -237,13 +247,13 @@ def build_universal_cv(profile_data: dict, output_path: str, font_scale=1.0, spa
                     r_bold.font.bold = True
                     r_bold.font.color.rgb = PRIMARY
 
-                r_txt = p_b.add_run(b.get("text", ""))
+                r_txt = p_b.add_run(text_content)
                 r_txt.font.name = "Calibri"
                 r_txt.font.size = Pt(8.4 * font_scale)
                 r_txt.font.color.rgb = TEXT_DARK
 
     # ------------------ FEATURED PROJECTS ------------------
-    projects = profile_data.get("featured_projects", [])
+    projects = profile_data.get("featured_projects") or profile_data.get("projects", [])
     if projects:
         add_section_header("Key Technical & Featured Projects")
         for p_idx, proj in enumerate(projects):
@@ -283,7 +293,7 @@ def build_universal_cv(profile_data: dict, output_path: str, font_scale=1.0, spa
 
             live_url = proj.get("live_url", "")
             if live_url:
-                r_ptxt2 = p_desc.add_run("  ")
+                p_desc.add_run("  ")
                 add_hyperlink(p_desc, live_url, "[View Project]", font_size=8.3 * font_scale, color_rgb=LINK_COLOR, bold=True)
 
     # ------------------ EDUCATION ------------------

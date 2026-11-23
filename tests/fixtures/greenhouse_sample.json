@@ -1,0 +1,22 @@
+{
+  "jobs": [
+    {
+      "id": 10101,
+      "title": "Backend Software Engineer",
+      "updated_at": "2026-11-20T12:00:00Z",
+      "absolute_url": "https://boards.greenhouse.io/canonical/jobs/10101",
+      "location": {
+        "name": "Worldwide (Remote)"
+      }
+    },
+    {
+      "id": 10102,
+      "title": "Senior Staff Architect",
+      "updated_at": "2026-11-19T10:00:00Z",
+      "absolute_url": "https://boards.greenhouse.io/canonical/jobs/10102",
+      "location": {
+        "name": "London, UK"
+      }
+    }
+  ]
+}

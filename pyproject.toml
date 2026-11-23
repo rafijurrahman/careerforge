@@ -4,37 +4,68 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "careerforge"
-version = "0.2.0"
-authors = [
-  { name="CareerForge Contributors" },
-]
+version = "0.1.0"
 description = "A universal, local-first, privacy-focused job application and career automation engine."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { text = "MIT" }
+authors = [
+  { name = "CareerForge Contributors" },
+]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Topic :: Office/Business",
+    "Intended Audience :: End Users/Desktop",
 ]
 dependencies = [
     "python-docx>=0.8.11",
     "pyyaml>=6.0",
     "requests>=2.31.0",
-    "pywin32>=306; platform_system=='Windows'",
+    "pydantic>=2.0.0",
 ]
 
 [project.optional-dependencies]
+windows = [
+    "pywin32>=306; platform_system=='Windows'",
+]
 dev = [
-    "pytest>=7.0",
-    "ruff>=0.1.0",
+    "pytest>=7.4.0",
+    "pytest-socket>=0.7.0",
+    "ruff>=0.4.0",
+    "mypy>=1.9.0",
+    "types-PyYAML",
+    "types-requests",
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/careerforge/careerforge"
 "Bug Tracker" = "https://github.com/careerforge/careerforge/issues"
+"Documentation" = "https://github.com/careerforge/careerforge#readme"
 
 [project.scripts]
-careerforge = "cli:main"
-forge = "cli:main"
+careerforge = "careerforge.cli:main"
+forge = "careerforge.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["careerforge*"]
+
+[tool.setuptools.package-data]
+"careerforge.data" = ["*.yaml", "*.yml"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"

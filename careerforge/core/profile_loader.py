@@ -4,6 +4,7 @@ Reads profile.yaml or environment configurations safely.
 """
 
 import os
+
 import yaml
 
 DEFAULT_PROFILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "profile.yaml")
@@ -26,10 +27,23 @@ def load_profile(path: str = None) -> dict:
     with open(target_path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
+    # Normalize section aliases
+    if "experience" in data and "work_experience" not in data:
+        data["work_experience"] = data["experience"]
+    if "work_experience" in data and "experience" not in data:
+        data["experience"] = data["work_experience"]
+
+    if "education" in data and "academic_background" not in data:
+        data["academic_background"] = data["education"]
+    if "academic_background" in data and "education" not in data:
+        data["education"] = data["academic_background"]
+
     # Basic schema validations
-    required_sections = ["personal", "work_experience", "academic_background"]
-    for sec in required_sections:
-        if sec not in data:
-            raise ValueError(f"Invalid profile schema: missing section '{sec}'.")
+    if "personal" not in data:
+        raise ValueError("Invalid profile schema: missing section 'personal'.")
+    if not data.get("work_experience") and not data.get("experience"):
+        raise ValueError("Invalid profile schema: missing section 'work_experience' or 'experience'.")
+    if not data.get("academic_background") and not data.get("education"):
+        raise ValueError("Invalid profile schema: missing section 'academic_background' or 'education'.")
 
     return data
