@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-  { name = "CareerForge Contributors" },
+  { name = "rafijurrahman", email = "145068278+rafijurrahman@users.noreply.github.com" },
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
