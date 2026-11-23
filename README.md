@@ -66,6 +66,7 @@ CareerForge is an open-source, local-first alternative. You define one master pr
 
 ---
 
+<!--
 ## Terminal Demo
 
 <div align="center">
@@ -79,6 +80,7 @@ CareerForge is an open-source, local-first alternative. You define one master pr
 </div>
 
 *(To record or update terminal demos locally, run `vhs demo/demo.tape`)*
+-->
 
 ---
 
@@ -123,6 +125,12 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 ### ✅ Available Now (v0.1.0)
 
+*   **Job-Specific Auto-Tailoring (`forge tailor`):**  
+    Uses an offline knapsack algorithm to score and prioritize bullets from your Master Profile based on relevance to a specific Job Description, outputting an optimized 1-page tailored CV without cloud APIs.
+*   **ATS Keyword Match & Gap Analysis (`forge match`):**  
+    Analyzes any job description against your candidate profile, calculating an ATS match percentage, listing matched skills, and highlighting missing keywords.
+*   **Direct Employer ATS Search Dorks (`forge dorks`):**  
+    Generates high-precision Google search queries for Greenhouse, Lever, Ashby, Workable, and Hacker News to discover live openings directly on employer domains without aggregators.
 *   **Automated 1-Page Document Optimizer (`forge apply`):**  
     Uses an iterative grid-search to adjust font scaling, spacing, and margins until your resume strictly fits exactly 1 page. Uses headless LibreOffice as the cross-platform default, with Microsoft Word COM as a Windows fast-path.
 *   **Empirical Anti-AI Linguistic Audit (`forge audit`):**  

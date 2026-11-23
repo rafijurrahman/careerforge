@@ -7,11 +7,18 @@ data_and_analytics:
     - t-sql
     - plsql
     - pl-sql
+    category: database
+  postgresql:
+    canonical: PostgreSQL
+    aliases:
     - postgres
-    - postgresql
-    - mysql
-    - sqlite
-    - sqlite3
+    - psql
+    - pgsql
+    category: database
+  mysql:
+    canonical: MySQL
+    aliases:
+    - my-sql
     category: database
   power_bi:
     canonical: Power BI
@@ -154,6 +161,31 @@ software_engineering:
     - version control
     - git flow
     category: tools
+  fastapi:
+    canonical: FastAPI
+    aliases:
+    - fast-api
+    category: backend
+  go:
+    canonical: Go
+    aliases:
+    - golang
+    category: languages
+  kafka:
+    canonical: Kafka
+    aliases:
+    - apache kafka
+    category: backend
+  redis:
+    canonical: Redis
+    aliases:
+    - redis cache
+    category: database
+  graphql:
+    canonical: GraphQL
+    aliases:
+    - graph-ql
+    category: backend
 marketing:
   seo:
     canonical: SEO

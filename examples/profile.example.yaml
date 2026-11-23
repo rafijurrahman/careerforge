@@ -33,19 +33,45 @@ experience:
     duration: "Jan 2023 – Present"
     location: "Remote (USA)"
     bullets:
-      - "Reduced p95 API response times from 840ms to 210ms by introducing Redis caching and query indexing."
-      - "Architected event-driven ingestion pipeline in Go and Kafka processing 14,000 messages per second."
-      - "Automated deployment verification across 8 microservices using GitHub Actions and Docker."
-      - "Mentored 4 junior engineers through weekly architecture reviews and code audits."
+      - text: "Reduced p95 API response times from 840ms to 210ms by introducing Redis caching and query indexing."
+        skills: ["Redis", "SQL", "Performance"]
+        weight: 9
+      - text: "Architected event-driven ingestion pipeline in Go and Kafka processing 14,000 messages per second."
+        skills: ["Go", "Kafka", "Data Engineering"]
+        weight: 9
+      - text: "Automated deployment verification across 8 microservices using GitHub Actions and Docker."
+        skills: ["Docker", "CI/CD", "DevOps"]
+        weight: 8
+      - text: "Mentored 4 junior engineers through weekly architecture reviews and code audits."
+        skills: ["Leadership", "Code Quality"]
+        weight: 6
+      - text: "Configured Prometheus and Grafana metrics monitoring, cutting incident triage turnaround by 40%."
+        skills: ["Prometheus", "Grafana", "Observability"]
+        weight: 7
+      - text: "Engineered multi-region AWS S3 data backup lifecycle saving $18,000 annually in infrastructure costs."
+        skills: ["AWS", "Cloud", "Cost Optimization"]
+        weight: 7
 
   - title: "Software Engineer"
     company: "Beacon Data Labs"
     duration: "Aug 2020 – Dec 2022"
     location: "Austin, TX (Hybrid)"
     bullets:
-      - "Built REST and GraphQL endpoints in Python and FastAPI serving 120,000 daily active users."
-      - "Migrated monolithic user management service to standalone PostgreSQL cluster with zero downtime."
-      - "Wrote comprehensive integration test suites cutting production regression bugs by 35%."
+      - text: "Built REST and GraphQL endpoints in Python and FastAPI serving 120,000 daily active users."
+        skills: ["Python", "FastAPI", "GraphQL"]
+        weight: 9
+      - text: "Migrated monolithic user management service to standalone PostgreSQL cluster with zero downtime."
+        skills: ["PostgreSQL", "Database", "Migration"]
+        weight: 9
+      - text: "Wrote comprehensive integration test suites cutting production regression bugs by 35%."
+        skills: ["Python", "Testing", "Pytest"]
+        weight: 8
+      - text: "Designed Celery background task queue with Redis broker handling 60,000 async jobs daily."
+        skills: ["Celery", "Redis", "Asynchronous"]
+        weight: 7
+      - text: "Implemented secure OAuth2 and JWT token authentication supporting role-based access control."
+        skills: ["Security", "OAuth2", "Authentication"]
+        weight: 6
 
 education:
   - degree: "Bachelor of Science in Computer Science"

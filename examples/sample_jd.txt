@@ -1,0 +1,23 @@
+Title: Senior Backend Engineer (Platform & APIs)
+Company: Nexus Systems
+Location: 100% Remote (Worldwide)
+Employment Type: Full-time
+
+About the Role:
+Nexus Systems is looking for a Senior Backend Engineer to scale our distributed cloud platform.
+You will architect high-throughput event processing pipelines, optimize low-latency database queries,
+and lead microservices deployment automation.
+
+Key Responsibilities:
+- Design and maintain high-performance REST and GraphQL APIs in Python and FastAPI.
+- Optimize database performance and schema design across PostgreSQL and Redis clusters.
+- Build reliable event streaming pipelines using Apache Kafka for high-volume message ingestion.
+- Automate CI/CD workflows, containerization, and deployment using Docker and Kubernetes.
+- Drive code quality, participate in architecture reviews, and mentor junior engineers.
+
+Requirements:
+- 4+ years of professional backend engineering experience.
+- Strong proficiency in Python, Go, or similar backend languages.
+- Deep hands-on experience with PostgreSQL and Redis caching strategies.
+- Proven track record with Kafka or RabbitMQ event-driven architectures.
+- Familiarity with Docker, Kubernetes, and automated testing.

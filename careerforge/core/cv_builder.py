@@ -356,6 +356,15 @@ def build_universal_cv(profile_data: dict, output_path: str, font_scale=1.0, spa
                 r_ct_sep.font.color.rgb = MUTED
                 add_hyperlink(p_c, v_url, "[Verify Credential]", font_size=8.4 * font_scale, color_rgb=LINK_COLOR, bold=True)
 
+    # Sanitize document metadata to prevent tool leaks or OS username exposure
+    core_props = doc.core_properties
+    full_name = personal.get("full_name", "")
+    core_props.author = full_name
+    core_props.last_modified_by = full_name
+    core_props.title = f"{full_name} - CV" if full_name else "Curriculum Vitae"
+    core_props.comments = ""
+    core_props.category = "Resume"
+
     os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
     doc.save(output_path)
     return output_path

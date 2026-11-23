@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2026-11-23
 
 ### Added
+- **Offline Knapsack CV Tailoring (`forge tailor`):**
+  - Re-ranks and selects highest-relevance experience bullets and projects matching a specific Job Description.
+  - Automatically optimizes and exports guaranteed 1-page tailored `.docx` and `.pdf` resumes completely offline.
+- **ATS Keyword Match & Gap Analysis (`forge match`):**
+  - Compares candidate master profile against any Job Description using the 250+ skill ontology in `skills.yaml`.
+  - Reports match percentage, matched skills, and highlighted missing keywords.
+- **Direct Employer ATS Dork Generator (`forge dorks`):**
+  - Generates targeted Google search queries and direct links for Greenhouse, Lever, Ashby, Workable, and Hacker News.
 - **Package Architecture:** Standard Python package structure installable via `pip install .` or `pip install -e ".[dev]"`.
 - **Universal ATS CV Engine:** 1-page layout optimization using LibreOffice headless (cross-platform default) and Microsoft Word COM (Windows fast-path).
 - **Research-Backed Anti-AI Linguistic Audit (`forge audit`):**

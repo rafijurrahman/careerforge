@@ -13,8 +13,11 @@ from importlib import resources
 
 try:
     from careerforge.core.anti_ai_engine import audit_text
+    from careerforge.core.dorks import generate_ats_dorks
+    from careerforge.core.matcher import compute_ats_match
     from careerforge.core.page_optimizer import optimize_to_single_page
     from careerforge.core.profile_loader import load_profile
+    from careerforge.core.tailor_engine import tailor_profile
     from careerforge.scrapers.ashby_scanner import scan_all_ashby
     from careerforge.scrapers.greenhouse_scanner import scan_all_greenhouse
     from careerforge.scrapers.remotive_scanner import scan_remotive
@@ -25,8 +28,11 @@ try:
     )
 except ImportError:
     from core.anti_ai_engine import audit_text
+    from core.dorks import generate_ats_dorks
+    from core.matcher import compute_ats_match
     from core.page_optimizer import optimize_to_single_page
     from core.profile_loader import load_profile
+    from core.tailor_engine import tailor_profile
     from scrapers.ashby_scanner import scan_all_ashby
     from scrapers.greenhouse_scanner import scan_all_greenhouse
     from scrapers.remotive_scanner import scan_remotive
@@ -200,6 +206,110 @@ def cmd_scrape(args):
         print(f"💾 Results saved to '{args.save}'.")
 
 
+def cmd_match(args):
+    """Computes keyword match and ATS skill gap against a job description."""
+    profile = load_profile(args.profile)
+    jd_content = ""
+    if os.path.exists(args.jd):
+        with open(args.jd, "r", encoding="utf-8") as f:
+            jd_content = f.read()
+    else:
+        jd_content = args.jd
+
+    res = compute_ats_match(jd_content, profile)
+
+    if getattr(args, "json", False):
+        print(json.dumps(res, indent=2))
+        sys.exit(0)
+
+    print("\n" + "=" * 60)
+    print("🎯 ATS Keyword Match & Gap Analysis")
+    print("=" * 60)
+    print(f"Overall Match Score:  {res['match_percentage']}%")
+    print(f"Matched Skills ({res['matched_count']}):   {', '.join(res['matched_skills']) if res['matched_skills'] else 'None'}")
+    print(f"Missing Skills ({res['missing_count']}):   {', '.join(res['missing_skills']) if res['missing_skills'] else 'None'}")
+    if res["additional_skills"]:
+        print(f"Additional Skills ({len(res['additional_skills'])}): {', '.join(res['additional_skills'][:10])}")
+    print("=" * 60 + "\n")
+
+
+def cmd_tailor(args):
+    """Tailors master profile bullets to match a job description and generates a 1-page CV."""
+    profile = load_profile(args.profile)
+    jd_content = ""
+    if os.path.exists(args.jd):
+        with open(args.jd, "r", encoding="utf-8") as f:
+            jd_content = f.read()
+    else:
+        jd_content = args.jd
+
+    print("\n🎯 Analyzing job requirements & tailoring profile bullets...")
+    tailored_prof, report = tailor_profile(
+        profile,
+        jd_content,
+        max_bullets_per_role=args.max_bullets or 4,
+    )
+
+    out_dir = args.out or os.path.join(os.getcwd(), "output", "tailored")
+    os.makedirs(out_dir, exist_ok=True)
+
+    name_slug = profile.get("personal", {}).get("full_name", "Candidate").replace(" ", "_")
+    role_slug = args.role_tag or "Tailored"
+
+    docx_file = os.path.join(out_dir, f"{name_slug}_{role_slug}_CV.docx")
+    pdf_file = os.path.join(out_dir, f"{name_slug}_{role_slug}_CV.pdf")
+
+    config = optimize_to_single_page(
+        tailored_prof,
+        docx_file,
+        pdf_file,
+        target_pages=args.pages,
+        engine=args.engine,
+    )
+
+    report["output_docx"] = docx_file
+    report["output_pdf"] = pdf_file
+    report["page_fit"] = config
+
+    if getattr(args, "json", False):
+        print(json.dumps(report, indent=2))
+        sys.exit(0)
+
+    print("\n" + "=" * 60)
+    print("✨ Tailored 1-Page ATS CV Successfully Generated!")
+    print("=" * 60)
+    print(f"Candidate:            {profile.get('personal', {}).get('full_name')}")
+    print(f"Initial Match:        {report['initial_match_percentage']}%")
+    print(f"Tailored Match:       {report['tailored_match_percentage']}%")
+    print(f"Matched Skills:       {', '.join(report['matched_skills'][:8])}")
+    if report["missing_skills"]:
+        print(f"Missing Skills:       {', '.join(report['missing_skills'][:6])}")
+    print("-" * 60)
+    print(f"DOCX:                 {docx_file}")
+    print(f"PDF:                  {pdf_file}")
+    print(f"Pages:                {config.get('pages', 1)} | Font Scale: {config.get('font_scale')}")
+    print(f"Backend Engine:       {config.get('backend', 'Default')}")
+    print("=" * 60 + "\n")
+
+
+def cmd_dorks(args):
+    """Generates direct-to-employer Google ATS search queries."""
+    dorks = generate_ats_dorks(args.role, location=args.location or "remote", extra_keywords=args.skills or "")
+
+    if getattr(args, "json", False):
+        print(json.dumps(dorks, indent=2))
+        sys.exit(0)
+
+    print("\n" + "=" * 60)
+    print(f"🔎 Direct Employer ATS Search Dorks for '{args.role}' ({args.location or 'remote'})")
+    print("=" * 60)
+    for idx, d in enumerate(dorks, 1):
+        print(f"\n{idx}. [{d['platform']}] {d['description']}")
+        print(f"   Query: {d['dork']}")
+        print(f"   URL:   {d['url']}")
+    print("\n" + "=" * 60 + "\n")
+
+
 def cmd_apply(args):
     """Generates and optimizes a 1-page ATS CV from the candidate profile."""
     profile = load_profile(args.profile)
@@ -315,6 +425,38 @@ def main():
     p_audit.add_argument("--file", type=str, required=True, help="Path to text or markdown file")
     p_audit.add_argument("--json", action="store_true", help="Output audit report as JSON")
     p_audit.set_defaults(func=cmd_audit)
+
+    # match
+    p_match = subparsers.add_parser("match", help="Analyze ATS keyword gap against a job description")
+    p_match.add_argument("--jd", type=str, required=True, help="Path to job description file or raw text string")
+    p_match.add_argument("--profile", type=str, default=None, help="Path to profile.yaml")
+    p_match.add_argument("--json", action="store_true", help="Output match report as JSON")
+    p_match.set_defaults(func=cmd_match)
+
+    # tailor
+    p_tailor = subparsers.add_parser("tailor", help="Auto-tailor master profile bullets to match a job description")
+    p_tailor.add_argument("--jd", type=str, required=True, help="Path to job description file or raw text string")
+    p_tailor.add_argument("--profile", type=str, default=None, help="Path to profile.yaml")
+    p_tailor.add_argument("--out", type=str, default=None, help="Output directory")
+    p_tailor.add_argument("--role-tag", type=str, default="Tailored", help="Role tag for file naming")
+    p_tailor.add_argument("--max-bullets", type=int, default=4, help="Max bullets per role (default: 4)")
+    p_tailor.add_argument("--pages", type=int, default=1, help="Target page count (default: 1)")
+    p_tailor.add_argument(
+        "--engine",
+        choices=["auto", "word", "libreoffice"],
+        default="auto",
+        help="PDF conversion & page-fit engine: auto, word, or libreoffice",
+    )
+    p_tailor.add_argument("--json", action="store_true", help="Output tailoring report as JSON")
+    p_tailor.set_defaults(func=cmd_tailor)
+
+    # dorks
+    p_dorks = subparsers.add_parser("dorks", help="Generate high-precision Google search queries for ATS boards")
+    p_dorks.add_argument("role", type=str, help="Target role title (e.g. 'Data Analyst', 'Backend Engineer')")
+    p_dorks.add_argument("--location", type=str, default="remote", help="Location or work mode filter (default: 'remote')")
+    p_dorks.add_argument("--skills", type=str, default="", help="Additional comma-separated skills to include")
+    p_dorks.add_argument("--json", action="store_true", help="Output dorks as JSON")
+    p_dorks.set_defaults(func=cmd_dorks)
 
     args = parser.parse_args()
     if not args.command:

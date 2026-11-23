@@ -12,6 +12,29 @@ import sys
 from typing import Optional, Tuple
 
 
+def sanitize_pdf_metadata(pdf_path: str, author_name: str = "") -> None:
+    """Strips system/host metadata and sets uniform author and generator info."""
+    if not os.path.exists(pdf_path):
+        return
+    try:
+        import pypdf
+        reader = pypdf.PdfReader(pdf_path)
+        writer = pypdf.PdfWriter()
+        for page in reader.pages:
+            writer.add_page(page)
+        metadata = {
+            "/Author": author_name,
+            "/Creator": "CareerForge ATS Engine",
+            "/Producer": "CareerForge",
+            "/Title": f"{author_name} - CV" if author_name else "Curriculum Vitae",
+        }
+        writer.add_metadata(metadata)
+        with open(pdf_path, "wb") as f:
+            writer.write(f)
+    except Exception:
+        pass
+
+
 def count_pdf_pages(pdf_path: str) -> int:
     """Calculates page count from a generated PDF file."""
     if not os.path.exists(pdf_path):
@@ -249,5 +272,11 @@ def optimize_to_single_page(
             "pages": 1,
             "backend": last_backend,
         }
+
+    if os.path.exists(output_pdf):
+        sanitize_pdf_metadata(
+            output_pdf,
+            author_name=profile_data.get("personal", {}).get("full_name", ""),
+        )
 
     return best_config

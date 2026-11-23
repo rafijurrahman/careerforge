@@ -35,12 +35,13 @@ This document outlines the master architecture, feature milestones, and open-sou
   - Generates 0-100 ATS Readability Score.
 - [ ] `--json` output across all commands for automated agent/script integration.
 
-### Phase 3: Intelligent Matching & Knapsack Tailoring (v0.4)
-- [ ] **`skills.yaml` (Skill Ontology):** Curated mapping of skills and aliases (`k8s` → `kubernetes`, `postgres` → `postgresql`).
-- [ ] **`forge match` (Keyword Gap Analysis):** Offline BM25 + ontology matching comparing Master Profile against Job Descriptions.
-- [ ] **`forge tailor` (Budgeted Knapsack Selection):**
-  - Scores bullets by relevance to the JD.
+### Phase 3: Intelligent Matching & Knapsack Tailoring (v0.2.0)
+- [x] **`skills.yaml` (Skill Ontology):** Curated mapping of skills and aliases across 12 disciplines (`k8s` → `kubernetes`, `postgres` → `postgresql`).
+- [x] **`forge match` (Keyword Gap Analysis):** Offline ontology matching comparing Master Profile against Job Descriptions with match percentage and missing skills.
+- [x] **`forge tailor` (Budgeted Knapsack Selection):**
+  - Scores bullets by relevance to the JD, metric presence, and weight.
   - Automatically selects optimal bullet combinations that maximize relevance score while strictly fitting the 1-page line budget.
+- [x] **`forge dorks` (Direct Employer Search):** High-precision Google ATS queries targeting Greenhouse, Lever, Ashby, Workable, and Hacker News.
 - [ ] **Remote-Eligibility Filter:** Flags hidden restrictions (e.g. "US Citizen only" or "US timezone required" disguised as "Worldwide").
 
 ### Phase 4: Local Application Tracking & Analytics (v0.5)
