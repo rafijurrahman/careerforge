@@ -72,10 +72,14 @@ jobs:
         shell: powershell
         run: |
           choco install libreoffice-fresh -y --no-progress --ignore-package-exit-codes=3010,1641
-          # Expose soffice via a clean shim so LibreOffice's internal python.exe does not shadow runner Python
+          # Expose soffice via a clean shim pointing to soffice.com so it outputs immediately without shadowing runner Python
           $shimDir = "C:\soffice-bin"
           New-Item -ItemType Directory -Path $shimDir -Force | Out-Null
-          Set-Content -Path "$shimDir\soffice.cmd" -Value '@"C:\Program Files\LibreOffice\program\soffice.exe" %*'
+          $sofficeBin = "C:\Program Files\LibreOffice\program\soffice.com"
+          if (-not (Test-Path $sofficeBin)) {
+            $sofficeBin = "C:\Program Files\LibreOffice\program\soffice.exe"
+          }
+          Set-Content -Path "$shimDir\soffice.cmd" -Value "@`"$sofficeBin`" %*"
           Add-Content -Path $env:GITHUB_PATH -Value $shimDir
 
       - name: Install LibreOffice on macOS
