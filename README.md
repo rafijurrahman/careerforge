@@ -4,10 +4,10 @@
 
 <br/>
 
-[![CI](https://github.com/careerforge/careerforge/actions/workflows/ci.yml/badge.svg)](https://github.com/careerforge/careerforge/actions)
+[![CI](https://github.com/rafijurrahman/careerforge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/rafijurrahman/careerforge/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue?style=flat-square&logo=python)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
-![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=flat-square)
+![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20(Supported)%20%7C%20Linux%20(Community)-lightgrey?style=flat-square)
 ![Privacy](https://img.shields.io/badge/Telemetry-Zero%20%28100%25%20Local%29-purple?style=flat-square)
 
 **A local, open-source job application and career automation engine. Works for any role. Runs on your machine. Your data stays yours.**
@@ -22,7 +22,7 @@
 
 Most career tools are closed cloud services that lock your resume behind monthly subscriptions, sell candidate data, and generate synthetic text full of recognizable AI buzzwords (*delve*, *pivotal*, *seamless*, *tapestry*).
 
-CareerForge is an open-source, local-first alternative. You define one master profile in local YAML, and CareerForge optimizes clean, single-page ATS-readable resumes (`.docx` and `.pdf`), audits your writing against empirical computational linguistics papers, and scans public job boards without requiring third-party accounts or cloud APIs.
+CareerForge is an open-source, local-first alternative. You define one master profile in local YAML, and CareerForge optimizes clean, single-page ATS-readable resumes (`.docx` and `.pdf`), audits your writing against computational linguistics findings, and scans public job boards without requiring third-party accounts or cloud APIs.
 
 ```
                   ┌─────────────────────────────────────────┐
@@ -34,7 +34,7 @@ CareerForge is an open-source, local-first alternative. You define one master pr
        ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
        │   forge apply   │    │   forge audit   │    │  forge scrape   │
        │  1-Page Fitting │    │ Research Anti-AI│    │ Greenhouse/Ashby│
-       │ LibreOffice/COM │    │ PNAS & ACL Rules│    │    Remotive     │
+       │ LibreOffice/COM │    │ Heuristic Rules │    │    Remotive     │
        └────────┬────────┘    └────────┬────────┘    └────────┬────────┘
                 ▼                      ▼                      ▼
          1-Page ATS CV          Clean Human Voice       Targeted Roles
@@ -46,11 +46,11 @@ CareerForge is an open-source, local-first alternative. You define one master pr
 
 | Operating System | Support Level | Supported PDF Engines | Verification Status |
 |---|:---:|:---:|---|
-| **Windows 10 / 11** | **Officially Supported** | Microsoft Word COM (Fast-path) + LibreOffice | Full 1-page fit & test coverage |
+| **Windows 10 / 11** | **Officially Supported** | Microsoft Word COM (Fast-path) + LibreOffice | Verified in GitHub Actions CI |
 | **macOS 12+ (Monterey+)** | **Officially Supported** | LibreOffice Headless (Required) | Verified in GitHub Actions CI |
-| **Linux (Ubuntu, Fedora, etc.)** | **Community-Supported** | LibreOffice Headless | Unit tests verified; page-fit community-supported |
+| **Linux (Ubuntu, Fedora, etc.)** | **Community-Supported** | LibreOffice Headless | Verified in GitHub Actions CI (Ubuntu runner) |
 
-### Installing LibreOffice (Required for macOS & Non-Word Windows setups)
+### Installing LibreOffice (Required for macOS, Linux & Non-Word Windows setups)
 * **Windows (via winget):**
   ```powershell
   winget install TheDocumentFoundation.LibreOffice
@@ -84,11 +84,16 @@ CareerForge is an open-source, local-first alternative. You define one master pr
 
 ---
 
-## ⚡ 3-Command Quick Start
+## ⚡ Quick Start
 
 ### 1. Install CareerForge
+
 ```bash
-git clone https://github.com/careerforge/careerforge.git
+# Recommended (isolated CLI application):
+pipx install git+https://github.com/rafijurrahman/careerforge.git
+
+# Or install from source:
+git clone https://github.com/rafijurrahman/careerforge.git
 cd careerforge
 pip install -e .
 ```
@@ -99,11 +104,14 @@ pip install -e .
 forge doctor
 ```
 
-### 3. Initialize Your Profile and Build Your First CV
+### 3. Initialize Your Profile and Tailor Your First CV
 ```bash
 forge init
+forge tailor --jd job.txt
 forge apply --role-tag "Universal"
 ```
+*(Note: tailor selects and prioritizes bullets from your real master profile; it never invents skills or experience).*
+
 Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `.pdf`.
 
 ---
@@ -112,10 +120,10 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 | Feature | CareerForge | Cloud AI Resume Builders |
 |---|:---:|:---:|
-| **Cost** | **100% Free & Open Source (MIT)** | $15 – $40 / month subscription |
-| **Privacy** | **100% Local (Zero Telemetry)** | Resumes stored on company servers |
-| **Document Fit** | **Guaranteed 1-Page Layout** | Often overflows to accidental 2nd page |
-| **Writing Style** | **Research-Backed Anti-AI Voice** | Generic synthetic LLM puffery |
+| **Cost** | **100% Free & Open Source (MIT)** | Often subscription-based |
+| **Privacy** | **No telemetry. audit/match/tailor/apply never use the network. Only scrape and dorks contact public job sites.** | Resumes stored on company servers |
+| **Document Fit** | **Auto-fits to 1 page (grid-search; checked in CI)** | Often overflows to accidental 2nd page |
+| **Writing Style** | **Informed by published research on LLM text markers** | Generic synthetic LLM puffery |
 | **Job Search** | **Direct Public ATS (Greenhouse, Ashby)** | Middleman affiliate job boards |
 | **Extensibility** | **Plugin Scrapers & Modular Rules** | Closed proprietary platform |
 
@@ -126,15 +134,15 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 ### ✅ Available Now (v0.1.0)
 
 *   **Job-Specific Auto-Tailoring (`forge tailor`):**  
-    Uses an offline knapsack algorithm to score and prioritize bullets from your Master Profile based on relevance to a specific Job Description, outputting an optimized 1-page tailored CV without cloud APIs.
+    Uses an offline knapsack algorithm to score and prioritize bullets from your Master Profile based on relevance to a specific Job Description, outputting an optimized 1-page tailored CV without cloud APIs. *(Note: tailor selects from your real master profile; it never invents skills or experience).*
 *   **ATS Keyword Match & Gap Analysis (`forge match`):**  
     Analyzes any job description against your candidate profile, calculating an ATS match percentage, listing matched skills, and highlighting missing keywords.
 *   **Direct Employer ATS Search Dorks (`forge dorks`):**  
-    Generates high-precision Google search queries for Greenhouse, Lever, Ashby, Workable, and Hacker News to discover live openings directly on employer domains without aggregators.
+    Generates high-precision search queries for Greenhouse, Lever, Ashby, Workable, and Hacker News to discover live openings directly on employer domains without aggregators.
 *   **Automated 1-Page Document Optimizer (`forge apply`):**  
     Uses an iterative grid-search to adjust font scaling, spacing, and margins until your resume strictly fits exactly 1 page. Uses headless LibreOffice as the cross-platform default, with Microsoft Word COM as a Windows fast-path.
 *   **Empirical Anti-AI Linguistic Audit (`forge audit`):**  
-    Scans cover letters and resumes against peer-reviewed computational linguistics findings (*PNAS 2025*, *Science Advances 2024*, *ACL 2025*) to eradicate AI puffery (`AI-001`), copula avoidance (`AI-002`), robotic transitions (`AI-003`), participial suffixes (`AI-004`), and low-burstiness cadence (`CADENCE-001`).
+    Scans cover letters and resumes against heuristics informed by published research on LLM text markers (Kobak et al. 2024, Reinhart et al. PNAS 2025, Juzek & Ward 2025) and editorial cleanup guidelines to flag stylistic buzzwords (`AI-001`), copula replacements (`AI-002`), robotic transitions (`AI-003`), participial suffixes (`AI-004`), and low-burstiness cadence (`CADENCE-001`).
 *   **Public ATS & Remote Job Scrapers (`forge scrape`):**  
     Concurrently scans Greenhouse public APIs, Ashby APIs, and Remotive for matching opportunities with built-in politeness (User-Agent headers, rate limiting, and exponential backoff).
 *   **System Diagnostics (`forge doctor`):**  
@@ -148,8 +156,6 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 The following advanced utilities are currently under active design. See [`ROADMAP.md`](ROADMAP.md) for milestones:
 
-*   **`forge tailor` (Budgeted Knapsack Auto-Tailoring):**  
-    Selects the optimal subset of bullet points from your master profile to maximize relevance to a specific Job Description while strictly fitting the 1-page line budget.
 *   **`forge ats-sim` (ATS Parser Simulator):**  
     Extracts text and evaluates section recognition, reading order, ligature sanitization, and contact extraction to generate a pre-application ATS Readability Score (0-100).
 *   **`forge track` (Offline SQLite Kanban):**  
@@ -171,31 +177,31 @@ For our complete directory of 30+ free remote portals, search dorks, and startup
 
 ---
 
-## 🤝 Contributing & Good First Issues
+## 🤝 Contributing & Community
 
-We actively welcome contributions!
+We actively welcome contributions! Check our [Good First Issues](https://github.com/rafijurrahman/careerforge/issues?q=label%3A%22good+first+issue%22) for tasks ready to pick up.
 
 *   **Want to add a new job board scraper?** Read [`docs/ADDING_A_SCRAPER.md`](docs/ADDING_A_SCRAPER.md).
 *   **Want to propose a new linguistic rule?** Open an issue using our [New Rule Template](.github/ISSUE_TEMPLATE/new_audit_rule.yml).
 *   **See general guidelines:** Check [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 
-### Good First Issues for New Contributors:
-1. `scraper`: Add Lever public postings API scraper (`jobs.lever.co`)
-2. `scraper`: Add Workable public API scanner (`apply.workable.com`)
-3. `scraper`: Add SmartRecruiters public API integration
-4. `skills`: Expand DevOps skill aliases in `careerforge/data/skills.yaml`
-5. `skills`: Expand Healthcare specialized certifications in `skills.yaml`
-6. `rules`: Add detection rule for passive voice over-reliance
-7. `rules`: Add rule for corporate buzzword nominalizations (`utilization of`)
-8. `docs`: Translate README into Bengali, Spanish, and Hindi
-9. `cli`: Add colored diff output for `forge audit` using Rich
-10. `cli`: Add `--export-csv` flag to `forge scrape`
-
 ---
 
 ## 🔒 Security & Privacy
 
-Read our complete [Privacy Model](docs/PRIVACY_MODEL.md) and [Security Policy](SECURITY.md). CareerForge will never collect analytics or transmit your profile to external servers.
+Read our complete [Privacy Model](docs/PRIVACY_MODEL.md) and [Security Policy](SECURITY.md). CareerForge does not collect telemetry, track usage, or store your resumes in the cloud.
+
+### Command Network Scope Summary:
+| Command | Network Access | Data Sent Over Network |
+|---|:---:|---|
+| `forge init` | **None** (Offline) | None |
+| `forge doctor` | **None** (Offline) | None |
+| `forge audit` | **None** (Offline) | None |
+| `forge match` | **None** (Offline) | None |
+| `forge tailor` | **None** (Offline) | None |
+| `forge apply` | **None** (Offline) | None |
+| `forge dorks` | **None** (Offline) | Generates local search URLs; zero network calls |
+| `forge scrape` | **Read-only public APIs** | Fetches public job postings from Greenhouse, Ashby, and Remotive |
 
 ---
 

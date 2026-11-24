@@ -15,7 +15,7 @@ rules:
     category: puffery
     severity: warn
     source: "Kobak et al., Science Advances 2024; Paul Graham 2024"
-    description: "Synthetic academic buzzwords with 300%-1000% excess frequency spikes post-2022."
+    description: "Heuristic flag: stylistic words observed with sharp frequency increases post-2022 in published text corpora."
     patterns:
       - '\bdelve\w*\b'
       - '\btestament\b'
@@ -61,8 +61,8 @@ rules:
   - id: AI-002
     category: copula_avoidance
     severity: error
-    source: "Geng & Trotta, SISSA & Imperial College London 2024"
-    description: "Inflation of simple copular verbs (is/are) into pretentious pseudo-academic phrases."
+    source: "Wikipedia AI Cleanup Project (heuristic; unverified citation attribution in prior draft)"
+    description: "Heuristic flag: substitution of simple copular verbs (is/are) with multi-word constructs (e.g., 'serves as a')."
     patterns:
       - '\bserves as (a|an|the)\b'
       - '\bmarks the\b'
@@ -81,8 +81,8 @@ rules:
   - id: AI-003
     category: transition_signposts
     severity: warn
-    source: "Juzek & Ward, ACL 2025"
-    description: "Mechanical essay transitions typical of synthetic RLHF training data."
+    source: "Juzek & Ward, ACL Anthology 2025"
+    description: "Heuristic flag: repetitive formal signpost transitions common in robotic essay structures."
     patterns:
       - '\bfurthermore\b'
       - '\bmoreover\b'
@@ -105,7 +105,7 @@ rules:
     category: participial_suffix
     severity: warn
     source: "Reinhart, Markey, Yurko et al., PNAS 2025"
-    description: "Appending participial -ing clauses at sentence ends at unnatural statistical rates."
+    description: "Heuristic flag: trailing participial clauses (-ing) appended at sentence boundaries."
     patterns:
       - ',\s*(highlighting|ensuring|reflecting|contributing to|showcasing|underscoring)\b'
     suggest:
@@ -119,7 +119,7 @@ rules:
     category: negative_parallelism
     severity: warn
     source: "Wikipedia AI Cleanup Project"
-    description: "Pseudo-mythbusting contrast templates (not X, but Y)."
+    description: "Heuristic flag: pseudo-mythbusting contrast templates (not X, but Y)."
     patterns:
       - '\bnot only\b.*?\bbut also\b'
       - '\bit is not about\b.*?\bbut\b'

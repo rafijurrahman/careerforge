@@ -19,11 +19,11 @@ This document outlines the master architecture, feature milestones, and open-sou
 - [x] Initial Greenhouse, Ashby & Remotive Scrapers (`scrapers/`)
 - [x] Curated Free Job Portal Directory (`JOB_PLATFORMS.md`)
 - [x] Base CV reference guide (`cv/README.md`)
-- [ ] Packaging with `pyproject.toml` (`pip install -e .` and `careerforge` / `forge` CLI aliases)
-- [ ] Rule modularization: Move Anti-AI rules from code to `rules/anti_ai_rules.yaml` (Rule IDs: `AI-001`, `AI-002`)
-- [ ] Diagnostic engine: `forge doctor` to inspect Python, Word COM, LibreOffice, and font availability
+- [x] Packaging with `pyproject.toml` (`pip install -e .` and `careerforge` / `forge` CLI aliases)
+- [x] Rule modularization: Move Anti-AI rules from code to `careerforge/data/anti_ai_rules.yaml` (Rule IDs: `AI-001`, `AI-002`)
+- [x] Diagnostic engine: `forge doctor` to inspect Python, Word COM, LibreOffice, and font availability
 - [ ] Rich terminal UI (colored diffs, status panels, tabular output)
-- [ ] Community templates: Issue templates (Bug, New Scraper, New Rule), `CODE_OF_CONDUCT.md`, `SECURITY.md`, `PRIVACY_MODEL.md`
+- [x] Community templates: Issue templates (Bug, New Scraper, New Rule), `CODE_OF_CONDUCT.md`, `SECURITY.md`, `docs/PRIVACY_MODEL.md`
 
 ### Phase 2: Extensibility & ATS Simulation (v0.3)
 - [ ] **Plugin Scraper Architecture:** `BaseScraper` class with rate limiting, politeness headers, and unified Pydantic `JobPosting` schema.

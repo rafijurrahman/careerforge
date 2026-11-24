@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: CareerForge Documentation
-    url: https://github.com/careerforge/careerforge#readme
+    url: https://github.com/rafijurrahman/careerforge#readme
     about: Read the official documentation, CLI commands, and setup guides.
   - name: GitHub Discussions
-    url: https://github.com/careerforge/careerforge/discussions
+    url: https://github.com/rafijurrahman/careerforge/discussions
     about: Ask questions, share ideas, or discuss features with the community.

@@ -47,7 +47,7 @@ This guide walks you through setting up **CareerForge** on your local machine.
 To use CareerForge for your personal job search, clone your own copy:
 
 ```bash
-git clone https://github.com/your-username/careerforge.git
+git clone https://github.com/rafijurrahman/careerforge.git
 cd careerforge
 ```
 

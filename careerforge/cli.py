@@ -11,6 +11,14 @@ import shutil
 import sys
 from importlib import resources
 
+# Ensure UTF-8 output across all consoles and CI runners to prevent cp1252 UnicodeEncodeError
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 try:
     from careerforge.core.anti_ai_engine import audit_text
     from careerforge.core.dorks import generate_ats_dorks

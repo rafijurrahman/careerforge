@@ -9,6 +9,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from typing import Optional, Tuple
 
 
@@ -97,9 +98,11 @@ def find_libreoffice_bin() -> Optional[str]:
 
     # 2. Check standard Windows directories
     if sys.platform == "win32":
+        prog_files = os.environ.get("ProgramFiles", r"C:\Program Files")
+        prog_files_x86 = os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)")
         standard_windows_paths = [
-            r"C:\Program Files\LibreOffice\program\soffice.exe",
-            r"C:\Program Files (x86)\LibreOffice\program\soffice.exe",
+            os.path.join(prog_files, "LibreOffice", "program", "soffice.exe"),
+            os.path.join(prog_files_x86, "LibreOffice", "program", "soffice.exe"),
             r"C:\ProgramData\chocolatey\bin\soffice.exe",
             os.path.expandvars(r"%LOCALAPPDATA%\Programs\LibreOffice\program\soffice.exe"),
         ]
@@ -126,32 +129,43 @@ def convert_with_libreoffice(docx_path: str, output_pdf: str) -> Optional[int]:
     abs_pdf = os.path.abspath(output_pdf)
     out_dir = os.path.dirname(abs_pdf) or "."
 
-    try:
-        proc = subprocess.run(
-            [
-                libre_bin,
-                "--headless",
-                "--convert-to",
-                "pdf:writer_pdf_Export",
-                "--outdir",
-                out_dir,
-                abs_docx,
-            ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            timeout=45,
-            check=False,
-        )
-        if proc.returncode == 0:
-            # LibreOffice names the output based on the input filename
-            base_name = os.path.splitext(os.path.basename(abs_docx))[0]
-            generated_pdf = os.path.join(out_dir, f"{base_name}.pdf")
-            if generated_pdf != abs_pdf and os.path.exists(generated_pdf):
-                shutil.move(generated_pdf, abs_pdf)
-            if os.path.exists(abs_pdf):
-                return count_pdf_pages(abs_pdf)
-    except Exception:
-        pass
+    # Create an isolated temporary user profile to avoid lockups and first-run dialogs
+    with tempfile.TemporaryDirectory() as temp_profile_dir:
+        temp_profile_url = f"file:///{os.path.abspath(temp_profile_dir).replace(os.sep, '/')}"
+
+        cmd = [
+            libre_bin,
+            f"-env:UserInstallation={temp_profile_url}",
+            "--headless",
+            "--convert-to",
+            "pdf:writer_pdf_Export",
+            "--outdir",
+            out_dir,
+            abs_docx,
+        ]
+
+        try:
+            proc = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                timeout=60,
+                check=False,
+            )
+            if proc.returncode == 0:
+                base_name = os.path.splitext(os.path.basename(abs_docx))[0]
+                generated_pdf = os.path.join(out_dir, f"{base_name}.pdf")
+                if generated_pdf != abs_pdf and os.path.exists(generated_pdf):
+                    shutil.move(generated_pdf, abs_pdf)
+                if os.path.exists(abs_pdf):
+                    return count_pdf_pages(abs_pdf)
+            else:
+                err_msg = proc.stderr.decode("utf-8", errors="replace")
+                print(f"[Error] LibreOffice exited with code {proc.returncode}: {err_msg}", file=sys.stderr)
+        except subprocess.TimeoutExpired:
+            print("[Error] LibreOffice conversion timed out after 60s.", file=sys.stderr)
+        except Exception as e:
+            print(f"[Error] Exception during LibreOffice conversion: {e}", file=sys.stderr)
 
     return None
 
