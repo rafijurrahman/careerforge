@@ -8,7 +8,7 @@ import os
 import yaml
 
 DEFAULT_PROFILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "profile.yaml")
-TEMPLATE_PROFILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates", "profile.template.yaml")
+TEMPLATE_PROFILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "profile.template.yaml")
 
 def load_profile(path: str = None) -> dict:
     """

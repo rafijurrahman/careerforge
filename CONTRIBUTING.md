@@ -8,7 +8,7 @@ Thank you for your interest in contributing to CareerForge! We welcome contribut
 
 1. **Fork and Clone:**
    ```bash
-   git clone https://github.com/careerforge/careerforge.git
+   git clone https://github.com/rafijurrahman/careerforge.git
    cd careerforge
    ```
 

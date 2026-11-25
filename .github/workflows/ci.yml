@@ -2,9 +2,12 @@ name: CareerForge CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, "fix/**"]
   pull_request:
     branches: [main, master]
+
+env:
+  PYTHONIOENCODING: "utf-8"
 
 jobs:
   unit-test:
@@ -69,19 +72,25 @@ jobs:
         shell: powershell
         run: |
           choco install libreoffice-fresh -y --no-progress --ignore-package-exit-codes=3010,1641
-          $loPath = "C:\Program Files\LibreOffice\program"
-          if (Test-Path $loPath) {
-            Add-Content -Path $env:GITHUB_PATH -Value $loPath
+          # Expose soffice via a clean shim pointing to soffice.com so it outputs immediately without shadowing runner Python
+          $shimDir = "C:\soffice-bin"
+          New-Item -ItemType Directory -Path $shimDir -Force | Out-Null
+          $sofficeBin = "C:\Program Files\LibreOffice\program\soffice.com"
+          if (-not (Test-Path $sofficeBin)) {
+            $sofficeBin = "C:\Program Files\LibreOffice\program\soffice.exe"
           }
-          if (Test-Path "C:\ProgramData\chocolatey\bin") {
-            Add-Content -Path $env:GITHUB_PATH -Value "C:\ProgramData\chocolatey\bin"
-          }
+          Set-Content -Path "$shimDir\soffice.cmd" -Value "@`"$sofficeBin`" %*"
+          Add-Content -Path $env:GITHUB_PATH -Value $shimDir
 
       - name: Install LibreOffice on macOS
         if: runner.os == 'macOS'
         run: |
           brew install --cask libreoffice
           echo "/Applications/LibreOffice.app/Contents/MacOS" >> $GITHUB_PATH
+
+      - name: Verify soffice installation
+        run: |
+          soffice --version
 
       - name: Install CareerForge & pypdf
         run: |

@@ -9,7 +9,7 @@ import yaml
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROFILE_PATH = os.path.join(ROOT_DIR, "profile.yaml")
-TEMPLATE_PATH = os.path.join(ROOT_DIR, "templates", "profile.template.yaml")
+TEMPLATE_PATH = os.path.join(ROOT_DIR, "data", "profile.template.yaml")
 
 def run_wizard():
     print("=" * 65)

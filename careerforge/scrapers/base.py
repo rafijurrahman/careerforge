@@ -52,7 +52,7 @@ def create_polite_session(rate_limit_per_sec: float = 2.0) -> requests.Session:
     """Creates a requests Session with CareerForge user-agent, timeouts, and exponential retries."""
     session = requests.Session()
     session.headers.update({
-        "User-Agent": f"CareerForge/{__version__} (https://github.com/careerforge/careerforge; open-source career engine)",
+        "User-Agent": f"CareerForge/{__version__} (https://github.com/rafijurrahman/careerforge; open-source career engine)",
         "Accept": "application/json, text/plain, */*",
     })
     retries = Retry(
