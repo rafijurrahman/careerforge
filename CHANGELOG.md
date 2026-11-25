@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-11-25
+
+### Added
+- **ATS Parser Fragility Checker (`forge ats-sim`):**
+  - 100% offline inspection engine identifying structural, layout, encoding, and typographic flaws that break resume text extractors.
+  - 13 comprehensive checks:
+    - `TEXT_EXTRACT`: Plain text extraction verification with hard cap (max 20) on image scans.
+    - `SECTIONS`: Standard section heading detection across Experience, Education, Skills, and Summary.
+    - `CONTACT`: Core contact validation (Email, Phone, LinkedIn) with hard cap (max 50) on missing contact info.
+    - `COLUMNS`: Multi-column layout detection via horizontal bounding box clustering in PDF and `w:cols` XML analysis in DOCX.
+    - `DOCX_STRUCT`: Document structure analysis flagging `w:txbxContent` text boxes and nested tables.
+    - `HEADER_FOOTER`: Header and footer containment check ensuring contact info is present in the main document body.
+    - `UNICODE`: Detection of typographic ligatures (U+FB00–U+FB06) and hidden zero-width characters (U+200B, U+FEFF, etc.).
+    - `ICON_GLYPHS`: Private Use Area (PUA) character detection for decorative icon fonts that extract as replacement glyphs.
+    - `FONTS`: Font embedding and ATS-safe font family verification (Calibri, Arial, Times New Roman, etc.).
+    - `DATES`: Consistency checks across date representations (flags mixed written month and numeric formats).
+    - `PAGE_COUNT`: Document length verification (target: exactly 1 page).
+    - `PARSER_AGREEMENT`: Dual-parser consistency comparison between `pdfminer.six` and `pypdf`.
+    - `FIELD_RECOVERY`: Entity discovery comparison against `profile.yaml` with missing field reporting.
+  - Rich table CLI visualization with check status, overall score (0–100), and actionable fix recommendations.
+  - `--json` machine-readable output format with standard exit codes (0 for pass, 1 for needs attention, 2 for error).
+  - `--check` flag on `forge apply` and `forge tailor` to automatically audit generated PDFs.
+- **Dependencies:**
+  - Added `pdfminer.six>=20231228` (MIT) and `pypdf>=4.0.0` (BSD) to core dependencies.
+  - Added `rich>=13.0.0` for terminal table formatting.
+
 ## [0.1.0] - 2026-11-23
 
 ### Added

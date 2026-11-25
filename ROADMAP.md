@@ -28,11 +28,11 @@ This document outlines the master architecture, feature milestones, and open-sou
 ### Phase 2: Extensibility & ATS Simulation (v0.3)
 - [ ] **Plugin Scraper Architecture:** `BaseScraper` class with rate limiting, politeness headers, and unified Pydantic `JobPosting` schema.
 - [ ] **Additional Scrapers:** Lever public postings API, Workable, Hacker News "Who is Hiring?" monthly threads.
-- [ ] **`forge ats-sim` (ATS Parser Simulator):**
+- [x] **`forge ats-sim` (ATS Parser Fragility Checker):** Complete in v0.2.0. Offline inspection of stream extraction, multi-column flows, XML text boxes, Unicode ligatures, PUA glyphs, date consistency, and dual-parser agreement with 0–100 score.
   - Section extraction test (Experience, Education, Skills, Contact).
   - Reading order test (verifying columns/tables don't scramble text).
   - Unicode/ligature/special character sanitizer.
-  - Generates 0-100 ATS Readability Score.
+  - Generates 0-100 Parseability Score.
 - [ ] `--json` output across all commands for automated agent/script integration.
 
 ### Phase 3: Intelligent Matching & Knapsack Tailoring (v0.2.0)
