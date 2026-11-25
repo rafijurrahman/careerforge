@@ -23,6 +23,7 @@ if hasattr(sys.stdout, "reconfigure"):
 try:
     from careerforge.core.anti_ai_engine import audit_text
     from careerforge.core.ats_sim import AtsSimFileError, run_ats_sim
+    from careerforge.core.cover import VALID_OUTREACH_TYPES, CoverError, generate_outreach
     from careerforge.core.dorks import generate_ats_dorks
     from careerforge.core.eligibility import check_eligibility
     from careerforge.core.ghost import analyze_ghost_jobs
@@ -53,6 +54,7 @@ try:
 except ImportError:
     from core.anti_ai_engine import audit_text
     from core.ats_sim import AtsSimFileError, run_ats_sim
+    from core.cover import VALID_OUTREACH_TYPES, CoverError, generate_outreach
     from core.dorks import generate_ats_dorks
     from core.eligibility import check_eligibility
     from core.ghost import analyze_ghost_jobs
@@ -877,7 +879,10 @@ def cmd_track_due(args):
         )
     console.print()
     console.print(table)
-    console.print("\nTip: Draft a follow-up note with 'forge track note <id> \"Sent follow-up\"'.\n")
+    console.print(
+        "\nTip: Draft a follow-up with 'forge cover --type follow-up --app <id>' "
+        "or log one with 'forge track note <id> \"Sent follow-up\"'.\n"
+    )
 
 
 def cmd_track_ghosted(args):
@@ -1410,6 +1415,81 @@ def cmd_interview_practice(args):
                 sys.exit(1)
 
 
+def cmd_cover(args):
+    """Generates template-based cover letter or outreach checked against Anti-AI rules."""
+    prof = _load_profile_or_exit(args.profile)
+
+    app_record = None
+    if args.app is not None:
+        store = CareerStore()
+        try:
+            app_id = int(str(args.app).strip())
+        except ValueError:
+            print(f"Error: Application ID '{args.app}' must be an integer.", file=sys.stderr)
+            sys.exit(2)
+        app_record = store.get_application(app_id)
+        if not app_record:
+            print(f"Error: Application ID {app_id} not found in local store.", file=sys.stderr)
+            sys.exit(2)
+
+    jd_text = ""
+    if args.jd:
+        if os.path.exists(args.jd):
+            with open(args.jd, "r", encoding="utf-8") as f:
+                jd_text = f.read()
+        else:
+            jd_text = args.jd
+    elif args.app is None and args.type != "follow-up":
+        print("Error: Provide --jd <file|text> (or --app <id> from 'forge track').", file=sys.stderr)
+        sys.exit(2)
+
+    try:
+        res = generate_outreach(
+            profile_data=prof,
+            jd_text=jd_text,
+            doc_type=args.type,
+            company=args.company,
+            role=args.role,
+            hiring_manager=args.hiring_manager,
+            app_record=app_record,
+        )
+    except CoverError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if args.out:
+        out_dir = os.path.dirname(os.path.abspath(args.out))
+        if out_dir:
+            os.makedirs(out_dir, exist_ok=True)
+        with open(args.out, "w", encoding="utf-8") as f:
+            f.write(res["text"])
+
+    if getattr(args, "json", False):
+        print(json.dumps(res, indent=2))
+        return
+
+    from rich.console import Console
+    from rich.panel import Panel
+
+    console = Console()
+    audit_badge = "[green]PASS[/green]" if res["audit"]["compliant"] else "[red]FLAGGED[/red]"
+    title = f"{res['type']} draft ({res['word_count']} words, {res['char_count']} chars | Anti-AI: {audit_badge})"
+    console.print(Panel(res["text"].strip(), title=title, border_style="cyan"))
+
+    if res["fill_markers"]:
+        console.print(
+            f"[yellow]Manual fill required ({len(res['fill_markers'])}):[/yellow] "
+            + ", ".join(res["fill_markers"])
+        )
+    if args.out:
+        console.print(f"[green]Written to {args.out}[/green]")
+    if res["audit"]["findings"]:
+        console.print(f"[yellow]Anti-AI findings ({len(res['audit']['findings'])}):[/yellow]")
+        for item in res["audit"]["findings"]:
+            console.print(f"  - [{item['rule_id']}] {item.get('term')}")
+    console.print()
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="careerforge",
@@ -1684,6 +1764,24 @@ def main():
     p_i_prac.add_argument("--stories", type=str, default=None, help="Path to stories.yaml bank")
     p_i_prac.add_argument("--json", action="store_true", help="Output JSON")
     p_i_prac.set_defaults(func=cmd_interview_practice)
+
+    # cover
+    p_cover = subparsers.add_parser("cover", help="Draft concise template outreach checked against Anti-AI rules")
+    p_cover.add_argument("--jd", type=str, default=None, help="Path to job description file or raw text")
+    p_cover.add_argument(
+        "--type",
+        choices=list(VALID_OUTREACH_TYPES),
+        default="cover",
+        help="Outreach template type (default: cover)",
+    )
+    p_cover.add_argument("--profile", type=str, default=None, help="Path to profile.yaml")
+    p_cover.add_argument("--app", type=str, default=None, help="Tracked application ID from 'forge track'")
+    p_cover.add_argument("--company", type=str, default=None, help="Target company name")
+    p_cover.add_argument("--role", type=str, default=None, help="Target role title")
+    p_cover.add_argument("--hiring-manager", type=str, default=None, help="Hiring manager name if known")
+    p_cover.add_argument("--out", type=str, default=None, help="Optional output file path")
+    p_cover.add_argument("--json", action="store_true", help="Output JSON")
+    p_cover.set_defaults(func=cmd_cover)
 
     args = parser.parse_args()
     if not args.command:

@@ -133,6 +133,8 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 ### ✅ Available Now (v0.2.0)
 
+*   **Template Cover & Outreach (`forge cover`):**  
+    Generates concise template drafts (`cover`, `cold-email`, `linkedin`, `follow-up`) grounded in `profile.yaml` metrics with `<<FILL: ...>>` markers, `forge track --app` follow-up links, and automatic Anti-AI audit checks.
 *   **STAR Interview Prep & Practice (`forge interview`):**  
     Drafts honest STAR outlines from `profile.yaml` (`TODO: fill in` for unstated parts), tracks category coverage in `stories.yaml`, and provides seeded role practice prompts with `--audit`.
 *   **Remote Eligibility Heuristic & Lever Scraper (`forge eligibility`, `forge match --my-country`, `forge scrape`):**  
@@ -164,10 +166,7 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 ### 🗺️ Planned Features (Roadmap)
 
-The following advanced utilities are currently under active design. See [`ROADMAP.md`](ROADMAP.md) for milestones:
-
-*   **`forge cover` (Template Outreach):**  
-    Concise cover letter, cold email, and LinkedIn templates checked against anti-AI rules.
+Refer to [`ROADMAP.md`](ROADMAP.md) for upcoming community plugins and scraper additions.
 
 ---
 

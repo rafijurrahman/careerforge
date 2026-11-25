@@ -1,0 +1,1 @@
+Hi {hiring_manager}, I saw the {role} role at {company}. {compact_proof} Open to connecting here? - {candidate_name}

@@ -1,0 +1,15 @@
+Hi {hiring_manager},
+
+I am applying for the {role} role at {company}. Your focus on {jd_focus} lines up closely with my recent work.
+
+{proof} {proof_second}
+
+My daily tools match what your team listed: {matched_skills}. I verify edge cases early. Clear code and plain documentation save everyone hours each week. In past roles, I fixed data and runtime bottlenecks at the source before they slowed downstream teams.
+
+{extra_note}
+
+Thank you for reading. Would you have 15 minutes this week to talk through the {role} role?
+
+Best,
+{candidate_name}
+{candidate_links}
