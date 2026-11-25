@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0-dev] - 2026-11-25
+
+### Added
+- **Local SQLite Job & Application Store (`careerforge/core/store.py`):**
+  - Implemented stdlib `sqlite3` persistence with `platformdirs` user data path and `CAREERFORGE_DB` environment override.
+  - Added `PRAGMA foreign_keys = ON` on every connection and versioned schema migrations via `PRAGMA user_version`.
+  - Created `jobs`, `applications`, and `events` tables recording SHA-256 CV hashes, JD snapshots, and full stage change logs.
+- **Application Tracking CLI (`forge track`):**
+  - Added `add`, `list`, `move`, `note`, `show`, `due`, `ghosted` (suggestion-only), and `export` (`--csv`/`--md`) subcommands with `--json` output and stable exit codes.
+  - Updated `forge scrape --save` to upsert postings into SQLite and safely set `closed_at` only on boards fetched without errors.
+- **Optional Kanban TUI (`forge track board`):**
+  - Added interactive Textual board under optional extra `careerforge[tui]`.
+
 ## [0.2.0] - 2026-11-25
 
 ### Added

@@ -28,8 +28,8 @@ CareerForge is designed from the ground up to be **100% offline-first and privat
 | `forge audit` | ❌ No | None | Scans text locally using regex and linguistic rules |
 | `forge match` | ❌ No | None | Compares text against local `skills.yaml` |
 | `forge dorks` | ❌ No | None | Generates targeted Google search queries locally |
-| `forge track` | ❌ No | None | Reads/writes to local SQLite database (`careerforge.db`) |
-| `forge scrape` | ✅ Yes | `boards-api.greenhouse.io`, `api.ashbyhq.com`, `remotive.com` | Fetches public job postings only. Never transmits your profile. |
+| `forge track` | ❌ No | None | Reads/writes strictly to local SQLite database (`careerforge.db`) |
+| `forge scrape` | ✅ Yes | `boards-api.greenhouse.io`, `api.ashbyhq.com`, `remotive.com` | Fetches public job postings only. `--save` stores postings in local SQLite. Never transmits your profile. |
 
 ---
 

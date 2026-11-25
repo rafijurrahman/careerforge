@@ -133,6 +133,8 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 ### ✅ Available Now (v0.2.0)
 
+*   **Offline Application Tracker & Kanban TUI (`forge track`):**  
+    Tracks scraped or manual job applications locally in SQLite (`jobs`, `applications`, `events`) with CV SHA-256 tracking, follow-up reminders (`due`), stale suggestions (`ghosted`), CSV/Markdown export, and an optional Textual Kanban board (`pip install careerforge[tui]`).
 *   **ATS Parser Fragility Checker (`forge ats-sim`):**  
     Inspects PDF and DOCX resume documents for structural, layout, encoding, and typographic flaws that break text extractors (such as scanned image-only PDFs, multi-column layouts, XML text boxes, header/footer trapping, Unicode ligatures, Private Use Area icon font glyphs, date formatting inconsistencies, and dual-parser stream divergence). Operates completely offline without external APIs and generates actionable fix recommendations. *(Note: this is a parser fragility checker, not an emulator of proprietary Workday, Taleo, or Greenhouse ranking algorithms).*
 *   **Job-Specific Auto-Tailoring (`forge tailor`):**  
@@ -158,8 +160,6 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 The following advanced utilities are currently under active design. See [`ROADMAP.md`](ROADMAP.md) for milestones:
 
-*   **`forge track` (Offline SQLite Kanban):**  
-    A local terminal UI (TUI) powered by `Textual` for tracking applications (`Saved`, `Applied`, `Interview`, `Offer`, `Ghosted`) with zero cloud dependencies.
 *   **`forge ghost` (Stale / Ghost Job Detector):**  
     Calculates Ghost Risk scores based on posting age and repost frequency from ATS APIs.
 *   **`forge salary` (Salary Range Intelligence):**  
