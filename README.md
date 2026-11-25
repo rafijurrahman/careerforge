@@ -133,6 +133,8 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 ### ✅ Available Now (v0.2.0)
 
+*   **STAR Interview Prep & Practice (`forge interview`):**  
+    Drafts honest STAR outlines from `profile.yaml` (`TODO: fill in` for unstated parts), tracks category coverage in `stories.yaml`, and provides seeded role practice prompts with `--audit`.
 *   **Remote Eligibility Heuristic & Lever Scraper (`forge eligibility`, `forge match --my-country`, `forge scrape`):**  
     Detects hidden geo/visa/timezone restrictions in job descriptions using `eligibility_rules.yaml` (false-positive guarded, heuristic) and expands live ATS scraping to Lever (`api.lever.co`) alongside Greenhouse, Ashby, and Remotive. `forge tailor --diff` exposes exact per-bullet scoring weights.
 *   **Application Analytics, Ghost Risk & Salary Bands (`forge report`, `forge ghost`, `forge salary`):**  
@@ -164,8 +166,8 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 The following advanced utilities are currently under active design. See [`ROADMAP.md`](ROADMAP.md) for milestones:
 
-*   **`forge interview` (STAR Story Bank):**  
-    Transforms master profile achievement bullets into structured Situation-Task-Action-Result interview talking points with behavioral category coverage tracking.
+*   **`forge cover` (Template Outreach):**  
+    Concise cover letter, cold email, and LinkedIn templates checked against anti-AI rules.
 
 ---
 

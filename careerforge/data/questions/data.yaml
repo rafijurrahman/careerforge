@@ -1,0 +1,35 @@
+role: data
+description: Role-specific behavioral questions for data analysts, BI engineers, and analytics roles.
+questions:
+  - id: data-01
+    category: technical_challenge
+    prompt: Tell me about a dataset you analyzed where numbers looked clean on the surface but later proved misleading or incomplete. How did you catch it?
+    focus: Validation checks, edge-case skepticism, and upstream reconciliation.
+  - id: data-02
+    category: ambiguity
+    prompt: Describe an open-ended question from a stakeholder like "why did retention drop?" and how you broke it into concrete metrics.
+    focus: Framing hypotheses, defining denominators cleanly, and avoiding vanity numbers.
+  - id: data-03
+    category: conflict
+    prompt: Tell me about a time two departments reported conflicting numbers for the same metric. How did you resolve the definition?
+    focus: Tracing SQL or spreadsheet logic line by line and aligning stakeholders on one source.
+  - id: data-04
+    category: deadline
+    prompt: Describe a time you had to deliver an executive report or analysis under tight time pressure with imperfect source data.
+    focus: Delivering useful directional answers while stating data caveats clearly.
+  - id: data-05
+    category: ownership
+    prompt: Tell me about a manual report or recurring spreadsheet task you automated or redesigned to cut errors and save time.
+    focus: Understanding the manual bottleneck, testing edge cases, and measuring time saved.
+  - id: data-06
+    category: failure
+    prompt: Tell me about an analysis or dashboard you shipped that went unused or missed what the stakeholder actually needed.
+    focus: Diagnosing missing discovery steps and changing how you validate requirements.
+  - id: data-07
+    category: leadership
+    prompt: Give an example of using your analysis to push back against an intuition-driven plan and change the team's direction.
+    focus: Presenting clear evidence without antagonizing decision makers.
+  - id: data-08
+    category: teamwork
+    prompt: Describe a project where you worked alongside engineers or operations staff to instrument missing fields or clean an ingestion pipeline.
+    focus: Specifying schema needs clearly and testing end-to-end output together.

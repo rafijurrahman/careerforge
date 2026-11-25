@@ -1,0 +1,35 @@
+role: general
+description: Cross-functional behavioral and STAR interview questions grounded in workplace execution.
+questions:
+  - id: gen-01
+    category: leadership
+    prompt: Tell me about a time you stepped up to guide a group decision without having formal authority over the people involved.
+    focus: Influence through evidence, clear framing, and follow-through.
+  - id: gen-02
+    category: conflict
+    prompt: Describe a strong disagreement with a teammate or stakeholder about how to approach a problem. How did you handle it?
+    focus: Listening to constraints, comparing trade-offs calmly, and reaching a working decision.
+  - id: gen-03
+    category: failure
+    prompt: Tell me about a mistake or missed call that cost your team time or forced rework. What changed afterward?
+    focus: Direct accountability, root cause analysis, and concrete process prevention.
+  - id: gen-04
+    category: teamwork
+    prompt: Give an example of collaborating closely with someone outside your core function whose priorities differed from yours.
+    focus: Translating goals across roles and aligning on shared deliverables.
+  - id: gen-05
+    category: ownership
+    prompt: Tell me about a recurring problem no one was officially assigned to fix, and why you decided to pick it up.
+    focus: Initiative, scoping a practical fix, and verifying that it stuck.
+  - id: gen-06
+    category: deadline
+    prompt: Describe a situation where a deadline moved up or a dependency slipped late in the project. What did you cut or adjust?
+    focus: Prioritizing scope honestly and communicating risk early.
+  - id: gen-07
+    category: ambiguity
+    prompt: Tell me about a time you started work with incomplete requirements and unclear success criteria. How did you turn that into a plan?
+    focus: Asking targeted questions, testing assumptions quickly, and getting feedback early.
+  - id: gen-08
+    category: technical_challenge
+    prompt: Describe a complex technical or analytical blocker that resisted your first two attempts. What led to the eventual fix?
+    focus: Structured debugging, isolating variables, and verifying the outcome.

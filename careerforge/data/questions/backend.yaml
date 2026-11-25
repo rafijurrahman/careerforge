@@ -1,0 +1,35 @@
+role: backend
+description: Role-specific behavioral questions for backend and infrastructure engineers.
+questions:
+  - id: back-01
+    category: technical_challenge
+    prompt: Tell me about a production bottleneck or latency spike you diagnosed across database queries, caches, or service boundaries.
+    focus: Profiling with real telemetry, isolating root cause, and confirming after deployment.
+  - id: back-02
+    category: failure
+    prompt: Describe a bug, migration issue, or outage your change introduced. How did you contain it and prevent a repeat?
+    focus: Fast mitigation, blameless root cause review, and concrete safeguards added.
+  - id: back-03
+    category: ownership
+    prompt: Tell me about a legacy service, flaky test suite, or operational alert you fixed when everyone else had been working around it.
+    focus: Picking up unglamorous debt and making reliability measurably better.
+  - id: back-04
+    category: conflict
+    prompt: Describe a technical architecture or API design disagreement with a peer where both options had real trade-offs.
+    focus: Comparing failure modes, operational cost, and reversibility.
+  - id: back-05
+    category: deadline
+    prompt: Tell me about a time you had to ship a backend change under a hard external deadline without sacrificing data integrity.
+    focus: Explicit scope cuts, safe rollback paths, and follow-up cleanup.
+  - id: back-06
+    category: ambiguity
+    prompt: Describe a feature request where throughput expectations, error budgets, or edge cases were undefined until you investigated.
+    focus: Estimating load concretely and clarifying contracts before coding.
+  - id: back-07
+    category: leadership
+    prompt: Give an example of writing an RFC, proposing a shared standard, or mentoring engineers through an unfamiliar subsystem.
+    focus: Practical documentation, code review clarity, and team buy-in.
+  - id: back-08
+    category: teamwork
+    prompt: Tell me about coordinating a breaking schema or API transition with frontend, mobile, or downstream consumers.
+    focus: Backward compatibility windows, staged rollouts, and clear communication.

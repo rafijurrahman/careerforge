@@ -1,0 +1,35 @@
+role: frontend
+description: Role-specific behavioral questions for frontend and product UI engineers.
+questions:
+  - id: front-01
+    category: technical_challenge
+    prompt: Tell me about a sluggish UI view, state management bug, or browser compatibility issue you debugged and resolved.
+    focus: Inspecting render cycles, network waterfalls, or DOM behavior methodically.
+  - id: front-02
+    category: teamwork
+    prompt: Describe a time a design spec looked infeasible or costly to build as drawn. How did you collaborate with Design and Product?
+    focus: Proposing realistic UX alternatives early with working prototypes.
+  - id: front-03
+    category: ownership
+    prompt: Tell me about an accessibility gap, error state, or mobile layout flaw you fixed before users ran into it in production.
+    focus: Keyboard navigation, empty/error states, and real-device verification.
+  - id: front-04
+    category: failure
+    prompt: Give an example of a UI release that confused users or broke an existing flow. How did you spot it and adjust?
+    focus: Listening to bug reports or usability signals and shipping a clean correction.
+  - id: front-05
+    category: deadline
+    prompt: Describe a product launch where API endpoints kept changing right up to release. How did you keep frontend work unblocked?
+    focus: Defining typed mocks, isolating API adapters, and graceful loading/error handling.
+  - id: front-06
+    category: conflict
+    prompt: Tell me about a disagreement over introducing a new framework, library, or component abstraction versus keeping things simple.
+    focus: Weighing bundle cost, team familiarity, and long-term maintenance.
+  - id: front-07
+    category: ambiguity
+    prompt: Describe building an interactive workflow when copy, validation rules, and edge states were still open questions.
+    focus: Listing state transitions explicitly and getting quick review loops.
+  - id: front-08
+    category: leadership
+    prompt: Tell me about improving frontend build speed, component reuse, or testing discipline across your team.
+    focus: Measurable developer workflow improvements and adoption by peers.
