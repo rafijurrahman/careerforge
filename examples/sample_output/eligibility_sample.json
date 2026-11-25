@@ -1,0 +1,12 @@
+{
+  "status": "Eligible",
+  "heuristic": true,
+  "notice": "Heuristic eligibility estimate from text rules; always verify requirements in the original posting.",
+  "regions": [],
+  "evidence": [],
+  "can_apply": {
+    "country": "BD",
+    "eligible": true,
+    "verdict": "Yes (heuristic: no restriction found for BD)"
+  }
+}

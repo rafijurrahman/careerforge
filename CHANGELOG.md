@@ -5,22 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.0-dev] - 2026-11-25
+## [0.5.0] - 2026-11-25
 
 ### Added
-- **Template Outreach & Cover Generator (`feat/cover-outreach`):**
-  - Added `careerforge/core/cover.py` and plain-text `hook -> proof -> ask` templates in `careerforge/data/templates/` (`cover.txt`, `cold_email.txt`, `linkedin.txt`, `follow_up.txt`) bundled in `pyproject.toml`.
-  - Enforced word/character caps (`cover` target 150-200 words, strict <= 200 cap; `linkedin` <= 300 chars), explicit `<<FILL: ...>>` markers for unknown slots, automatic `anti_ai_engine.audit_text()` validation, and `--type follow-up --app <id>` SQLite lookup from `forge track` (plus tip in `forge track due`).
-  - Wired `forge cover` CLI, added `docs/COVER.md`, updated `docs/PRIVACY_MODEL.md`, and added `tests/test_cover.py`.
-- **Interview Prep & STAR Story Bank (`feat/interview-star`):**
-  - Added `careerforge/core/interview.py` with honest STAR drafting from `profile.yaml` (`TODO: fill in` placeholders, metric-first prioritization, zero fabricated narrative), `stories.yaml` persistence via `platformdirs` (`CAREERFORGE_DATA_DIR` / `CAREERFORGE_STORIES` overrides), and 8-category behavioral coverage auditing.
-  - Added curated role question banks in `careerforge/data/questions/` (`general.yaml`, `data.yaml`, `backend.yaml`, `frontend.yaml`) and bundled them in `pyproject.toml`.
-  - Wired `forge interview` subcommands (`draft`, `add`, `list`, `edit`, `coverage`, `practice` with `--seed`, `--timer`, and Anti-AI `--audit`), plus `docs/INTERVIEW.md`.
+- **Interview Preparation & STAR Story Bank (`forge interview`):**
+  - Drafts honest STAR outlines from verified metrics and projects in `profile.yaml` (`TODO: fill in` for missing narrative fields; zero fabrication).
+  - Manages local `stories.yaml` via `platformdirs` (`CAREERFORGE_DATA_DIR` / `CAREERFORGE_STORIES` overrides) with `add`, `list`, `edit`, and 8-category `coverage` auditing.
+  - Provides seeded practice prompts (`--seed`) from bundled role YAML banks (`general`, `data`, `backend`, `frontend`) with `--timer` budgeting and live Anti-AI `--audit`.
+- **Template Outreach Generator (`forge cover`):**
+  - Generates `hook -> proof -> ask` drafts (`cover`, `cold-email`, `linkedin`, `follow-up`) grounded in `profile.yaml` metrics with explicit `<<FILL: ...>>` markers, length caps (`cover` 150-200 words, `linkedin` <= 300 chars), automatic Anti-AI auditing, and `--app <id>` SQLite lookup.
+- **Workflow-Grouped Help, Demos & Seed Scripts:**
+  - Grouped `forge --help` by workflow stage (`Find`, `Match`, `Build`, `Track`, `Prepare`, `Setup & Diagnostics`).
+  - Added VHS terminal demo scripts in `demo/*.tape`, offline demo DB seeder (`examples/seed_demo_db.py`), sanitized command fixtures in `examples/sample_output/`, and updated `docs/ARCHITECTURE.md` and `docs/PRIVACY_MODEL.md`.
 
-## [0.3.0-dev] - 2026-11-25
+## [0.4.0] - 2026-11-25
 
 ### Added
-- **Remote Geo-Eligibility, Lever Scraper & Tailor Diff (`feat/remote-eligibility-lever`):**
+- **Remote Geo-Eligibility, Lever Scraper & Tailor Diff (`forge eligibility`, `forge tailor --diff`):**
   - Added heuristic geo-restriction rule engine (`careerforge/core/eligibility.py` & `careerforge/data/eligibility_rules.yaml`) with sentence-level false-positive guards, restriction precedence over generic "worldwide" labels, `--my-country` applicant verdicts, standalone `forge eligibility`, and integration into `forge match` & `forge scrape`.
   - Implemented `LeverScraper` (`careerforge/scrapers/lever_scanner.py`) over `BaseScraper` with live-verified company slugs (`kinsta`, `palantir`, `spotify`, `doxel`, `hevodata`, `zoox`, `wealthsimple`, `shieldai`).
   - Added `forge tailor --diff` itemized bullet scoring table (`skill_score`, `metric_score`, `token_overlap_score`, `weight_score`).
@@ -29,6 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Implemented `forge report` for cumulative funnel conversion rates (`saved` to `offer`), CV SHA-256 performance comparison, terminal sparklines, `--since` filtering, and small-sample warnings.
   - Implemented `forge ghost` heuristic Ghost Risk scoring (`Low`/`Medium`/`High`) with explicit "not proof" caveats and itemized signal breakdown.
   - Implemented `forge salary` calculating `min`, `p25`, `median`, `p75`, `max` per currency with user-supplied `--rates` YAML conversion, selection-bias disclosure, and small-sample warnings.
+
+## [0.3.0] - 2026-11-25
+
+### Added
 - **Local SQLite Job & Application Store (`careerforge/core/store.py`):**
   - Implemented stdlib `sqlite3` persistence with `platformdirs` user data path and `CAREERFORGE_DB` environment override.
   - Added `PRAGMA foreign_keys = ON` on every connection and versioned schema migrations via `PRAGMA user_version`.

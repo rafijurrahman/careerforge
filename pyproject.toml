@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 # If "careerforge" is already claimed, rename to "careerforge-cli"
 name = "careerforge"
 # name = "careerforge-cli"  # Fallback PyPI package name
-version = "0.2.0"
+version = "0.5.0"
 description = "A universal, local-first, privacy-focused job application and career automation engine."
 readme = "README.md"
 requires-python = ">=3.10"

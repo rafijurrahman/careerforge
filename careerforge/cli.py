@@ -1490,12 +1490,79 @@ def cmd_cover(args):
     console.print()
 
 
+COMMAND_GROUPS = [
+    (
+        "Find",
+        [
+            ("scrape", "Search public ATS APIs (Greenhouse, Ashby, Lever, Remotive)"),
+            ("dorks", "Print employer ATS Google search URLs locally (offline, no network)"),
+        ],
+    ),
+    (
+        "Match",
+        [
+            ("match", "Score heuristic JD skill overlap and remote geo-eligibility hints"),
+            ("eligibility", "Scan a JD for heuristic remote geo/visa restrictions"),
+        ],
+    ),
+    (
+        "Build",
+        [
+            ("tailor", "Rank real profile bullets for a JD into a 1-page CV (--diff explains scores)"),
+            ("apply", "Build and grid-fit a 1-page ATS DOCX/PDF via LibreOffice or Word COM"),
+            ("ats-sim", "Check PDF/DOCX for parser fragility flaws (heuristic, not a real ATS)"),
+            ("audit", "Flag LLM style markers and cadence flatness using research heuristics"),
+        ],
+    ),
+    (
+        "Track",
+        [
+            ("track", "Track local SQLite applications, due follow-ups, exports, and Kanban TUI"),
+            ("report", "Summarize local SQLite funnel conversion rates and CV SHA-256 outcomes"),
+            ("ghost", "Estimate heuristic stale/repost Ghost Risk on stored jobs (not proof)"),
+            ("salary", "Compute disclosed salary bands locally (no COL, --rates YAML only)"),
+        ],
+    ),
+    (
+        "Prepare",
+        [
+            ("interview", "Draft honest STAR outlines (TODO: fill in), audit coverage, practice prompts"),
+            ("cover", "Draft concise template outreach (<<FILL>> markers, Anti-AI audited)"),
+        ],
+    ),
+    (
+        "Setup & Diagnostics",
+        [
+            ("init", "Create your local candidate profile.yaml interactively"),
+            ("setup", "Create your local candidate profile.yaml (alias for init)"),
+            ("doctor", "Check Python, LibreOffice/Word COM, profile syntax, and bundled data"),
+        ],
+    ),
+]
+
+
+class _GroupedHelpFormatter(argparse.RawDescriptionHelpFormatter):
+    """Formats top-level subcommands cleanly by workflow stage."""
+
+    def _format_action(self, action):
+        if isinstance(action, argparse._SubParsersAction):
+            lines = []
+            for group_name, entries in COMMAND_GROUPS:
+                lines.append(f"  {group_name}:")
+                for cmd_name, desc in entries:
+                    lines.append(f"    {cmd_name:<14} {desc}")
+                lines.append("")
+            return "\n".join(lines)
+        return super()._format_action(action)
+
+
 def main():
     parser = argparse.ArgumentParser(
-        prog="careerforge",
-        description="CareerForge: Universal, Role-Agnostic Job Application & CV Optimization Engine",
+        prog="forge",
+        description="CareerForge: Offline-first local job search, CV optimization, and application tracker",
+        formatter_class=_GroupedHelpFormatter,
     )
-    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    subparsers = parser.add_subparsers(dest="command", metavar="<command>", title="Commands by Workflow Stage")
 
     # doctor
     p_doc = subparsers.add_parser("doctor", help="Run system diagnostics for Word COM, LibreOffice, and config")

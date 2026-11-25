@@ -131,7 +131,7 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 ## 📦 Features
 
-### ✅ Available Now (v0.2.0)
+### ✅ Available Now (v0.5.0)
 
 *   **Template Cover & Outreach (`forge cover`):**  
     Generates concise template drafts (`cover`, `cold-email`, `linkedin`, `follow-up`) grounded in `profile.yaml` metrics with `<<FILL: ...>>` markers, `forge track --app` follow-up links, and automatic Anti-AI audit checks.
@@ -195,14 +195,18 @@ Read our complete [Privacy Model](docs/PRIVACY_MODEL.md) and [Security Policy](S
 ### Command Network Scope Summary:
 | Command | Network Access | Data Sent Over Network |
 |---|:---:|---|
-| `forge init` | **None** (Offline) | None |
+| `forge init` / `setup` | **None** (Offline) | None |
 | `forge doctor` | **None** (Offline) | None |
 | `forge audit` | **None** (Offline) | None |
+| `forge ats-sim` | **None** (Offline) | None |
 | `forge match` | **None** (Offline) | None |
+| `forge eligibility` | **None** (Offline) | None |
 | `forge tailor` | **None** (Offline) | None |
 | `forge apply` | **None** (Offline) | None |
+| `forge track` / `report` / `ghost` / `salary` | **None** (Offline) | Reads/writes local SQLite (`careerforge.db`) |
+| `forge interview` / `cover` | **None** (Offline) | Local STAR story bank (`stories.yaml`) & template outreach |
 | `forge dorks` | **None** (Offline) | Generates local search URLs; zero network calls |
-| `forge scrape` | **Read-only public APIs** | Fetches public job postings from Greenhouse, Ashby, and Remotive |
+| `forge scrape` | **Read-only public APIs** | Fetches public job postings from Greenhouse, Ashby, Lever, and Remotive |
 
 ---
 

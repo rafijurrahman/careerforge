@@ -26,4 +26,4 @@
 ## Limitations
 1. Single-user local SQLite database: concurrent multi-writer access across multiple background terminals is not designed for heavy parallelism.
 2. Follow-up (`due`) and stagnant (`ghosted`) windows rely strictly on timestamps recorded in `applications` and `events`. External email responses are not automatically synced.
-3. Automatic `closed_at` closure only applies to company boards where full job listings are fetched cleanly in a single API call (`Greenhouse`, `Ashby`); category feeds (`Remotive`) do not close older entries automatically.
+3. Automatic `closed_at` closure only applies to company boards where full job listings are fetched cleanly in a single API call (`Greenhouse`, `Ashby`, `Lever`); category feeds (`Remotive`) do not close older entries automatically.

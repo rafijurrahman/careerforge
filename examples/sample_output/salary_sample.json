@@ -1,0 +1,26 @@
+{
+  "heuristic": true,
+  "notice": "Heuristic compensation estimate based strictly on stored job records (no cost-of-living adjustments).",
+  "role_filter": null,
+  "keyword_filter": null,
+  "converted_with_rates": false,
+  "total_disclosed": 5,
+  "sample_too_small": true,
+  "warnings": [
+    "Selection-bias warning: calculated solely from postings that disclose salary ranges; employers omitting compensation are not represented.",
+    "Sample too small (5 disclosed job(s) < 10): salary percentiles are rough estimates."
+  ],
+  "buckets": [
+    {
+      "currency": "UNKNOWN",
+      "count": 5,
+      "min": 85000.0,
+      "p25": 105000.0,
+      "median": 115000.0,
+      "p75": 120000.0,
+      "max": 160000.0,
+      "sample_too_small": true
+    }
+  ],
+  "skipped_currencies": {}
+}
