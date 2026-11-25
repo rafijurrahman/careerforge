@@ -23,18 +23,18 @@ def _has_quantifiable_metrics(text: str) -> bool:
     return bool(re.search(pattern, text, re.IGNORECASE))
 
 
-def score_bullet(
+def score_bullet_breakdown(
     bullet_item: Any,
     jd_skills: set,
     jd_text: str,
     alias_map: Dict[str, str],
-) -> float:
+) -> Dict[str, Any]:
     """
-    Computes a relevance score for an experience bullet:
-    - 4.0 points per matching skill required by the JD
-    - 2.0 points for quantifiable metrics (numbers, %, latency, scale)
-    - 0.5 points for word-token overlap with the JD
-    - Configured weight bonus (1 to 10 scale)
+    Computes itemized relevance score components for an experience bullet:
+    - skill_score: 4.0 points per matching skill required by JD
+    - metric_score: 2.0 points for quantifiable metrics
+    - token_overlap_score: 0.1 points per shared non-stopword token
+    - weight_score: configured bullet weight / 10.0
     """
     if isinstance(bullet_item, dict):
         text = bullet_item.get("text", "")
@@ -51,8 +51,8 @@ def score_bullet(
         c_name = alias_map.get(str(s).strip().lower(), str(s).strip())
         detected_skills.add(c_name)
 
-    matching_skills = detected_skills & jd_skills
-    skill_score = len(matching_skills) * 4.0
+    matching_skills = sorted(detected_skills & jd_skills)
+    skill_score = round(len(matching_skills) * 4.0, 2)
 
     # 2. Metric bonus
     metric_score = 2.0 if _has_quantifiable_metrics(text) else 0.0
@@ -61,13 +61,32 @@ def score_bullet(
     stopwords = {"and", "the", "in", "with", "to", "for", "of", "a", "an", "on", "by", "as", "at"}
     bullet_tokens = {t.lower() for t in re.findall(r"\b\w{3,}\b", text)} - stopwords
     jd_tokens = {t.lower() for t in re.findall(r"\b\w{3,}\b", jd_text)} - stopwords
-    token_overlap = len(bullet_tokens & jd_tokens) * 0.1
+    matching_tokens = sorted(bullet_tokens & jd_tokens)
+    token_overlap = round(len(matching_tokens) * 0.1, 2)
 
     # 4. Weight score (normalized to 0-1)
-    weight_score = (weight / 10.0)
+    weight_score = round(weight / 10.0, 2)
 
-    total_score = skill_score + metric_score + token_overlap + weight_score
-    return round(total_score, 2)
+    total_score = round(skill_score + metric_score + token_overlap + weight_score, 2)
+    return {
+        "total_score": total_score,
+        "skill_score": skill_score,
+        "metric_score": metric_score,
+        "token_overlap_score": token_overlap,
+        "weight_score": weight_score,
+        "matching_skills": matching_skills,
+        "matching_tokens": matching_tokens,
+    }
+
+
+def score_bullet(
+    bullet_item: Any,
+    jd_skills: set,
+    jd_text: str,
+    alias_map: Dict[str, str],
+) -> float:
+    """Computes total relevance score for an experience bullet."""
+    return float(score_bullet_breakdown(bullet_item, jd_skills, jd_text, alias_map)["total_score"])
 
 
 def tailor_profile(
@@ -100,8 +119,8 @@ def tailor_profile(
         scored_bullets = []
         for b in raw_bullets:
             b_text = b.get("text", "") if isinstance(b, dict) else str(b)
-            score = score_bullet(b, jd_skills, jd_text, alias_map)
-            scored_bullets.append((score, b_text, b))
+            breakdown = score_bullet_breakdown(b, jd_skills, jd_text, alias_map)
+            scored_bullets.append((breakdown["total_score"], b_text, b, breakdown))
 
         # Sort descending by score
         scored_bullets.sort(key=lambda x: x[0], reverse=True)
@@ -110,12 +129,28 @@ def tailor_profile(
         selected_raw = scored_bullets[:max_bullets_per_role]
         exp["bullets"] = [item[1] for item in selected_raw]
 
+        bullet_diffs = []
+        for idx, (_sc, b_text, _b_obj, breakdown) in enumerate(scored_bullets):
+            bullet_diffs.append(
+                {
+                    "text": b_text,
+                    "selected": idx < max_bullets_per_role,
+                    "total_score": breakdown["total_score"],
+                    "skill_score": breakdown["skill_score"],
+                    "metric_score": breakdown["metric_score"],
+                    "token_overlap_score": breakdown["token_overlap_score"],
+                    "weight_score": breakdown["weight_score"],
+                    "matching_skills": breakdown["matching_skills"],
+                }
+            )
+
         report_roles.append({
             "company": company,
             "role": role,
             "total_available_bullets": len(raw_bullets),
             "selected_count": len(exp["bullets"]),
             "top_selected": [item[1] for item in selected_raw],
+            "bullet_diffs": bullet_diffs,
         })
 
     # 2. Tailor Projects (prioritize projects containing JD skills)

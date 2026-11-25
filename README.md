@@ -133,6 +133,8 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 ### ✅ Available Now (v0.2.0)
 
+*   **Remote Eligibility Heuristic & Lever Scraper (`forge eligibility`, `forge match --my-country`, `forge scrape`):**  
+    Detects hidden geo/visa/timezone restrictions in job descriptions using `eligibility_rules.yaml` (false-positive guarded, heuristic) and expands live ATS scraping to Lever (`api.lever.co`) alongside Greenhouse, Ashby, and Remotive. `forge tailor --diff` exposes exact per-bullet scoring weights.
 *   **Application Analytics, Ghost Risk & Salary Bands (`forge report`, `forge ghost`, `forge salary`):**  
     Analyzes local SQLite funnel conversion rates by CV hash and source (`report`), scores heuristic stale/ghost posting signals (`ghost`), and aggregates disclosed salary percentiles with optional local FX conversion (`salary`), completely offline.
 *   **Offline Application Tracker & Kanban TUI (`forge track`):**  

@@ -23,6 +23,7 @@ try:
     from careerforge.core.anti_ai_engine import audit_text
     from careerforge.core.ats_sim import AtsSimFileError, run_ats_sim
     from careerforge.core.dorks import generate_ats_dorks
+    from careerforge.core.eligibility import check_eligibility
     from careerforge.core.ghost import analyze_ghost_jobs
     from careerforge.core.matcher import compute_ats_match
     from careerforge.core.page_optimizer import optimize_to_single_page
@@ -31,12 +32,12 @@ try:
     from careerforge.core.salary import SalaryError, analyze_salaries
     from careerforge.core.store import VALID_STAGES, CareerStore, StoreError
     from careerforge.core.tailor_engine import tailor_profile
-    from careerforge.scrapers.ashby_scanner import AshbyScraper, scan_all_ashby
-    from careerforge.scrapers.greenhouse_scanner import GreenhouseScraper, scan_all_greenhouse
-    from careerforge.scrapers.remotive_scanner import RemotiveScraper, scan_remotive
+    from careerforge.scrapers.ashby_scanner import AshbyScraper
+    from careerforge.scrapers.greenhouse_scanner import GreenhouseScraper
+    from careerforge.scrapers.lever_scanner import LeverScraper
+    from careerforge.scrapers.remotive_scanner import RemotiveScraper
     from careerforge.scrapers.work_mode_config import (
         describe_modes,
-        filter_jobs_by_mode,
         get_work_modes,
         location_matches,
     )
@@ -44,6 +45,7 @@ except ImportError:
     from core.anti_ai_engine import audit_text
     from core.ats_sim import AtsSimFileError, run_ats_sim
     from core.dorks import generate_ats_dorks
+    from core.eligibility import check_eligibility
     from core.ghost import analyze_ghost_jobs
     from core.matcher import compute_ats_match
     from core.page_optimizer import optimize_to_single_page
@@ -52,12 +54,12 @@ except ImportError:
     from core.salary import SalaryError, analyze_salaries
     from core.store import VALID_STAGES, CareerStore, StoreError
     from core.tailor_engine import tailor_profile
-    from scrapers.ashby_scanner import AshbyScraper, scan_all_ashby
-    from scrapers.greenhouse_scanner import GreenhouseScraper, scan_all_greenhouse
-    from scrapers.remotive_scanner import RemotiveScraper, scan_remotive
+    from scrapers.ashby_scanner import AshbyScraper
+    from scrapers.greenhouse_scanner import GreenhouseScraper
+    from scrapers.lever_scanner import LeverScraper
+    from scrapers.remotive_scanner import RemotiveScraper
     from scrapers.work_mode_config import (
         describe_modes,
-        filter_jobs_by_mode,
         get_work_modes,
         location_matches,
     )
@@ -223,29 +225,37 @@ def cmd_scrape(args):
 
     print(f"\n🔍 Searching for: {', '.join(keywords)}")
     print(f"   Work mode filter: {describe_modes(work_modes)}")
-    print("   Sources: Greenhouse | Ashby | Remotive\n")
+    print("   Sources: Greenhouse | Ashby | Lever | Remotive\n")
 
+    gh_scraper = GreenhouseScraper()
+    ashby_scraper = AshbyScraper()
+    lever_scraper = LeverScraper()
+    rem_scraper = RemotiveScraper()
+
+    gh_postings, gh_ok, _ = gh_scraper.fetch_with_status({"keywords": keywords, "exclude_senior": not args.include_senior})
+    ashby_postings, ashby_ok, _ = ashby_scraper.fetch_with_status({"keywords": keywords, "exclude_senior": not args.include_senior})
+    lever_postings, lever_ok, _ = lever_scraper.fetch_with_status({"keywords": keywords, "exclude_senior": not args.include_senior})
+    rem_postings = list(rem_scraper.fetch({"target_roles": keywords, "limit": args.limit}))
+
+    all_postings = gh_postings + ashby_postings + lever_postings + rem_postings
+    if work_modes and work_modes != ["Remote"]:
+        all_postings = [p for p in all_postings if location_matches(p.location, work_modes)]
+
+    my_country = getattr(args, "my_country", None)
+    stats = None
+    store = None
     if args.save:
-        gh_scraper = GreenhouseScraper()
-        ashby_scraper = AshbyScraper()
-        rem_scraper = RemotiveScraper()
-
-        gh_postings, gh_ok, _ = gh_scraper.fetch_with_status({"keywords": keywords, "exclude_senior": not args.include_senior})
-        ashby_postings, ashby_ok, _ = ashby_scraper.fetch_with_status({"keywords": keywords, "exclude_senior": not args.include_senior})
-        rem_postings = list(rem_scraper.fetch({"target_roles": keywords, "limit": args.limit}))
-
-        all_postings = gh_postings + ashby_postings + rem_postings
-        if work_modes and work_modes != ["Remote"]:
-            all_postings = [p for p in all_postings if location_matches(p.location, work_modes)]
-
         succeeded_boards = {}
         succeeded_boards.update(gh_ok)
         succeeded_boards.update(ashby_ok)
-
+        succeeded_boards.update(lever_ok)
         store = CareerStore()
         stats = store.upsert_scraped_jobs(all_postings, succeeded_boards=succeeded_boards)
 
-        all_matches = [
+    all_matches = []
+    for p in all_postings:
+        elig = check_eligibility(f"{p.location} {p.description or ''}", my_country=my_country)
+        all_matches.append(
             {
                 "id": p.id,
                 "platform": p.source,
@@ -253,28 +263,24 @@ def cmd_scrape(args):
                 "title": p.title,
                 "location": p.location,
                 "url": p.source_url,
+                "eligibility_status": elig["status"],
+                "eligibility_can_apply": elig["can_apply"]["verdict"] if elig["can_apply"] else None,
             }
-            for p in all_postings
-        ]
-    else:
-        gh_matches = scan_all_greenhouse(keywords=keywords, exclude_senior=not args.include_senior)
-        ashby_matches = scan_all_ashby(keywords=keywords, exclude_senior=not args.include_senior)
-        rem_matches = scan_remotive(target_roles=keywords, limit=args.limit)
-
-        all_matches = gh_matches + ashby_matches + rem_matches
-        if work_modes and work_modes != ["Remote"]:
-            all_matches = filter_jobs_by_mode(all_matches, work_modes)
-        stats = None
+        )
 
     print(f"✨ Found {len(all_matches)} matching opportunities:\n")
 
     for idx, j in enumerate(all_matches[: args.limit], 1):
         source = j.get("platform") or j.get("source", "Board")
+        elig_tag = j["eligibility_status"]
+        if j.get("eligibility_can_apply"):
+            elig_tag += f" ({j['eligibility_can_apply']})"
         print(f"{idx}. [{source}] {j['title']} @ {j['company']}")
-        print(f"   Location: {j.get('location', 'Remote')}")
-        print(f"   Apply: {j['url']}\n")
+        print(f"   Location:    {j.get('location', 'Remote')}")
+        print(f"   Eligibility: {elig_tag} [heuristic]")
+        print(f"   Apply:       {j['url']}\n")
 
-    if args.save:
+    if args.save and store is not None and stats is not None:
         print(
             f"💾 Saved to SQLite store '{store.db_path}': "
             f"inserted={stats['inserted']}, updated={stats['updated']}, closed={stats['closed']}."
@@ -296,6 +302,8 @@ def cmd_match(args):
         jd_content = args.jd
 
     res = compute_ats_match(jd_content, profile)
+    elig = check_eligibility(jd_content, my_country=getattr(args, "my_country", None))
+    res["eligibility"] = elig
 
     if getattr(args, "json", False):
         print(json.dumps(res, indent=2))
@@ -309,7 +317,48 @@ def cmd_match(args):
     print(f"Missing Skills ({res['missing_count']}):   {', '.join(res['missing_skills']) if res['missing_skills'] else 'None'}")
     if res["additional_skills"]:
         print(f"Additional Skills ({len(res['additional_skills'])}): {', '.join(res['additional_skills'][:10])}")
+    print("-" * 60)
+    print(f"Remote Eligibility:   {elig['status']} (heuristic)")
+    if elig["regions"]:
+        print(f"Detected Regions:     {', '.join(elig['regions'])}")
+    if elig["can_apply"]:
+        print(f"Can Apply ({elig['can_apply']['country']}):     {elig['can_apply']['verdict']}")
+    for ev in elig["evidence"][:3]:
+        print(f"  • [{ev['rule_id']}] \"{ev['snippet']}\"")
     print("=" * 60 + "\n")
+
+
+def cmd_eligibility(args):
+    """Inspects job description text for remote geo-eligibility restrictions."""
+    jd_content = ""
+    if os.path.exists(args.jd):
+        with open(args.jd, "r", encoding="utf-8") as f:
+            jd_content = f.read()
+    else:
+        jd_content = args.jd
+
+    elig = check_eligibility(jd_content, my_country=args.my_country)
+
+    if getattr(args, "json", False):
+        print(json.dumps(elig, indent=2))
+        sys.exit(0)
+
+    print("\n" + "=" * 64)
+    print("🌍 Remote Geo-Eligibility Check (Heuristic)")
+    print("=" * 64)
+    print(f"Status:          {elig['status']}")
+    print(f"Notice:          {elig['notice']}")
+    if elig["regions"]:
+        print(f"Regions/Flags:   {', '.join(elig['regions'])}")
+    if elig["can_apply"]:
+        print(f"Can Apply ({elig['can_apply']['country']}):  {elig['can_apply']['verdict']}")
+    if elig["evidence"]:
+        print("\nEvidence Snippets:")
+        for ev in elig["evidence"]:
+            print(f"  • [{ev['rule_id']} | {ev['region']} | {ev['severity']}] {ev['snippet']}")
+    else:
+        print("\nNo geographic or visa restriction patterns matched.")
+    print("=" * 64 + "\n")
 
 
 def cmd_tailor(args):
@@ -369,6 +418,42 @@ def cmd_tailor(args):
     print(f"Pages:                {config.get('pages', 1)} | Font Scale: {config.get('font_scale')}")
     print(f"Backend Engine:       {config.get('backend', 'Default')}")
     print("=" * 60 + "\n")
+
+    if getattr(args, "diff", False):
+        from rich.table import Table
+
+        console = _track_console()
+        diff_table = Table(
+            title="Bullet Selection Diff Breakdown",
+            show_header=True,
+            header_style="bold cyan",
+        )
+        diff_table.add_column("Status", width=10)
+        diff_table.add_column("Role", width=22)
+        diff_table.add_column("Total", justify="right", width=6)
+        diff_table.add_column("Skill", justify="right", width=6)
+        diff_table.add_column("Metric", justify="right", width=7)
+        diff_table.add_column("Token", justify="right", width=6)
+        diff_table.add_column("Wt", justify="right", width=5)
+        diff_table.add_column("Bullet")
+
+        for role_rep in report.get("roles_tailored", []):
+            role_label = f"{role_rep.get('company', '')} ({role_rep.get('role', '')})"
+            for bd in role_rep.get("bullet_diffs", []):
+                status_str = "[bold green]SELECTED[/bold green]" if bd["selected"] else "[dim red]DROPPED[/dim red]"
+                diff_table.add_row(
+                    status_str,
+                    role_label[:22],
+                    str(bd["total_score"]),
+                    str(bd["skill_score"]),
+                    str(bd["metric_score"]),
+                    str(bd["token_overlap_score"]),
+                    str(bd["weight_score"]),
+                    bd["text"],
+                )
+        console.print()
+        console.print(diff_table)
+        console.print()
 
     if getattr(args, "check", False):
         target_check_file = pdf_file if os.path.exists(pdf_file) else docx_file
@@ -1067,6 +1152,12 @@ def main():
     p_scrape.add_argument("--include-senior", action="store_true", help="Include senior/lead/director roles")
     p_scrape.add_argument("--limit", type=int, default=15, help="Number of jobs to display")
     p_scrape.add_argument(
+        "--my-country",
+        type=str,
+        default=None,
+        help="Your country code (e.g. BD, US) for heuristic remote geo-eligibility hints",
+    )
+    p_scrape.add_argument(
         "--save",
         nargs="?",
         const="__DB__",
@@ -1119,8 +1210,16 @@ def main():
     p_match = subparsers.add_parser("match", help="Analyze ATS keyword gap against a job description")
     p_match.add_argument("--jd", type=str, required=True, help="Path to job description file or raw text string")
     p_match.add_argument("--profile", type=str, default=None, help="Path to profile.yaml")
+    p_match.add_argument("--my-country", type=str, default=None, help="Country code (e.g. BD, US) for geo-eligibility check")
     p_match.add_argument("--json", action="store_true", help="Output match report as JSON")
     p_match.set_defaults(func=cmd_match)
+
+    # eligibility
+    p_elig = subparsers.add_parser("eligibility", help="Check job description text for remote geo-restrictions (heuristic)")
+    p_elig.add_argument("--jd", type=str, required=True, help="Path to job description file or raw text string")
+    p_elig.add_argument("--my-country", type=str, default=None, help="Country code (e.g. BD, US) for application verdict")
+    p_elig.add_argument("--json", action="store_true", help="Output eligibility report as JSON")
+    p_elig.set_defaults(func=cmd_eligibility)
 
     # tailor
     p_tailor = subparsers.add_parser("tailor", help="Auto-tailor master profile bullets to match a job description")
@@ -1140,6 +1239,11 @@ def main():
         "--check",
         action="store_true",
         help="Automatically run ATS parser fragility check on generated PDF",
+    )
+    p_tailor.add_argument(
+        "--diff",
+        action="store_true",
+        help="Show score breakdown explaining why each bullet was selected or dropped",
     )
     p_tailor.add_argument("--json", action="store_true", help="Output tailoring report as JSON")
     p_tailor.set_defaults(func=cmd_tailor)
