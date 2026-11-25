@@ -131,8 +131,10 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 ## 📦 Features
 
-### ✅ Available Now (v0.1.0)
+### ✅ Available Now (v0.2.0)
 
+*   **ATS Parser Fragility Checker (`forge ats-sim`):**  
+    Inspects PDF and DOCX resume documents for structural, layout, encoding, and typographic flaws that break text extractors (such as scanned image-only PDFs, multi-column layouts, XML text boxes, header/footer trapping, Unicode ligatures, Private Use Area icon font glyphs, date formatting inconsistencies, and dual-parser stream divergence). Operates completely offline without external APIs and generates actionable fix recommendations. *(Note: this is a parser fragility checker, not an emulator of proprietary Workday, Taleo, or Greenhouse ranking algorithms).*
 *   **Job-Specific Auto-Tailoring (`forge tailor`):**  
     Uses an offline knapsack algorithm to score and prioritize bullets from your Master Profile based on relevance to a specific Job Description, outputting an optimized 1-page tailored CV without cloud APIs. *(Note: tailor selects from your real master profile; it never invents skills or experience).*
 *   **ATS Keyword Match & Gap Analysis (`forge match`):**  
@@ -140,7 +142,7 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 *   **Direct Employer ATS Search Dorks (`forge dorks`):**  
     Generates high-precision search queries for Greenhouse, Lever, Ashby, Workable, and Hacker News to discover live openings directly on employer domains without aggregators.
 *   **Automated 1-Page Document Optimizer (`forge apply`):**  
-    Uses an iterative grid-search to adjust font scaling, spacing, and margins until your resume strictly fits exactly 1 page. Uses headless LibreOffice as the cross-platform default, with Microsoft Word COM as a Windows fast-path.
+    Uses an iterative grid-search to adjust font scaling, spacing, and margins until your resume strictly fits exactly 1 page. Uses headless LibreOffice as the cross-platform default, with Microsoft Word COM as a Windows fast-path. Supports `--check` to automatically run parser diagnostics after building.
 *   **Empirical Anti-AI Linguistic Audit (`forge audit`):**  
     Scans cover letters and resumes against heuristics informed by published research on LLM text markers (Kobak et al. 2024, Reinhart et al. PNAS 2025, Juzek & Ward 2025) and editorial cleanup guidelines to flag stylistic buzzwords (`AI-001`), copula replacements (`AI-002`), robotic transitions (`AI-003`), participial suffixes (`AI-004`), and low-burstiness cadence (`CADENCE-001`).
 *   **Public ATS & Remote Job Scrapers (`forge scrape`):**  
@@ -150,14 +152,12 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 *   **Universal Skills Ontology (`careerforge/data/skills.yaml`):**  
     250+ canonical skills and aliases across 12 professional disciplines (Software, Data, Marketing, Accounting/Finance, Sales, Customer Support, HR, Healthcare/Nursing, Design, Project Management, Education, and Operations/Logistics).
 *   **Provable Offline Privacy:**  
-    Enforced by automated `pytest-socket` tests proving that audit, profile loading, and CV generation execute completely offline without opening network sockets.
+    Enforced by automated `pytest-socket` tests proving that audit, profile loading, ats-sim, and CV generation execute completely offline without opening network sockets.
 
 ### 🗺️ Planned Features (Roadmap)
 
 The following advanced utilities are currently under active design. See [`ROADMAP.md`](ROADMAP.md) for milestones:
 
-*   **`forge ats-sim` (ATS Parser Simulator):**  
-    Extracts text and evaluates section recognition, reading order, ligature sanitization, and contact extraction to generate a pre-application ATS Readability Score (0-100).
 *   **`forge track` (Offline SQLite Kanban):**  
     A local terminal UI (TUI) powered by `Textual` for tracking applications (`Saved`, `Applied`, `Interview`, `Offer`, `Ghosted`) with zero cloud dependencies.
 *   **`forge ghost` (Stale / Ghost Job Detector):**  

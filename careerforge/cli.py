@@ -21,6 +21,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 try:
     from careerforge.core.anti_ai_engine import audit_text
+    from careerforge.core.ats_sim import AtsSimFileError, run_ats_sim
     from careerforge.core.dorks import generate_ats_dorks
     from careerforge.core.matcher import compute_ats_match
     from careerforge.core.page_optimizer import optimize_to_single_page
@@ -36,6 +37,7 @@ try:
     )
 except ImportError:
     from core.anti_ai_engine import audit_text
+    from core.ats_sim import AtsSimFileError, run_ats_sim
     from core.dorks import generate_ats_dorks
     from core.matcher import compute_ats_match
     from core.page_optimizer import optimize_to_single_page
@@ -299,6 +301,11 @@ def cmd_tailor(args):
     print(f"Backend Engine:       {config.get('backend', 'Default')}")
     print("=" * 60 + "\n")
 
+    if getattr(args, "check", False):
+        target_check_file = pdf_file if os.path.exists(pdf_file) else docx_file
+        print(f"\n🩺 Running ATS parser fragility check on '{target_check_file}'...")
+        _display_ats_sim_report(target_check_file, profile_path=args.profile)
+
 
 def cmd_dorks(args):
     """Generates direct-to-employer Google ATS search queries."""
@@ -340,6 +347,11 @@ def cmd_apply(args):
     print(f"   Pages: {config.get('pages', 1)} | Font Scale: {config.get('font_scale')}")
     print(f"   Engine: {config.get('backend', 'Default')}")
     print("=" * 60 + "\n")
+
+    if getattr(args, "check", False):
+        target_check_file = pdf_file if os.path.exists(pdf_file) else docx_file
+        print(f"\n🩺 Running ATS parser fragility check on '{target_check_file}'...")
+        _display_ats_sim_report(target_check_file, profile_path=args.profile)
 
 
 def cmd_audit(args):
@@ -386,6 +398,99 @@ def cmd_audit(args):
     sys.exit(0 if res["compliant"] else 1)
 
 
+def _display_ats_sim_report(file_path: str, profile_path: str = None, as_json: bool = False) -> int:
+    """Executes parser fragility check and prints rich diagnostics."""
+    try:
+        rep = run_ats_sim(file_path, profile_path=profile_path)
+    except AtsSimFileError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 2
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 2
+
+    if as_json:
+        print(rep.model_dump_json(indent=2))
+        return 0 if rep.score >= 80 else 1
+
+    try:
+        from rich.console import Console
+        from rich.table import Table
+
+        console = Console()
+        table = Table(
+            title=f"ATS Parser Fragility Diagnostic: {os.path.basename(file_path)}",
+            show_header=True,
+            header_style="bold cyan",
+        )
+        table.add_column("Check ID", style="bold", width=18)
+        table.add_column("Name", width=26)
+        table.add_column("Status", justify="center", width=10)
+        table.add_column("Diagnostic Detail")
+
+        for c in rep.checks:
+            if c.passed:
+                status = "[bold green]PASS[/bold green]"
+            elif c.score >= 0.5:
+                status = "[bold yellow]WARN[/bold yellow]"
+            else:
+                status = "[bold red]FAIL[/bold red]"
+            table.add_row(c.id, c.name, status, c.detail)
+
+        console.print()
+        console.print(table)
+        console.print()
+
+        score_color = "green" if rep.score >= 80 else "red"
+        status_text = "PASSED (ATS Parser Safe)" if rep.score >= 80 else "NEEDS ATTENTION"
+        console.print(
+            f"Overall Parseability Score: [bold {score_color}]{rep.score} / 100[/bold {score_color}] "
+            f"— [bold {score_color}]{status_text}[/bold {score_color}]"
+        )
+
+        if rep.hard_caps_applied:
+            for cap in rep.hard_caps_applied:
+                console.print(f"  [bold yellow]⚠️ Hard Cap Applied:[/bold yellow] {cap}")
+
+        if rep.failed_checks:
+            console.print("\n[bold]Fix Recommendations:[/bold]")
+            for c in rep.failed_checks:
+                console.print(f"  • [bold cyan]{c.id}[/bold cyan]: {c.hint}")
+        else:
+            console.print("\n[bold green]🎉 Zero parser fragility issues detected! Clean document structure.[/bold green]")
+        console.print()
+
+    except ImportError:
+        print("\n" + "=" * 70)
+        print(f"ATS Parser Fragility Diagnostic: {os.path.basename(file_path)}")
+        print("=" * 70)
+        for c in rep.checks:
+            status = "PASS" if c.passed else ("WARN" if c.score >= 0.5 else "FAIL")
+            print(f"[{status:4s}] {c.id:18s} {c.name:24s} | {c.detail}")
+        print("-" * 70)
+        print(f"Overall Parseability Score: {rep.score} / 100 ({'PASSED' if rep.score >= 80 else 'NEEDS ATTENTION'})")
+        if rep.hard_caps_applied:
+            for cap in rep.hard_caps_applied:
+                print(f"  * Hard Cap: {cap}")
+        if rep.failed_checks:
+            print("\nFix Recommendations:")
+            for c in rep.failed_checks:
+                print(f"  * [{c.id}]: {c.hint}")
+        print("=" * 70 + "\n")
+
+    return 0 if rep.score >= 80 else 1
+
+
+def cmd_ats_sim(args):
+    """Checks resume document for parser fragility flaws."""
+    code = _display_ats_sim_report(
+        args.file,
+        profile_path=args.profile,
+        as_json=getattr(args, "json", False),
+    )
+    sys.exit(code)
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="careerforge",
@@ -426,7 +531,27 @@ def main():
         default="auto",
         help="PDF conversion & page-fit engine: auto (Word COM on Windows, LibreOffice on macOS), word, or libreoffice",
     )
+    p_apply.add_argument(
+        "--check",
+        action="store_true",
+        help="Automatically run ATS parser fragility check on generated PDF",
+    )
     p_apply.set_defaults(func=cmd_apply)
+
+    # ats-sim
+    p_ats = subparsers.add_parser(
+        "ats-sim",
+        help="Inspect resume for parser fragility flaws (formatting, fonts, columns, encodings)",
+    )
+    p_ats.add_argument("file", type=str, help="Path to resume file (.pdf or .docx)")
+    p_ats.add_argument(
+        "--profile",
+        type=str,
+        default=None,
+        help="Path to candidate profile.yaml for field recovery check",
+    )
+    p_ats.add_argument("--json", action="store_true", help="Output diagnostic report as JSON")
+    p_ats.set_defaults(func=cmd_ats_sim)
 
     # audit
     p_audit = subparsers.add_parser("audit", help="Audit a text file against Anti-AI standards")
@@ -454,6 +579,11 @@ def main():
         choices=["auto", "word", "libreoffice"],
         default="auto",
         help="PDF conversion & page-fit engine: auto, word, or libreoffice",
+    )
+    p_tailor.add_argument(
+        "--check",
+        action="store_true",
+        help="Automatically run ATS parser fragility check on generated PDF",
     )
     p_tailor.add_argument("--json", action="store_true", help="Output tailoring report as JSON")
     p_tailor.set_defaults(func=cmd_tailor)
