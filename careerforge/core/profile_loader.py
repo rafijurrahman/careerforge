@@ -12,17 +12,25 @@ TEMPLATE_PROFILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)),
 
 def load_profile(path: str = None) -> dict:
     """
-    Loads candidate profile from specified path or default profile.yaml.
-    Falls back to template if user profile does not yet exist.
+    Loads candidate profile from specified path or profile.yaml in the current directory.
+    Raises FileNotFoundError with a 'forge init' hint if missing.
     """
-    target_path = path or DEFAULT_PROFILE_PATH
-
-    if not os.path.exists(target_path):
-        if os.path.exists(TEMPLATE_PROFILE_PATH):
-            print(f"[Notice] '{target_path}' not found. Loading sample template from '{TEMPLATE_PROFILE_PATH}'.")
-            target_path = TEMPLATE_PROFILE_PATH
+    if path:
+        target_path = path
+        if not os.path.exists(target_path):
+            raise FileNotFoundError(
+                f"Profile file '{target_path}' not found. Run 'forge init' to create profile.yaml or pass --profile <path>."
+            )
+    else:
+        cwd_profile = os.path.join(os.getcwd(), "profile.yaml")
+        if os.path.exists(cwd_profile):
+            target_path = cwd_profile
+        elif os.path.exists(DEFAULT_PROFILE_PATH):
+            target_path = DEFAULT_PROFILE_PATH
         else:
-            raise FileNotFoundError(f"Neither '{target_path}' nor template profile exists.")
+            raise FileNotFoundError(
+                "Profile 'profile.yaml' not found in current directory. Run 'forge init' to create your profile, or pass --profile <path>."
+            )
 
     with open(target_path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)

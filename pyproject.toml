@@ -36,11 +36,15 @@ dependencies = [
     "pypdf>=4.0.0",
     "pdfminer.six>=20231228",
     "rich>=13.0.0",
+    "platformdirs>=4.0.0",
 ]
 
 [project.optional-dependencies]
 windows = [
     "pywin32>=306; platform_system=='Windows'",
+]
+tui = [
+    "textual>=0.60.0",
 ]
 dev = [
     "pytest>=7.4.0",

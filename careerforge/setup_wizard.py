@@ -8,17 +8,18 @@ import os
 import yaml
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROFILE_PATH = os.path.join(ROOT_DIR, "profile.yaml")
 TEMPLATE_PATH = os.path.join(ROOT_DIR, "data", "profile.template.yaml")
 
+
 def run_wizard():
+    profile_path = os.path.join(os.getcwd(), "profile.yaml")
     print("=" * 65)
     print("  🚀 Welcome to CareerForge: Universal Job Search & CV Engine")
     print("=" * 65)
     print("\nThis wizard will initialize your personal profile.yaml.")
     print("Your profile data remains 100% private and local on your machine.\n")
 
-    if os.path.exists(PROFILE_PATH):
+    if os.path.exists(profile_path):
         overwrite = input("A 'profile.yaml' already exists. Overwrite? (y/N): ").strip().lower()
         if overwrite != "y":
             print("Setup cancelled. Existing profile preserved.")
@@ -66,12 +67,12 @@ def run_wizard():
         data["personal"]["portfolio"] = portfolio
 
     # Write profile.yaml
-    with open(PROFILE_PATH, "w", encoding="utf-8") as f:
+    with open(profile_path, "w", encoding="utf-8") as f:
         yaml.dump(data, f, sort_keys=False, allow_unicode=True)
 
     print("\n" + "=" * 65)
     print("✅ SUCCESS: 'profile.yaml' created successfully!")
-    print(f"File location: {PROFILE_PATH}")
+    print(f"File location: {profile_path}")
     print("You can now open 'profile.yaml' in your editor to add your full")
     print("work experience, achievements, and technical skills.")
     print("=" * 65 + "\n")

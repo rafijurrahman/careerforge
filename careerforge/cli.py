@@ -26,14 +26,16 @@ try:
     from careerforge.core.matcher import compute_ats_match
     from careerforge.core.page_optimizer import optimize_to_single_page
     from careerforge.core.profile_loader import load_profile
+    from careerforge.core.store import VALID_STAGES, CareerStore, StoreError
     from careerforge.core.tailor_engine import tailor_profile
-    from careerforge.scrapers.ashby_scanner import scan_all_ashby
-    from careerforge.scrapers.greenhouse_scanner import scan_all_greenhouse
-    from careerforge.scrapers.remotive_scanner import scan_remotive
+    from careerforge.scrapers.ashby_scanner import AshbyScraper, scan_all_ashby
+    from careerforge.scrapers.greenhouse_scanner import GreenhouseScraper, scan_all_greenhouse
+    from careerforge.scrapers.remotive_scanner import RemotiveScraper, scan_remotive
     from careerforge.scrapers.work_mode_config import (
         describe_modes,
         filter_jobs_by_mode,
         get_work_modes,
+        location_matches,
     )
 except ImportError:
     from core.anti_ai_engine import audit_text
@@ -42,11 +44,26 @@ except ImportError:
     from core.matcher import compute_ats_match
     from core.page_optimizer import optimize_to_single_page
     from core.profile_loader import load_profile
+    from core.store import VALID_STAGES, CareerStore, StoreError
     from core.tailor_engine import tailor_profile
-    from scrapers.ashby_scanner import scan_all_ashby
-    from scrapers.greenhouse_scanner import scan_all_greenhouse
-    from scrapers.remotive_scanner import scan_remotive
-    from scrapers.work_mode_config import describe_modes, filter_jobs_by_mode, get_work_modes
+    from scrapers.ashby_scanner import AshbyScraper, scan_all_ashby
+    from scrapers.greenhouse_scanner import GreenhouseScraper, scan_all_greenhouse
+    from scrapers.remotive_scanner import RemotiveScraper, scan_remotive
+    from scrapers.work_mode_config import (
+        describe_modes,
+        filter_jobs_by_mode,
+        get_work_modes,
+        location_matches,
+    )
+
+
+def _load_profile_or_exit(path: str = None) -> dict:
+    """Loads profile.yaml or exits cleanly with status code 2 and a forge init hint."""
+    try:
+        return load_profile(path)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
 
 
 def cmd_doctor(args):
@@ -185,22 +202,63 @@ def cmd_setup(args):
 
 def cmd_scrape(args):
     """Scrapes job boards for roles matching user profile or specified keywords."""
-    profile = load_profile(args.profile)
-    keywords = args.roles or profile.get("target_preferences", {}).get("target_roles", ["Software Engineer"])
-    work_modes = get_work_modes(profile)
+    if args.roles and not args.profile:
+        try:
+            profile = load_profile(None)
+            work_modes = get_work_modes(profile)
+        except FileNotFoundError:
+            profile = {}
+            work_modes = ["Remote"]
+        keywords = args.roles
+    else:
+        profile = _load_profile_or_exit(args.profile)
+        keywords = args.roles or profile.get("target_preferences", {}).get("target_roles", ["Software Engineer"])
+        work_modes = get_work_modes(profile)
 
     print(f"\n🔍 Searching for: {', '.join(keywords)}")
     print(f"   Work mode filter: {describe_modes(work_modes)}")
     print("   Sources: Greenhouse | Ashby | Remotive\n")
 
-    gh_matches = scan_all_greenhouse(keywords=keywords, exclude_senior=not args.include_senior)
-    ashby_matches = scan_all_ashby(keywords=keywords, exclude_senior=not args.include_senior)
-    rem_matches = scan_remotive(target_roles=keywords, limit=args.limit)
+    if args.save:
+        gh_scraper = GreenhouseScraper()
+        ashby_scraper = AshbyScraper()
+        rem_scraper = RemotiveScraper()
 
-    all_matches = gh_matches + ashby_matches + rem_matches
+        gh_postings, gh_ok, _ = gh_scraper.fetch_with_status({"keywords": keywords, "exclude_senior": not args.include_senior})
+        ashby_postings, ashby_ok, _ = ashby_scraper.fetch_with_status({"keywords": keywords, "exclude_senior": not args.include_senior})
+        rem_postings = list(rem_scraper.fetch({"target_roles": keywords, "limit": args.limit}))
 
-    if work_modes and work_modes != ["Remote"]:
-        all_matches = filter_jobs_by_mode(all_matches, work_modes)
+        all_postings = gh_postings + ashby_postings + rem_postings
+        if work_modes and work_modes != ["Remote"]:
+            all_postings = [p for p in all_postings if location_matches(p.location, work_modes)]
+
+        succeeded_boards = {}
+        succeeded_boards.update(gh_ok)
+        succeeded_boards.update(ashby_ok)
+
+        store = CareerStore()
+        stats = store.upsert_scraped_jobs(all_postings, succeeded_boards=succeeded_boards)
+
+        all_matches = [
+            {
+                "id": p.id,
+                "platform": p.source,
+                "company": p.company,
+                "title": p.title,
+                "location": p.location,
+                "url": p.source_url,
+            }
+            for p in all_postings
+        ]
+    else:
+        gh_matches = scan_all_greenhouse(keywords=keywords, exclude_senior=not args.include_senior)
+        ashby_matches = scan_all_ashby(keywords=keywords, exclude_senior=not args.include_senior)
+        rem_matches = scan_remotive(target_roles=keywords, limit=args.limit)
+
+        all_matches = gh_matches + ashby_matches + rem_matches
+        if work_modes and work_modes != ["Remote"]:
+            all_matches = filter_jobs_by_mode(all_matches, work_modes)
+        stats = None
 
     print(f"✨ Found {len(all_matches)} matching opportunities:\n")
 
@@ -211,14 +269,19 @@ def cmd_scrape(args):
         print(f"   Apply: {j['url']}\n")
 
     if args.save:
-        with open(args.save, "w", encoding="utf-8") as f:
-            json.dump(all_matches, f, indent=2)
-        print(f"💾 Results saved to '{args.save}'.")
+        print(
+            f"💾 Saved to SQLite store '{store.db_path}': "
+            f"inserted={stats['inserted']}, updated={stats['updated']}, closed={stats['closed']}."
+        )
+        if args.save != "__DB__":
+            with open(args.save, "w", encoding="utf-8") as f:
+                json.dump(all_matches, f, indent=2)
+            print(f"💾 Results also exported to '{args.save}'.")
 
 
 def cmd_match(args):
     """Computes keyword match and ATS skill gap against a job description."""
-    profile = load_profile(args.profile)
+    profile = _load_profile_or_exit(args.profile)
     jd_content = ""
     if os.path.exists(args.jd):
         with open(args.jd, "r", encoding="utf-8") as f:
@@ -245,7 +308,7 @@ def cmd_match(args):
 
 def cmd_tailor(args):
     """Tailors master profile bullets to match a job description and generates a 1-page CV."""
-    profile = load_profile(args.profile)
+    profile = _load_profile_or_exit(args.profile)
     jd_content = ""
     if os.path.exists(args.jd):
         with open(args.jd, "r", encoding="utf-8") as f:
@@ -327,7 +390,7 @@ def cmd_dorks(args):
 
 def cmd_apply(args):
     """Generates and optimizes a 1-page ATS CV from the candidate profile."""
-    profile = load_profile(args.profile)
+    profile = _load_profile_or_exit(args.profile)
     out_dir = args.out or os.path.join(os.getcwd(), "output")
     os.makedirs(out_dir, exist_ok=True)
 
@@ -491,6 +554,299 @@ def cmd_ats_sim(args):
     sys.exit(code)
 
 
+def _track_console():
+    from rich.console import Console
+    return Console()
+
+
+def cmd_track_add(args):
+    """Adds a job application from DB job ID, URL, or manual details."""
+    store = CareerStore()
+    jd_snapshot = None
+    if getattr(args, "jd", None):
+        if os.path.exists(args.jd):
+            with open(args.jd, "r", encoding="utf-8") as f:
+                jd_snapshot = f.read()
+        else:
+            jd_snapshot = args.jd
+
+    company = getattr(args, "company", None)
+    title = getattr(args, "title", None)
+    if args.manual and (not company or not title):
+        if sys.stdin.isatty():
+            if not company:
+                company = input("Company name: ").strip()
+            if not title:
+                title = input("Role title: ").strip()
+        if not company or not title:
+            print("Error: Manual entry requires --company and --title.", file=sys.stderr)
+            sys.exit(2)
+
+    try:
+        app = store.add_application(
+            job_id=args.job_id,
+            url=args.url,
+            manual=args.manual,
+            company=company,
+            title=title,
+            location=args.location or "Remote",
+            stage=args.stage,
+            cv_path=args.cv,
+            jd_snapshot=jd_snapshot,
+            match_score=args.score,
+            notes=args.notes or "",
+            due_days=args.due_days,
+        )
+    except StoreError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if getattr(args, "json", False):
+        print(json.dumps(app, indent=2))
+        sys.exit(0)
+
+    print(f"✅ Tracked Application #{app['id']}: {app['title']} @ {app['company']} [{app['stage']}]")
+    if app.get("cv_sha256"):
+        print(f"   CV SHA-256: {app['cv_sha256']}")
+
+
+def cmd_track_list(args):
+    """Lists tracked job applications."""
+    store = CareerStore()
+    try:
+        apps = store.list_applications(stage=args.stage)
+    except StoreError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if getattr(args, "json", False):
+        print(json.dumps(apps, indent=2))
+        sys.exit(0)
+
+    if not apps:
+        print("No tracked applications found. Run 'forge track add --help' to start tracking.")
+        sys.exit(0)
+
+    from rich.table import Table
+
+    console = _track_console()
+    table = Table(title="Tracked Job Applications", show_header=True, header_style="bold cyan")
+    table.add_column("ID", style="bold", width=5)
+    table.add_column("Stage", width=11)
+    table.add_column("Company", width=18)
+    table.add_column("Title", width=26)
+    table.add_column("Source", width=12)
+    table.add_column("Applied", width=12)
+    table.add_column("CV SHA", width=10)
+
+    for a in apps:
+        applied_str = (a.get("applied_at") or "-")[:10]
+        cv_short = (a.get("cv_sha256") or "-")[:8]
+        table.add_row(
+            str(a["id"]),
+            a["stage"],
+            a.get("company", ""),
+            a.get("title", ""),
+            a.get("source", ""),
+            applied_str,
+            cv_short,
+        )
+    console.print()
+    console.print(table)
+    console.print()
+
+
+def cmd_track_move(args):
+    """Moves an application to another pipeline stage."""
+    store = CareerStore()
+    try:
+        app_id = int(args.id)
+        app = store.move_application(app_id, args.stage, note=args.note, due_days=args.due_days)
+    except ValueError:
+        print(f"Error: Invalid application ID '{args.id}'. Must be an integer.", file=sys.stderr)
+        sys.exit(2)
+    except StoreError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if getattr(args, "json", False):
+        print(json.dumps(app, indent=2))
+        sys.exit(0)
+
+    print(f"✅ Moved Application #{app['id']} ({app['company']} - {app['title']}) -> [{app['stage']}]")
+
+
+def cmd_track_note(args):
+    """Adds a note to an existing application."""
+    store = CareerStore()
+    try:
+        app_id = int(args.id)
+        app = store.add_note(app_id, args.text)
+    except ValueError:
+        print(f"Error: Invalid application ID '{args.id}'. Must be an integer.", file=sys.stderr)
+        sys.exit(2)
+    except StoreError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if getattr(args, "json", False):
+        print(json.dumps(app, indent=2))
+        sys.exit(0)
+
+    print(f"📝 Note saved to Application #{app['id']}.")
+
+
+def cmd_track_show(args):
+    """Displays full details and event timeline for an application."""
+    store = CareerStore()
+    try:
+        app_id = int(args.id)
+    except ValueError:
+        print(f"Error: Invalid application ID '{args.id}'. Must be an integer.", file=sys.stderr)
+        sys.exit(2)
+
+    app = store.get_application(app_id)
+    if app is None:
+        print(f"Error: Application #{app_id} not found.", file=sys.stderr)
+        sys.exit(2)
+
+    if getattr(args, "json", False):
+        print(json.dumps(app, indent=2))
+        sys.exit(0)
+
+    print("\n" + "=" * 64)
+    print(f"Application #{app['id']}: {app['title']} @ {app['company']}")
+    print("=" * 64)
+    print(f"Stage:        {app['stage']}")
+    print(f"Source:       {app.get('source', '')} | Location: {app.get('location', '')}")
+    print(f"URL:          {app.get('url') or '-'}")
+    print(f"Applied At:   {app.get('applied_at') or '-'}")
+    print(f"Next Action:  {app.get('next_action_at') or '-'}")
+    print(f"CV Path:      {app.get('cv_path') or '-'}")
+    print(f"CV SHA-256:   {app.get('cv_sha256') or '-'}")
+    print(f"Match Score:  {app.get('match_score') if app.get('match_score') is not None else '-'}")
+    print(f"Notes:        {app.get('notes') or '-'}")
+    if app.get("jd_snapshot"):
+        preview = app["jd_snapshot"].strip().replace("\n", " ")[:180]
+        print(f"JD Snapshot:  {preview}...")
+    print("-" * 64)
+    print("Timeline Events:")
+    for ev in app.get("events", []):
+        print(f"  - [{ev['at']}] ({ev['kind']}) {ev['detail']}")
+    print("=" * 64 + "\n")
+
+
+def cmd_track_due(args):
+    """Lists applications overdue for follow-up."""
+    store = CareerStore()
+    due_apps = store.get_due_applications(days=args.days)
+
+    if getattr(args, "json", False):
+        print(json.dumps(due_apps, indent=2))
+        sys.exit(0)
+
+    if not due_apps:
+        print(f"✅ No applications due for follow-up (>= {args.days} days).")
+        sys.exit(0)
+
+    from rich.table import Table
+
+    console = _track_console()
+    table = Table(title=f"Follow-Ups Due (>= {args.days} days)", show_header=True, header_style="bold yellow")
+    table.add_column("ID", style="bold", width=5)
+    table.add_column("Stage", width=11)
+    table.add_column("Company", width=18)
+    table.add_column("Title", width=26)
+    table.add_column("Days Elapsed", justify="right", width=12)
+
+    for a in due_apps:
+        table.add_row(
+            str(a["id"]),
+            a["stage"],
+            a.get("company", ""),
+            a.get("title", ""),
+            str(a.get("days_since_applied", 0)),
+        )
+    console.print()
+    console.print(table)
+    console.print("\nTip: Draft a follow-up note with 'forge track note <id> \"Sent follow-up\"'.\n")
+
+
+def cmd_track_ghosted(args):
+    """Suggests stagnant applications that may be ghosted without auto-moving."""
+    store = CareerStore()
+    candidates = store.get_ghost_candidates(days=args.days)
+
+    if getattr(args, "json", False):
+        print(json.dumps(candidates, indent=2))
+        sys.exit(0)
+
+    if not candidates:
+        print(f"✅ No applications stagnant for >= {args.days} days.")
+        sys.exit(0)
+
+    from rich.table import Table
+
+    console = _track_console()
+    table = Table(
+        title=f"Suggested Ghosted Candidates (>= {args.days} days inactive; not auto-moved)",
+        show_header=True,
+        header_style="bold magenta",
+    )
+    table.add_column("ID", style="bold", width=5)
+    table.add_column("Stage", width=11)
+    table.add_column("Company", width=18)
+    table.add_column("Title", width=26)
+    table.add_column("Days Inactive", justify="right", width=14)
+
+    for a in candidates:
+        table.add_row(
+            str(a["id"]),
+            a["stage"],
+            a.get("company", ""),
+            a.get("title", ""),
+            str(a.get("stale_days", 0)),
+        )
+    console.print()
+    console.print(table)
+    console.print("\nTo mark any item ghosted manually, run: forge track move <id> ghosted\n")
+
+
+def cmd_track_export(args):
+    """Exports tracked applications as CSV or Markdown."""
+    if not args.csv and not args.md:
+        print("Error: Specify either --csv or --md for export format.", file=sys.stderr)
+        sys.exit(2)
+    if args.csv and args.md:
+        print("Error: Choose only one of --csv or --md.", file=sys.stderr)
+        sys.exit(2)
+
+    fmt = "csv" if args.csv else "md"
+    store = CareerStore()
+    output_text = store.export_applications(fmt=fmt)
+
+    if args.out:
+        with open(args.out, "w", encoding="utf-8") as f:
+            f.write(output_text)
+        print(f"💾 Exported {fmt.upper()} report to '{args.out}'.")
+    else:
+        print(output_text, end="")
+
+
+def cmd_track_board(args):
+    """Launches the optional Textual Kanban TUI board."""
+    try:
+        from careerforge.tui import run_board_tui
+    except ImportError:
+        print(
+            "Error: Terminal UI requires optional [tui] extra. Install with: pip install careerforge[tui]",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+
+    run_board_tui()
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="careerforge",
@@ -516,7 +872,13 @@ def main():
     p_scrape.add_argument("--roles", nargs="+", default=None, help="Specific role keywords to search")
     p_scrape.add_argument("--include-senior", action="store_true", help="Include senior/lead/director roles")
     p_scrape.add_argument("--limit", type=int, default=15, help="Number of jobs to display")
-    p_scrape.add_argument("--save", type=str, default=None, help="Save results to JSON file")
+    p_scrape.add_argument(
+        "--save",
+        nargs="?",
+        const="__DB__",
+        default=None,
+        help="Save results to local SQLite DB (default with --save) or specify JSON export path",
+    )
     p_scrape.set_defaults(func=cmd_scrape)
 
     # apply
@@ -596,10 +958,76 @@ def main():
     p_dorks.add_argument("--json", action="store_true", help="Output dorks as JSON")
     p_dorks.set_defaults(func=cmd_dorks)
 
+    # track
+    p_track = subparsers.add_parser("track", help="Track job applications locally in SQLite")
+    track_sub = p_track.add_subparsers(dest="track_action", help="Tracking actions")
+
+    p_t_add = track_sub.add_parser("add", help="Add an application from job ID, URL, or manual input")
+    p_t_add.add_argument("job_id", nargs="?", default=None, help="Existing job ID or external_id from scraped jobs")
+    p_t_add.add_argument("--url", type=str, default=None, help="Job posting URL")
+    p_t_add.add_argument("--manual", action="store_true", help="Create job entry manually")
+    p_t_add.add_argument("--company", type=str, default=None, help="Company name")
+    p_t_add.add_argument("--title", type=str, default=None, help="Role title")
+    p_t_add.add_argument("--location", type=str, default="Remote", help="Job location (default: Remote)")
+    p_t_add.add_argument("--stage", choices=list(VALID_STAGES), default="saved", help="Initial stage (default: saved)")
+    p_t_add.add_argument("--cv", type=str, default=None, help="Path to submitted CV file (records path and SHA-256)")
+    p_t_add.add_argument("--jd", type=str, default=None, help="JD file path or raw text to snapshot")
+    p_t_add.add_argument("--score", type=float, default=None, help="ATS match score snapshot")
+    p_t_add.add_argument("--notes", type=str, default="", help="Initial notes")
+    p_t_add.add_argument("--due-days", type=int, default=7, help="Follow-up cadence in days when applied (default: 7)")
+    p_t_add.add_argument("--json", action="store_true", help="Output JSON")
+    p_t_add.set_defaults(func=cmd_track_add)
+
+    p_t_list = track_sub.add_parser("list", help="List tracked applications")
+    p_t_list.add_argument("--stage", type=str, default=None, help="Filter by stage")
+    p_t_list.add_argument("--json", action="store_true", help="Output JSON")
+    p_t_list.set_defaults(func=cmd_track_list)
+
+    p_t_move = track_sub.add_parser("move", help="Move an application to another stage")
+    p_t_move.add_argument("id", type=str, help="Application ID")
+    p_t_move.add_argument("stage", type=str, help=f"Target stage ({', '.join(VALID_STAGES)})")
+    p_t_move.add_argument("--note", type=str, default=None, help="Optional event note")
+    p_t_move.add_argument("--due-days", type=int, default=7, help="Follow-up window in days (default: 7)")
+    p_t_move.add_argument("--json", action="store_true", help="Output JSON")
+    p_t_move.set_defaults(func=cmd_track_move)
+
+    p_t_note = track_sub.add_parser("note", help="Append a timestamped note to an application")
+    p_t_note.add_argument("id", type=str, help="Application ID")
+    p_t_note.add_argument("text", type=str, help="Note text")
+    p_t_note.add_argument("--json", action="store_true", help="Output JSON")
+    p_t_note.set_defaults(func=cmd_track_note)
+
+    p_t_show = track_sub.add_parser("show", help="Show application details and event history")
+    p_t_show.add_argument("id", type=str, help="Application ID")
+    p_t_show.add_argument("--json", action="store_true", help="Output JSON")
+    p_t_show.set_defaults(func=cmd_track_show)
+
+    p_t_due = track_sub.add_parser("due", help="List applications needing follow-up")
+    p_t_due.add_argument("--days", type=int, default=7, help="Days since applied threshold (default: 7)")
+    p_t_due.add_argument("--json", action="store_true", help="Output JSON")
+    p_t_due.set_defaults(func=cmd_track_due)
+
+    p_t_ghost = track_sub.add_parser("ghosted", help="Suggest stale applications that may be ghosted")
+    p_t_ghost.add_argument("--days", type=int, default=21, help="Days inactive threshold (default: 21)")
+    p_t_ghost.add_argument("--json", action="store_true", help="Output JSON")
+    p_t_ghost.set_defaults(func=cmd_track_ghosted)
+
+    p_t_export = track_sub.add_parser("export", help="Export applications as CSV or Markdown")
+    p_t_export.add_argument("--csv", action="store_true", help="Export as CSV")
+    p_t_export.add_argument("--md", action="store_true", help="Export as Markdown table")
+    p_t_export.add_argument("--out", type=str, default=None, help="Output file path (prints to stdout if omitted)")
+    p_t_export.set_defaults(func=cmd_track_export)
+
+    p_t_board = track_sub.add_parser("board", help="Launch interactive Kanban TUI (requires careerforge[tui])")
+    p_t_board.set_defaults(func=cmd_track_board)
+
     args = parser.parse_args()
     if not args.command:
         parser.print_help()
         sys.exit(0)
+    if args.command == "track" and not getattr(args, "track_action", None):
+        p_track.print_help()
+        sys.exit(2)
 
     args.func(args)
 
