@@ -152,8 +152,35 @@ def _migrate_v1(conn: sqlite3.Connection) -> None:
     )
 
 
+def _compute_description_hash(description: Optional[str]) -> str:
+    """Computes a compact hash for non-empty job description text."""
+    clean = (description or "").strip()
+    if not clean:
+        return ""
+    return hashlib.sha256(clean.encode("utf-8")).hexdigest()[:16]
+
+
+def _migrate_v2(conn: sqlite3.Connection) -> None:
+    """v2 migration: track job description hash and last changed timestamp for ghost signals."""
+    cols = {row[1] for row in conn.execute("PRAGMA table_info(jobs)").fetchall()}
+    if "description_hash" not in cols:
+        conn.execute("ALTER TABLE jobs ADD COLUMN description_hash TEXT DEFAULT ''")
+    if "description_changed_at" not in cols:
+        conn.execute("ALTER TABLE jobs ADD COLUMN description_changed_at TEXT")
+
+    rows = conn.execute("SELECT id, description, first_seen FROM jobs").fetchall()
+    for r in rows:
+        d_hash = _compute_description_hash(r["description"])
+        changed_at = r["first_seen"] if d_hash else None
+        conn.execute(
+            "UPDATE jobs SET description_hash = ?, description_changed_at = ? WHERE id = ?",
+            (d_hash, changed_at, r["id"]),
+        )
+
+
 MIGRATIONS: List[Callable[[sqlite3.Connection], None]] = [
     _migrate_v1,
+    _migrate_v2,
 ]
 
 
@@ -289,8 +316,9 @@ class CareerStore:
                     if ext_id:
                         seen_per_board[board_key].add(str(ext_id))
 
+                desc_hash = _compute_description_hash(description)
                 existing = conn.execute(
-                    "SELECT id FROM jobs WHERE dedupe_hash = ?",
+                    "SELECT id, description_hash, description_changed_at FROM jobs WHERE dedupe_hash = ?",
                     (d_hash,),
                 ).fetchone()
 
@@ -300,8 +328,9 @@ class CareerStore:
                         INSERT INTO jobs (
                             dedupe_hash, source, external_id, company, title,
                             location, remote_policy, salary_min, salary_max, currency,
-                            url, description, posted_at, first_seen, last_seen, closed_at
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)
+                            url, description, description_hash, description_changed_at,
+                            posted_at, first_seen, last_seen, closed_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)
                         """,
                         (
                             d_hash,
@@ -316,6 +345,8 @@ class CareerStore:
                             currency,
                             url,
                             description,
+                            desc_hash,
+                            now_iso if desc_hash else None,
                             posted_at,
                             now_iso,
                             now_iso,
@@ -323,6 +354,15 @@ class CareerStore:
                     )
                     inserted += 1
                 else:
+                    old_desc_hash = existing["description_hash"] or ""
+                    old_changed_at = existing["description_changed_at"]
+                    if desc_hash and desc_hash != old_desc_hash:
+                        new_desc_hash = desc_hash
+                        new_changed_at = now_iso
+                    else:
+                        new_desc_hash = old_desc_hash or desc_hash
+                        new_changed_at = old_changed_at or (now_iso if new_desc_hash else None)
+
                     conn.execute(
                         """
                         UPDATE jobs
@@ -335,6 +375,8 @@ class CareerStore:
                             currency = COALESCE(?, currency),
                             url = COALESCE(NULLIF(?, ''), url),
                             description = CASE WHEN ? != '' THEN ? ELSE description END,
+                            description_hash = ?,
+                            description_changed_at = ?,
                             posted_at = COALESCE(?, posted_at)
                         WHERE id = ?
                         """,
@@ -348,6 +390,8 @@ class CareerStore:
                             url,
                             description,
                             description,
+                            new_desc_hash,
+                            new_changed_at,
                             posted_at,
                             existing["id"],
                         ),
@@ -400,18 +444,24 @@ class CareerStore:
                     ).fetchone()
             return dict(row) if row else None
 
-    def list_jobs(self, limit: int = 100, include_closed: bool = True) -> List[Dict[str, Any]]:
+    def list_jobs(self, limit: Optional[int] = 100, include_closed: bool = True) -> List[Dict[str, Any]]:
         with self._connect() as conn:
-            if include_closed:
-                rows = conn.execute(
-                    "SELECT * FROM jobs ORDER BY last_seen DESC, id DESC LIMIT ?",
-                    (limit,),
-                ).fetchall()
+            query = "SELECT * FROM jobs"
+            if not include_closed:
+                query += " WHERE closed_at IS NULL"
+            query += " ORDER BY last_seen DESC, id DESC"
+            if limit is not None:
+                rows = conn.execute(query + " LIMIT ?", (limit,)).fetchall()
             else:
-                rows = conn.execute(
-                    "SELECT * FROM jobs WHERE closed_at IS NULL ORDER BY last_seen DESC, id DESC LIMIT ?",
-                    (limit,),
-                ).fetchall()
+                rows = conn.execute(query).fetchall()
+            return [dict(r) for r in rows]
+
+    def list_all_events(self) -> List[Dict[str, Any]]:
+        """Returns all timeline events ordered chronologically."""
+        with self._connect() as conn:
+            rows = conn.execute(
+                "SELECT id, application_id, at, kind, detail FROM events ORDER BY at ASC, id ASC"
+            ).fetchall()
             return [dict(r) for r in rows]
 
     # ------------------------------------------------------------------

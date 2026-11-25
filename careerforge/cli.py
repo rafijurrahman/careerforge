@@ -23,9 +23,12 @@ try:
     from careerforge.core.anti_ai_engine import audit_text
     from careerforge.core.ats_sim import AtsSimFileError, run_ats_sim
     from careerforge.core.dorks import generate_ats_dorks
+    from careerforge.core.ghost import analyze_ghost_jobs
     from careerforge.core.matcher import compute_ats_match
     from careerforge.core.page_optimizer import optimize_to_single_page
     from careerforge.core.profile_loader import load_profile
+    from careerforge.core.reporter import ReportError, generate_report
+    from careerforge.core.salary import SalaryError, analyze_salaries
     from careerforge.core.store import VALID_STAGES, CareerStore, StoreError
     from careerforge.core.tailor_engine import tailor_profile
     from careerforge.scrapers.ashby_scanner import AshbyScraper, scan_all_ashby
@@ -41,9 +44,12 @@ except ImportError:
     from core.anti_ai_engine import audit_text
     from core.ats_sim import AtsSimFileError, run_ats_sim
     from core.dorks import generate_ats_dorks
+    from core.ghost import analyze_ghost_jobs
     from core.matcher import compute_ats_match
     from core.page_optimizer import optimize_to_single_page
     from core.profile_loader import load_profile
+    from core.reporter import ReportError, generate_report
+    from core.salary import SalaryError, analyze_salaries
     from core.store import VALID_STAGES, CareerStore, StoreError
     from core.tailor_engine import tailor_profile
     from scrapers.ashby_scanner import AshbyScraper, scan_all_ashby
@@ -847,6 +853,194 @@ def cmd_track_board(args):
     run_board_tui()
 
 
+def cmd_report(args):
+    """Generates application funnel, CV response rates, and timing metrics."""
+    store = CareerStore()
+    try:
+        rep = generate_report(store, since=args.since)
+    except ReportError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if getattr(args, "json", False):
+        print(json.dumps(rep, indent=2))
+        sys.exit(0)
+
+    from rich.table import Table
+
+    console = _track_console()
+    console.print()
+    title_suffix = f" (since {args.since})" if args.since else ""
+    table = Table(
+        title=f"Application Funnel Report{title_suffix}",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Stage", style="bold", width=12)
+    table.add_column("Count", justify="right", width=7)
+    table.add_column("Step %", justify="right", width=9)
+    table.add_column("Bar", width=22)
+
+    max_count = max((s["count"] for s in rep["funnel"]), default=1) or 1
+    for step in rep["funnel"]:
+        bar_len = int(round((step["count"] / max_count) * 20))
+        bar = "█" * bar_len + "░" * (20 - bar_len)
+        table.add_row(
+            step["stage"],
+            str(step["count"]),
+            f"{step['step_conversion_pct']}%",
+            bar,
+        )
+
+    console.print(table)
+    console.print(f"Funnel Sparkline: [bold cyan]{rep['funnel_sparkline']}[/bold cyan]")
+    if rep["avg_response_days"] is not None:
+        console.print(f"Average Days to First Response: {rep['avg_response_days']} days")
+    if rep["avg_active_days"] is not None:
+        console.print(f"Average Active Application Age: {rep['avg_active_days']} days")
+
+    if rep["by_cv_version"]:
+        cv_table = Table(title="Response Rate by CV Version (SHA-256)", show_header=True, header_style="bold green")
+        cv_table.add_column("CV Hash", width=14)
+        cv_table.add_column("Applied", justify="right", width=9)
+        cv_table.add_column("Responded", justify="right", width=10)
+        cv_table.add_column("Rate", justify="right", width=8)
+        for row in rep["by_cv_version"]:
+            cv_table.add_row(
+                row["cv_hash"],
+                str(row["applied"]),
+                str(row["responded"]),
+                f"{row['response_rate_pct']}%",
+            )
+        console.print()
+        console.print(cv_table)
+
+    if rep["by_source"]:
+        src_table = Table(title="Response Rate by Source", show_header=True, header_style="bold blue")
+        src_table.add_column("Source", width=16)
+        src_table.add_column("Applied", justify="right", width=9)
+        src_table.add_column("Responded", justify="right", width=10)
+        src_table.add_column("Rate", justify="right", width=8)
+        for row in rep["by_source"]:
+            src_table.add_row(
+                row["source"],
+                str(row["applied"]),
+                str(row["responded"]),
+                f"{row['response_rate_pct']}%",
+            )
+        console.print()
+        console.print(src_table)
+
+    for w in rep["warnings"]:
+        console.print(f"[bold yellow]Warning:[/bold yellow] {w}")
+    console.print()
+
+
+def cmd_ghost(args):
+    """Evaluates heuristic Ghost Risk on stored job listings."""
+    if args.top <= 0:
+        print("Error: --top must be a positive integer.", file=sys.stderr)
+        sys.exit(2)
+
+    store = CareerStore()
+    try:
+        res = analyze_ghost_jobs(store, job_id=args.job_id, top=args.top)
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if getattr(args, "json", False):
+        print(json.dumps(res, indent=2))
+        sys.exit(0)
+
+    from rich.table import Table
+
+    console = _track_console()
+    console.print(f"\n[bold yellow]Notice:[/bold yellow] {res['notice']}\n")
+
+    if not res["items"]:
+        print("No jobs in local database yet. Run 'forge scrape --save' or 'forge track add' first.")
+        sys.exit(0)
+
+    table = Table(title="Ghost Risk Heuristic Audit", show_header=True, header_style="bold cyan")
+    table.add_column("ID", width=5)
+    table.add_column("Risk", width=8)
+    table.add_column("Score", justify="right", width=6)
+    table.add_column("Company", width=16)
+    table.add_column("Title", width=24)
+    table.add_column("Reasons")
+
+    for item in res["items"]:
+        lvl = item["risk_level"]
+        lvl_styled = (
+            "[bold red]High[/bold red]"
+            if lvl == "High"
+            else ("[bold yellow]Medium[/bold yellow]" if lvl == "Medium" else "[bold green]Low[/bold green]")
+        )
+        table.add_row(
+            str(item["job_id"]),
+            lvl_styled,
+            str(item["risk_score"]),
+            item["company"],
+            item["title"],
+            "; ".join(item["reasons"]),
+        )
+    console.print(table)
+    console.print()
+
+
+def cmd_salary(args):
+    """Computes heuristic salary percentiles strictly from stored listings."""
+    store = CareerStore()
+    try:
+        res = analyze_salaries(
+            store,
+            role=args.role,
+            keyword=args.keyword,
+            currency=args.currency,
+            rates_path=args.rates,
+        )
+    except SalaryError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if getattr(args, "json", False):
+        print(json.dumps(res, indent=2))
+        sys.exit(0)
+
+    from rich.table import Table
+
+    console = _track_console()
+    console.print(f"\n[bold yellow]Notice:[/bold yellow] {res['notice']}\n")
+
+    if res["buckets"]:
+        table = Table(title="Disclosed Compensation Bands", show_header=True, header_style="bold cyan")
+        table.add_column("Currency", width=9)
+        table.add_column("Count", justify="right", width=6)
+        table.add_column("Min", justify="right", width=11)
+        table.add_column("P25", justify="right", width=11)
+        table.add_column("Median", justify="right", width=11)
+        table.add_column("P75", justify="right", width=11)
+        table.add_column("Max", justify="right", width=11)
+
+        for b in res["buckets"]:
+            table.add_row(
+                b["currency"],
+                str(b["count"]),
+                f"{b['min']:,.0f}",
+                f"{b['p25']:,.0f}",
+                f"{b['median']:,.0f}",
+                f"{b['p75']:,.0f}",
+                f"{b['max']:,.0f}",
+            )
+        console.print(table)
+        console.print()
+
+    for w in res["warnings"]:
+        console.print(f"[bold yellow]Warning:[/bold yellow] {w}")
+    console.print()
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="careerforge",
@@ -1020,6 +1214,28 @@ def main():
 
     p_t_board = track_sub.add_parser("board", help="Launch interactive Kanban TUI (requires careerforge[tui])")
     p_t_board.set_defaults(func=cmd_track_board)
+
+    # report
+    p_report = subparsers.add_parser("report", help="Show application funnel and response rate analytics")
+    p_report.add_argument("--since", type=str, default=None, help="Filter window: YYYY-MM-DD or Nd (e.g. 30d)")
+    p_report.add_argument("--json", action="store_true", help="Output JSON report")
+    p_report.set_defaults(func=cmd_report)
+
+    # ghost
+    p_ghost = subparsers.add_parser("ghost", help="Evaluate heuristic Ghost Risk scores on stored jobs")
+    p_ghost.add_argument("job_id", nargs="?", default=None, help="Optional job ID or external_id to inspect")
+    p_ghost.add_argument("--top", type=int, default=20, help="Show top N highest-risk jobs (default: 20)")
+    p_ghost.add_argument("--json", action="store_true", help="Output JSON report")
+    p_ghost.set_defaults(func=cmd_ghost)
+
+    # salary
+    p_salary = subparsers.add_parser("salary", help="Analyze salary percentiles from disclosed job postings")
+    p_salary.add_argument("--role", type=str, default=None, help="Filter postings by role title/text")
+    p_salary.add_argument("--keyword", type=str, default=None, help="Additional keyword filter")
+    p_salary.add_argument("--currency", type=str, default=None, help="Target or filter currency code (e.g. USD)")
+    p_salary.add_argument("--rates", type=str, default=None, help="Path to user-supplied currency rates YAML")
+    p_salary.add_argument("--json", action="store_true", help="Output JSON report")
+    p_salary.set_defaults(func=cmd_salary)
 
     args = parser.parse_args()
     if not args.command:
