@@ -1,63 +1,88 @@
 # CareerForge System Architecture
 
-CareerForge is designed as a modular, local-first engine composed of three core subsystems:
-1. **The Ingestion & Normalization Layer:** Loads user profiles and scrapes public job boards.
-2. **The Verification & Audit Layer:** Enforces 1-page document constraints and linguistic compliance.
-3. **The Document Generation Layer:** Produces ATS-safe `.docx` and verified `.pdf` output.
+CareerForge is a modular, local-first application suite composed of five cooperating layers:
+1. **Discovery Layer:** Public ATS scrapers (`Greenhouse`, `Ashby`, `Lever`, `Remotive`) and offline Google search dork URL generation (`forge dorks`).
+2. **Matching & Eligibility Layer:** Skill ontology matching (`skills.yaml`), heuristic remote geo-restriction detection (`eligibility_rules.yaml`), and knapsack CV bullet selection with `--diff` breakdowns.
+3. **Document Generation & Parser Check Layer:** Single-page `.docx` / `.pdf` builder (`LibreOffice` headless cross-platform default, `Word COM` on Windows), Anti-AI style audit (`anti_ai_rules.yaml`), and offline PDF/DOCX parser fragility diagnostics (`forge ats-sim`).
+4. **Local Tracking & Analytics Layer:** Stdlib SQLite database (`careerforge.db` via `platformdirs`), Textual Kanban TUI (`careerforge[tui]`), cumulative funnel conversion reports (`forge report`), heuristic stale-job scoring (`forge ghost`), and disclosed compensation percentiles (`forge salary`).
+5. **Interview & Outreach Preparation Layer:** Honest `TODO: fill in` STAR story bank (`stories.yaml` + bundled role question banks) and Anti-AI-audited outreach templates (`<<FILL: ...>>` markers + `--app` integration).
 
 ---
 
-## 🏛️ System Component Diagram
+## System Component Diagram
 
 ```mermaid
 graph TD
     User([User CLI / forge]) --> CLI[careerforge/cli.py]
-    
-    subgraph Data & Storage
+
+    subgraph Data & Local Storage
         Profile[(profile.yaml)]
-        Skills[(careerforge/data/skills.yaml)]
-        Rules[(careerforge/data/anti_ai_rules.yaml)]
+        SQLite[(careerforge.db<br/>SQLite v2)]
+        Stories[(stories.yaml)]
+        Ontology[(skills.yaml &<br/>eligibility_rules.yaml)]
+        AuditRules[(anti_ai_rules.yaml)]
+        Questions[(questions/*.yaml)]
+        Templates[(templates/*.txt)]
     end
 
-    subgraph Core Engine
-        Loader[Profile Loader & Normalizer]
-        Optimizer[1-Page Page Optimizer]
-        CVBuilder[Universal docx Builder]
-        Auditor[Anti-AI Linguistic Engine]
+    subgraph Matching, Prep & Analytics
+        Matcher[matcher.py &<br/>eligibility.py]
+        Tailor[tailor_engine.py]
+        Store[store.py & tui.py]
+        Analytics[reporter.py, ghost.py,<br/>salary.py]
+        Prep[interview.py &<br/>cover.py]
+        Auditor[anti_ai_engine.py]
     end
 
-    subgraph PDF Backends
-        LibreOffice[LibreOffice Headless<br/>Cross-Platform Default]
-        WordCOM[Microsoft Word COM<br/>Windows Fast-Path]
+    subgraph Document & PDF Pipeline
+        Optimizer[page_optimizer.py]
+        CVBuilder[cv_builder.py]
+        AtsSim[ats_sim.py]
+        LibreOffice[LibreOffice Headless]
+        WordCOM[Windows Word COM]
     end
 
-    subgraph Scrapers Plugin Layer
+    subgraph Public Scrapers
         BaseScraper[BaseScraper ABC]
-        GH[Greenhouse Scraper]
-        Ashby[Ashby Scraper]
-        Remotive[Remotive Scraper]
+        GH[Greenhouse]
+        Ashby[Ashby]
+        Lever[Lever]
+        Remotive[Remotive]
     end
 
-    CLI --> Loader
-    Loader --> Profile
-    CLI --> Auditor
-    Auditor --> Rules
-    CLI --> Optimizer
+    CLI --> Matcher
+    Matcher --> Profile
+    Matcher --> Ontology
+    CLI --> Tailor
+    Tailor --> Optimizer
     Optimizer --> CVBuilder
     Optimizer --> LibreOffice
     Optimizer --> WordCOM
+    CLI --> AtsSim
+    CLI --> Auditor
+    Auditor --> AuditRules
+
+    CLI --> Store
+    Store --> SQLite
+    CLI --> Analytics
+    Analytics --> SQLite
+    CLI --> Prep
+    Prep --> Stories
+    Prep --> Questions
+    Prep --> Templates
+    Prep --> Auditor
+
     CLI --> BaseScraper
     BaseScraper --> GH
     BaseScraper --> Ashby
+    BaseScraper --> Lever
     BaseScraper --> Remotive
-    
-    CVBuilder --> OutputDocx[(output/Candidate_CV.docx)]
-    Optimizer --> OutputPDF[(output/Candidate_CV.pdf)]
+    CLI --> Dorks[dorks.py - offline URLs]
 ```
 
 ---
 
-## 🔄 Execution Flow
+## Execution Flows
 
 ### 1. The 1-Page Document Auto-Fitting Loop
 ```mermaid
@@ -65,9 +90,9 @@ sequenceDiagram
     participant User
     participant Optimizer as page_optimizer.py
     participant Builder as cv_builder.py
-    participant Backend as PDF Engine (LibreOffice / Word COM)
+    participant Backend as LibreOffice / Word COM
 
-    User->>Optimizer: forge apply --pages 1
+    User->>Optimizer: forge apply --pages 1 [--check]
     loop Grid Search (Font Scale 1.06 -> 0.92, Margins 0.30 -> 0.20)
         Optimizer->>Builder: build_universal_cv(font_scale, spacing_scale)
         Builder-->>Optimizer: output.docx written
@@ -79,16 +104,18 @@ sequenceDiagram
     end
 ```
 
-### 2. The Anti-AI Linguistic Audit Pipeline
+### 2. Local SQLite Tracking & Offline Preparation
 ```mermaid
 sequenceDiagram
-    participant CLI as forge audit
-    participant Engine as anti_ai_engine.py
-    participant Rules as anti_ai_rules.yaml
+    participant Scrape as forge scrape --save
+    participant DB as careerforge.db (SQLite)
+    participant Track as forge track / due
+    participant Analytics as report / ghost / salary
+    participant Cover as forge cover --type follow-up
 
-    CLI->>Engine: audit_text(content)
-    Engine->>Rules: Load rules (AI-001 to AI-005)
-    Engine->>Engine: Regex pattern evaluation
-    Engine->>Engine: Sentence cadence variance (burstiness)
-    Engine-->>CLI: Findings report + Exit code (0=Pass, 1=Fail)
+    Scrape->>DB: Upsert jobs + track description_hash
+    Track->>DB: Record applied stage, CV SHA-256, events
+    Analytics->>DB: Read jobs + applications offline (warnings if n < 10)
+    Track->>Cover: Pass app ID with company, role, applied_at
+    Cover->>Cover: Render template + audit_text() offline
 ```

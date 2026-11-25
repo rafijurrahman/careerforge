@@ -1,0 +1,108 @@
+{
+  "heuristic": true,
+  "notice": "Heuristic ghost risk estimate, not proof of employer intent.",
+  "count": 6,
+  "total_jobs_evaluated": 6,
+  "items": [
+    {
+      "job_id": 2,
+      "company": "Harbor Freight Tech",
+      "title": "Senior Backend Platform Engineer",
+      "source": "lever",
+      "url": "https://jobs.lever.co/harborfreight/202",
+      "risk_score": 40,
+      "risk_level": "Medium",
+      "age_days": 68,
+      "repost_count": 1,
+      "closed": false,
+      "reasons": [
+        "Posting age is 68 days (>= 60d old, +25).",
+        "Description hash (ab775d45) unchanged across 66 days (+15)."
+      ],
+      "notice": "Heuristic ghost risk estimate, not proof of employer intent."
+    },
+    {
+      "job_id": 5,
+      "company": "Cascade Logistics",
+      "title": "Platform Data Engineer",
+      "source": "greenhouse",
+      "url": "https://boards.greenhouse.io/cascadelogistics/jobs/505",
+      "risk_score": 35,
+      "risk_level": "Medium",
+      "age_days": 75,
+      "repost_count": 1,
+      "closed": false,
+      "reasons": [
+        "Posting age is 75 days (>= 60d old, +25).",
+        "Not refreshed in 75 days since last_seen (+10)."
+      ],
+      "notice": "Heuristic ghost risk estimate, not proof of employer intent."
+    },
+    {
+      "job_id": 4,
+      "company": "Summit FinOps",
+      "title": "Python Backend Developer",
+      "source": "remotive",
+      "url": "https://remotive.com/remote-jobs/404",
+      "risk_score": 25,
+      "risk_level": "Low",
+      "age_days": 45,
+      "repost_count": 1,
+      "closed": false,
+      "reasons": [
+        "Posting age is 45 days (>= 30d old, +15).",
+        "Not refreshed in 45 days since last_seen (+10)."
+      ],
+      "notice": "Heuristic ghost risk estimate, not proof of employer intent."
+    },
+    {
+      "job_id": 6,
+      "company": "Riverbank Analytics",
+      "title": "Backend Systems Engineer",
+      "source": "url",
+      "url": "https://jobs.ashbyhq.com/example/606",
+      "risk_score": 25,
+      "risk_level": "Low",
+      "age_days": 28,
+      "repost_count": 1,
+      "closed": false,
+      "reasons": [
+        "Not refreshed in 28 days since last_seen (+10).",
+        "No salary range and missing/short (<120 chars) job description (+15)."
+      ],
+      "notice": "Heuristic ghost risk estimate, not proof of employer intent."
+    },
+    {
+      "job_id": 1,
+      "company": "Northwind Data Systems",
+      "title": "Data & Analytics Engineer",
+      "source": "greenhouse",
+      "url": "https://boards.greenhouse.io/northwinddata/jobs/101",
+      "risk_score": 0,
+      "risk_level": "Low",
+      "age_days": 5,
+      "repost_count": 1,
+      "closed": false,
+      "reasons": [
+        "No elevated ghost signals detected."
+      ],
+      "notice": "Heuristic ghost risk estimate, not proof of employer intent."
+    },
+    {
+      "job_id": 3,
+      "company": "Beacon Health Labs",
+      "title": "Analytics Engineer",
+      "source": "ashby",
+      "url": "https://jobs.ashbyhq.com/beaconhealth/303",
+      "risk_score": 0,
+      "risk_level": "Low",
+      "age_days": 12,
+      "repost_count": 1,
+      "closed": false,
+      "reasons": [
+        "No elevated ghost signals detected."
+      ],
+      "notice": "Heuristic ghost risk estimate, not proof of employer intent."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "type": "cover",
+  "company": "Northwind Data Systems",
+  "role": "Backend Engineer",
+  "hiring_manager": "<<FILL: hiring manager name>>",
+  "applied_date": null,
+  "app_id": null,
+  "word_count": 167,
+  "char_count": 1104,
+  "fill_markers": [
+    "<<FILL: hiring manager name>>"
+  ],
+  "matched_skills": [
+    "Docker",
+    "FastAPI",
+    "Go",
+    "GraphQL",
+    "Kafka"
+  ],
+  "selected_proofs": [
+    "Built REST and GraphQL endpoints in Python and FastAPI serving 120,000 daily active users.",
+    "Architected event-driven ingestion pipeline in Go and Kafka processing 14,000 messages per second."
+  ],
+  "audit": {
+    "compliant": true,
+    "total_issues": 0,
+    "sentence_count": 17,
+    "average_sentence_words": 10.1,
+    "burstiness_status": "HEALTHY",
+    "findings": []
+  },
+  "text": "Hi <<FILL: hiring manager name>>,\n\nI am applying for the Backend Engineer role at Northwind Data Systems. Your focus on Docker, FastAPI, Go lines up closely with my recent work.\n\nBuilt REST and GraphQL endpoints in Python and FastAPI serving 120,000 daily active users. Architected event-driven ingestion pipeline in Go and Kafka processing 14,000 messages per second.\n\nMy daily tools match what your team listed: Docker, FastAPI, Go, GraphQL, Kafka. I verify edge cases early. Clear code and plain documentation save everyone hours each week. In past roles, I fixed data and runtime bottlenecks at the source before they slowed downstream teams.\n\nMy projects follow simple rules: small test cycles, explicit data checks, clear metrics, and systems other engineers can debug quickly. If anything looks unclear in a service or table, I trace it to the schema before patching downstream code.\n\nThank you for reading. Would you have 15 minutes this week to talk through the Backend Engineer role?\n\nBest,\nAlex Rivera\nalex.rivera@example.com | linkedin.com/in/alexrivera-fictional | github.com/alexrivera-demo\n"
+}

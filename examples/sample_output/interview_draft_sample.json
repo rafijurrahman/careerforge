@@ -1,0 +1,49 @@
+{
+  "draft_count": 3,
+  "saved": null,
+  "drafts": [
+    {
+      "title": "Apex Cloud Systems: Reduced p95 API response times from 840ms to...",
+      "source_type": "experience",
+      "source_ref": "Senior Backend Engineer at Apex Cloud Systems (Jan 2023 \u2013 Present) [Remote (USA)]",
+      "has_metric": true,
+      "inferred_metrics": [
+        "840ms",
+        "210ms"
+      ],
+      "situation": "Senior Backend Engineer at Apex Cloud Systems (Jan 2023 \u2013 Present) [Remote (USA)]",
+      "task": "TODO: fill in",
+      "action": "Reduced p95 API response times from 840ms to 210ms by introducing Redis caching and query indexing.",
+      "result": "TODO: fill in (profile cites metrics: 840ms, 210ms)",
+      "tags": []
+    },
+    {
+      "title": "Apex Cloud Systems: Architected event-driven ingestion pipeline in Go and Kafka...",
+      "source_type": "experience",
+      "source_ref": "Senior Backend Engineer at Apex Cloud Systems (Jan 2023 \u2013 Present) [Remote (USA)]",
+      "has_metric": true,
+      "inferred_metrics": [
+        "14,000"
+      ],
+      "situation": "Senior Backend Engineer at Apex Cloud Systems (Jan 2023 \u2013 Present) [Remote (USA)]",
+      "task": "TODO: fill in",
+      "action": "Architected event-driven ingestion pipeline in Go and Kafka processing 14,000 messages per second.",
+      "result": "TODO: fill in (profile cites metrics: 14,000)",
+      "tags": []
+    },
+    {
+      "title": "Apex Cloud Systems: Configured Prometheus and Grafana metrics monitoring, cutting incident...",
+      "source_type": "experience",
+      "source_ref": "Senior Backend Engineer at Apex Cloud Systems (Jan 2023 \u2013 Present) [Remote (USA)]",
+      "has_metric": true,
+      "inferred_metrics": [
+        "40%"
+      ],
+      "situation": "Senior Backend Engineer at Apex Cloud Systems (Jan 2023 \u2013 Present) [Remote (USA)]",
+      "task": "TODO: fill in",
+      "action": "Configured Prometheus and Grafana metrics monitoring, cutting incident triage turnaround by 40%.",
+      "result": "TODO: fill in (profile cites metrics: 40%)",
+      "tags": []
+    }
+  ]
+}

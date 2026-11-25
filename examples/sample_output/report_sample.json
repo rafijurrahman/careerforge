@@ -1,0 +1,92 @@
+{
+  "total_applications": 3,
+  "total_applied": 3,
+  "since": null,
+  "sample_too_small": true,
+  "warnings": [
+    "Sample too small (3 applied < 10): conversion rates are high-variance estimates."
+  ],
+  "funnel": [
+    {
+      "stage": "saved",
+      "count": 3,
+      "step_conversion_pct": 100.0,
+      "overall_pct": 100.0
+    },
+    {
+      "stage": "applied",
+      "count": 3,
+      "step_conversion_pct": 100.0,
+      "overall_pct": 100.0
+    },
+    {
+      "stage": "screen",
+      "count": 1,
+      "step_conversion_pct": 33.3,
+      "overall_pct": 33.3
+    },
+    {
+      "stage": "interview",
+      "count": 1,
+      "step_conversion_pct": 100.0,
+      "overall_pct": 33.3
+    },
+    {
+      "stage": "offer",
+      "count": 0,
+      "step_conversion_pct": 0.0,
+      "overall_pct": 0.0
+    }
+  ],
+  "funnel_sparkline": "\u2588\u2588\u2583\u2583\u2581",
+  "current_stages": {
+    "saved": 0,
+    "applied": 1,
+    "screen": 0,
+    "interview": 1,
+    "offer": 0,
+    "rejected": 1,
+    "ghosted": 0
+  },
+  "by_cv_version": [
+    {
+      "cv_hash": "a0d6fff71c34",
+      "applied": 2,
+      "responded": 1,
+      "response_rate_pct": 50.0,
+      "offers": 0
+    },
+    {
+      "cv_hash": "a5174d2155b3",
+      "applied": 1,
+      "responded": 0,
+      "response_rate_pct": 0.0,
+      "offers": 0
+    }
+  ],
+  "by_source": [
+    {
+      "source": "ashby",
+      "applied": 1,
+      "responded": 1,
+      "response_rate_pct": 100.0,
+      "offers": 0
+    },
+    {
+      "source": "greenhouse",
+      "applied": 1,
+      "responded": 0,
+      "response_rate_pct": 0.0,
+      "offers": 0
+    },
+    {
+      "source": "url",
+      "applied": 1,
+      "responded": 0,
+      "response_rate_pct": 0.0,
+      "offers": 0
+    }
+  ],
+  "avg_response_days": 11.0,
+  "avg_active_days": 12.0
+}

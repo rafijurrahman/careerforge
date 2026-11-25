@@ -12,7 +12,7 @@ CareerForge is designed from the ground up to be **100% offline-first and privat
 | **Local-Only Profiles** | `profile.yaml` is stored on your disk and strictly `.gitignore`d. |
 | **Zero Account Signups** | No passwords, no logins, no authentication tokens needed for core features. |
 | **No Cloud LLM Leaks** | Anti-AI auditing and keyword matching run locally on your CPU via deterministic algorithms. |
-| **Isolated Scrapers** | Scrapers fetch only public, unauthenticated job boards (Greenhouse, Ashby, Remotive) using standard HTTPS GET. |
+| **Isolated Scrapers** | Scrapers fetch only public, unauthenticated job boards (Greenhouse, Ashby, Lever, Remotive) using standard HTTPS GET. |
 
 ---
 
@@ -20,8 +20,9 @@ CareerForge is designed from the ground up to be **100% offline-first and privat
 
 | Command | Uses Network? | External Domains Contacted | Notes |
 |---|:---:|---|---|
-| `forge init` | ❌ No | None | Runs locally |
+| `forge init` / `setup` | ❌ No | None | Creates local `profile.yaml` interactively |
 | `forge doctor` | ❌ No | None | Inspects local system environment |
+| `forge dorks` | ❌ No | None | Prints employer ATS Google search URLs locally without HTTP requests |
 | `forge ats-sim` | ❌ No | None | Inspects local PDF/DOCX for parser fragility and encoding flaws |
 | `forge tailor` | ❌ No | None | Re-ranks profile bullets locally using offline knapsack algorithm |
 | `forge apply` | ❌ No | None | Generates DOCX/PDF via local Word COM / LibreOffice |
