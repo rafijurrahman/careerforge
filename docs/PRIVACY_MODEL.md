@@ -34,6 +34,7 @@ CareerForge is designed from the ground up to be **100% offline-first and privat
 | `forge ghost` | ❌ No | None | Scores heuristic Ghost Risk locally from stored SQLite jobs |
 | `forge salary` | ❌ No | None | Aggregates salary percentiles locally; uses optional local `rates.yaml` only |
 | `forge interview` | ❌ No | None | Drafts STAR outlines, manages local `stories.yaml`, runs seeded practice prompts locally |
+| `forge cover` | ❌ No | None | Builds template outreach from local profile/SQLite and audits via local `audit_text` |
 | `forge scrape` | ✅ Yes | `boards-api.greenhouse.io`, `api.ashbyhq.com`, `api.lever.co`, `remotive.com` | Fetches public job postings only. `--save` stores postings in local SQLite. Never transmits your profile. |
 
 ---

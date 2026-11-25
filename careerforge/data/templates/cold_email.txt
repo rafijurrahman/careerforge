@@ -1,0 +1,13 @@
+Subject: {role} at {company} - {candidate_name}
+
+Hi {hiring_manager},
+
+I saw your {role} opening at {company}. The work on {jd_focus} caught my eye.
+
+{proof}
+
+I use {matched_skills} daily. Open to a 15-minute call this week to see if my experience fits what you need?
+
+Thanks,
+{candidate_name}
+{candidate_links}

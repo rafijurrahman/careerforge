@@ -1,0 +1,13 @@
+Subject: Following up on {role} at {company}
+
+Hi {hiring_manager},
+
+I applied for the {role} opening at {company} on {applied_date}. I wanted to share a quick follow-up while your team reviews applications.
+
+One relevant note from my recent work: {proof}
+
+Please let me know if any extra detail on {jd_focus} would help. Thank you for your time.
+
+Best,
+{candidate_name}
+{candidate_links}
