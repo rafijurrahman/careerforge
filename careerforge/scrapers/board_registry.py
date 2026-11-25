@@ -22,3 +22,15 @@ ASHBY_BOARDS = [
     "perplexity", "synthesia", "vanta", "merge", "causal",
     "hex", "omnipresent", "deel", "safetywing"
 ]
+
+# Verified live HTTP 200 endpoints against api.lever.co/v0/postings/<slug>?mode=json
+LEVER_BOARDS = [
+    "kinsta",
+    "palantir",
+    "spotify",
+    "doxel",
+    "hevodata",
+    "zoox",
+    "wealthsimple",
+    "shieldai",
+]

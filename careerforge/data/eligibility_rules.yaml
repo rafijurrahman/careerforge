@@ -1,0 +1,70 @@
+# Verifiable Geo & Remote Eligibility Pattern Rules for CareerForge
+# Notice: Rules produce heuristic guidance only, not legal work-authorization advice.
+
+negative_guards:
+  - '(?:our|the)\s+(?:engineering\s+|product\s+|company\s+)?team\s+is\s+(?:located|based)\s+in\b'
+  - '(?:our\s+)?headquarters\s+(?:is|are)\s+(?:located\s+)?in\b'
+  - 'offices?\s+(?:are\s+)?(?:located\s+)?in\b'
+  - 'founded\s+in\b'
+  - 'we\s+have\s+offices\s+across\b'
+
+rules:
+  - id: ELIG-US-01
+    regex: '(?:must\s+be\s+(?:located|based|residing)\s+in|must\s+reside\s+in|candidates?\s+(?:must|need\s+to)\s+(?:be\s+located|reside)\s+in|open\s+only\s+to\s+(?:residents|candidates)\s+in)\s+(?:the\s+)?(?:united\s+states|u\.s\.a?\.?|us\b)'
+    region: US
+    severity: restricted
+    notes: "Requires US residency or physical location in the United States."
+
+  - id: ELIG-US-02
+    regex: '(?:u\.s\.?\s+citizens?\s+only|us\s+citizenship\s+(?:is\s+)?required|must\s+be\s+a\s+u\.s\.?\s+citizen|u\.s\.?\s+persons?\s+only|active\s+(?:us\s+)?security\s+clearance)'
+    region: US
+    severity: restricted
+    notes: "Requires US citizenship, US person status, or security clearance."
+
+  - id: ELIG-US-03
+    regex: '(?:(?:must\s+be\s+)?(?:legally\s+)?authorized\s+to\s+work\s+in\s+(?:the\s+)?(?:united\s+states|u\.s\.a?\.?|us\b)|eligible\s+to\s+work\s+in\s+(?:the\s+)?(?:united\s+states|u\.s\.?|us\b))'
+    region: US
+    severity: restricted
+    notes: "Requires existing authorization to work in the United States."
+
+  - id: ELIG-VISA-01
+    regex: '(?:no\s+visa\s+sponsorship|cannot\s+sponsor\s+visas?|will\s+not\s+sponsor|unable\s+to\s+(?:provide|offer|sponsor)\s+(?:visa\s+)?sponsorship|does\s+not\s+(?:provide|offer)\s+visa\s+sponsorship|without\s+visa\s+sponsorship)'
+    region: VISA_RESTRICTED
+    severity: likely_restricted
+    notes: "Employer states no visa sponsorship is available."
+
+  - id: ELIG-TZ-AMERICAS
+    regex: '(?:u\.s\.?\s+time\s*zones?\s+(?:overlap|only|required)|(?:est|edt|pst|pdt|cst|cdt|mst|north\s+american)\s+(?:working\s+hours|overlap|hours\s+required|time\s*zone\s+overlap)|overlap\s+with\s+(?:est|pst|cst|u\.s\.?)\s+(?:business\s+)?hours)'
+    region: AMERICAS_TZ
+    severity: likely_restricted
+    notes: "Requires working hour overlap with US/Americas timezones."
+
+  - id: ELIG-EU-01
+    regex: '(?:must\s+(?:be\s+located|reside|live)\s+in\s+(?:the\s+)?(?:eu|european\s+union|eea)|authorized\s+to\s+work\s+in\s+(?:the\s+)?(?:eu|european\s+union|eea)|eu\s+work\s+permit\s+required)'
+    region: EU
+    severity: restricted
+    notes: "Requires EU/EEA residency or work permit."
+
+  - id: ELIG-UK-01
+    regex: '(?:must\s+(?:be\s+located|reside)\s+in\s+(?:the\s+)?(?:uk|united\s+kingdom)|right\s+to\s+work\s+in\s+(?:the\s+)?(?:uk|united\s+kingdom))'
+    region: UK
+    severity: restricted
+    notes: "Requires UK residency or right to work."
+
+  - id: ELIG-CA-01
+    regex: '(?:must\s+(?:be\s+located|reside)\s+in\s+canada|authorized\s+to\s+work\s+in\s+canada)'
+    region: CA
+    severity: restricted
+    notes: "Requires Canadian residency or work authorization."
+
+  - id: ELIG-REGION-01
+    regex: '(?:must\s+(?:be\s+located|reside|work)\s+(?:within|in|from)\s+(?:north\s+america|latin\s+america|latam|emea|apac|australia|india|germany|singapore))'
+    region: REGIONAL
+    severity: restricted
+    notes: "Specifies regional geographic restriction."
+
+  - id: ELIG-WORK-FROM
+    regex: '(?:work\s+from\s+(?!home\b|anywhere\b|remote\b)(?:the\s+)?(?:us|usa|uk|canada|eu|europe|australia|india|germany)\s+only)'
+    region: REGIONAL
+    severity: restricted
+    notes: "Restricts remote work exclusively to a named country or region."

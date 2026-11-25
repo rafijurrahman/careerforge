@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.0-dev] - 2026-11-25
 
 ### Added
+- **Remote Geo-Eligibility, Lever Scraper & Tailor Diff (`feat/remote-eligibility-lever`):**
+  - Added heuristic geo-restriction rule engine (`careerforge/core/eligibility.py` & `careerforge/data/eligibility_rules.yaml`) with sentence-level false-positive guards, restriction precedence over generic "worldwide" labels, `--my-country` applicant verdicts, standalone `forge eligibility`, and integration into `forge match` & `forge scrape`.
+  - Implemented `LeverScraper` (`careerforge/scrapers/lever_scanner.py`) over `BaseScraper` with live-verified company slugs (`kinsta`, `palantir`, `spotify`, `doxel`, `hevodata`, `zoox`, `wealthsimple`, `shieldai`).
+  - Added `forge tailor --diff` itemized bullet scoring table (`skill_score`, `metric_score`, `token_overlap_score`, `weight_score`).
 - **Schema v2 & Local Analytics (`forge report`, `forge ghost`, `forge salary`):**
   - Added schema v2 migration tracking `description_hash` and `description_changed_at` in `jobs`.
   - Implemented `forge report` for cumulative funnel conversion rates (`saved` to `offer`), CV SHA-256 performance comparison, terminal sparklines, `--since` filtering, and small-sample warnings.

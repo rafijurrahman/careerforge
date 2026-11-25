@@ -39,81 +39,150 @@ class JobPosting(BaseModel):
 
 Here is a complete, working example implementing a scraper for companies hosted on Lever (`jobs.lever.co/{company}`).
 
-### 1. Create the Scraper File
-Save this as `careerforge/scrapers/lever_scanner.py`:
+### 1. Real Implementation Example (`LeverScraper`)
+Here is the exact working implementation in `careerforge/scrapers/lever_scanner.py` targeting public Lever postings API (`api.lever.co/v0/postings/{company}?mode=json`):
 
 ```python
 """
 Lever ATS Scraper Plugin for CareerForge.
-Queries public Lever API endpoints (https://api.lever.co/v0/postings/{company}).
+Queries public Lever postings API (https://api.lever.co/v0/postings/{company}?mode=json).
 """
 
-from typing import Iterator, List, Dict, Any, Optional
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timezone
+from typing import Any, Dict, Iterator, List, Optional, Set, Tuple
+
 import requests
-from careerforge.scrapers.base import BaseScraper, JobPosting
 
-# Example Lever company slugs
-LEVER_BOARDS = [
-    "automattic",
-    "gitbook",
-    "kinsta",
-    "hotjar",
-]
+from careerforge.scrapers.base import BaseScraper, JobPosting, compute_dedup_hash
+from careerforge.scrapers.board_registry import LEVER_BOARDS
 
-SENIOR_TERMS = ["senior", "lead", "principal", "manager", "director", "head of", "vp"]
+SENIOR_TERMS = ["senior", "lead", "principal", "manager", "director", "head of", "vp", "staff"]
+
+
+def _epoch_ms_to_iso(created_at: Any) -> Optional[str]:
+    if not isinstance(created_at, (int, float)) or created_at <= 0:
+        return None
+    try:
+        dt = datetime.fromtimestamp(float(created_at) / 1000.0, tz=timezone.utc)
+        return dt.isoformat(timespec="seconds")
+    except (ValueError, OSError):
+        return None
 
 
 class LeverScraper(BaseScraper):
     name = "lever"
-    rate_limit_per_sec = 3.0  # Polite throttling
+    rate_limit_per_sec = 3.0
 
     def __init__(self, session: Optional[requests.Session] = None, boards: Optional[List[str]] = None):
         super().__init__(session=session)
         self.boards = boards or LEVER_BOARDS
 
-    def fetch(self, config: Dict[str, Any]) -> Iterator[JobPosting]:
+    def _scan_board_with_status(
+        self,
+        board: str,
+        keywords: List[str],
+        exclude_senior: bool,
+    ) -> Tuple[bool, str, List[JobPosting], Set[str]]:
+        url = f"https://api.lever.co/v0/postings/{board}?mode=json"
+        company_name = board.capitalize()
+        results: List[JobPosting] = []
+        live_ids: Set[str] = set()
+        try:
+            self._throttle()
+            resp = self.session.get(url, timeout=8)
+            if resp.status_code != 200:
+                return False, company_name, results, live_ids
+
+            jobs_list = resp.json()
+            if not isinstance(jobs_list, list):
+                return False, company_name, results, live_ids
+
+            for idx, j in enumerate(jobs_list):
+                title = j.get("text", "")
+                categories = j.get("categories", {}) or {}
+                loc = categories.get("location", "Remote") or "Remote"
+                workplace = str(j.get("workplaceType", "")).lower()
+                raw_id = str(j.get("id", f"{board}-{idx}"))
+                ext_id = f"lever-{board}-{raw_id}"
+
+                live_ids.add(ext_id)
+                live_ids.add(compute_dedup_hash(company_name, title, loc))
+
+                t_low = title.lower()
+                if any(k.lower() in t_low for k in keywords):
+                    if exclude_senior and any(s in t_low for s in SENIOR_TERMS):
+                        continue
+
+                    is_remote = (
+                        workplace == "remote"
+                        or "remote" in loc.lower()
+                        or "worldwide" in loc.lower()
+                    )
+                    sal_range = j.get("salaryRange") or {}
+                    sal_min = sal_range.get("min") if isinstance(sal_range, dict) else None
+                    sal_max = sal_range.get("max") if isinstance(sal_range, dict) else None
+                    sal_curr = sal_range.get("currency") if isinstance(sal_range, dict) else None
+
+                    desc = j.get("descriptionPlain") or j.get("descriptionBodyPlain") or ""
+                    results.append(
+                        JobPosting(
+                            id=ext_id,
+                            title=title,
+                            company=company_name,
+                            location=loc,
+                            remote_policy="Remote" if is_remote else "On-site/Hybrid",
+                            salary_min=float(sal_min) if sal_min is not None else None,
+                            salary_max=float(sal_max) if sal_max is not None else None,
+                            currency=sal_curr,
+                            description=desc,
+                            posted_at=_epoch_ms_to_iso(j.get("createdAt")),
+                            source_url=j.get("hostedUrl", f"https://jobs.lever.co/{board}"),
+                            source="Lever",
+                        )
+                    )
+            return True, company_name, results, live_ids
+        except Exception:
+            return False, company_name, results, set()
+
+    def fetch_with_status(
+        self,
+        config: Dict[str, Any],
+    ) -> Tuple[List[JobPosting], Dict[Tuple[str, str], Set[str]], List[Tuple[str, str]]]:
         keywords = config.get("keywords", ["Data Analyst", "Software Engineer"])
         exclude_senior = config.get("exclude_senior", True)
+        boards = config.get("boards", self.boards)
+        max_workers = config.get("max_workers", 8)
 
-        for board in self.boards:
-            url = f"https://api.lever.co/v0/postings/{board}?mode=json"
-            try:
-                self._throttle()
-                resp = self.session.get(url, timeout=8)
-                if resp.status_code != 200:
-                    continue
+        postings: List[JobPosting] = []
+        succeeded_boards: Dict[Tuple[str, str], Set[str]] = {}
+        failed_boards: List[Tuple[str, str]] = []
 
-                for job in resp.json():
-                    title = job.get("text", "")
-                    t_lower = title.lower()
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [
+                executor.submit(self._scan_board_with_status, b, keywords, exclude_senior)
+                for b in boards
+            ]
+            for b, f in zip(boards, futures):
+                try:
+                    ok, company_name, items, live_ids = f.result()
+                    if ok:
+                        succeeded_boards[("Lever", company_name)] = live_ids
+                        postings.extend(items)
+                    else:
+                        failed_boards.append(("Lever", company_name))
+                except Exception:
+                    failed_boards.append(("Lever", b.capitalize()))
+        return postings, succeeded_boards, failed_boards
 
-                    # Keyword match check
-                    if not any(k.lower() in t_lower for k in keywords):
-                        continue
-
-                    # Filter senior titles if requested
-                    if exclude_senior and any(s in t_lower for s in SENIOR_TERMS):
-                        continue
-
-                    categories = job.get("categories", {})
-                    location = categories.get("location", "Remote")
-                    commitment = categories.get("commitment", "Full-time")
-
-                    yield JobPosting(
-                        id=f"lever-{board}-{job.get('id', '')}",
-                        title=title,
-                        company=board.capitalize(),
-                        location=location,
-                        remote_policy="Remote" if "remote" in location.lower() else "On-site",
-                        source_url=job.get("hostedUrl", f"https://jobs.lever.co/{board}"),
-                        source="Lever",
-                    )
-            except Exception:
-                continue
+    def fetch(self, config: Dict[str, Any]) -> Iterator[JobPosting]:
+        postings, _, _ = self.fetch_with_status(config)
+        for item in postings:
+            yield item
 
     def healthcheck(self) -> bool:
         try:
-            resp = self.session.get("https://api.lever.co/v0/postings/automattic?mode=json", timeout=5)
+            resp = self.session.get("https://api.lever.co/v0/postings/kinsta?mode=json", timeout=5)
             return resp.status_code == 200
         except Exception:
             return False
@@ -124,20 +193,21 @@ Create `tests/fixtures/lever_sample.json`:
 ```json
 [
   {
-    "id": "lever-sample-01",
-    "text": "Data Analyst (Remote)",
-    "hostedUrl": "https://jobs.lever.co/automattic/lever-sample-01",
+    "id": "lever-kinsta-01",
+    "text": "Junior Data Analyst",
+    "hostedUrl": "https://jobs.lever.co/kinsta/lever-kinsta-01",
+    "workplaceType": "remote",
     "categories": {
-      "location": "Worldwide - Remote",
+      "location": "Remote - Worldwide",
       "commitment": "Full-time"
     }
   }
 ]
 ```
 
-Add offline test in `tests/test_scrapers.py`:
+Add offline test in `tests/test_eligibility_lever_diff.py` (or `tests/test_scrapers.py`):
 ```python
-def test_lever_scraper_offline_fixture():
+def test_lever_scraper_contract_offline_fixture():
     fixture_data = load_fixture("lever_sample.json")
     mock_session = MagicMock()
     mock_resp = MagicMock()
@@ -145,12 +215,12 @@ def test_lever_scraper_offline_fixture():
     mock_resp.json.return_value = fixture_data
     mock_session.get.return_value = mock_resp
 
-    scraper = LeverScraper(session=mock_session, boards=["automattic"])
-    postings = list(scraper.fetch({"keywords": ["Data Analyst"]}))
+    scraper = LeverScraper(session=mock_session, boards=["kinsta"])
+    postings, ok_boards, failed = scraper.fetch_with_status({"keywords": ["Data Analyst"]})
 
     assert len(postings) == 1
     assert postings[0].source == "Lever"
-    assert postings[0].company == "Automattic"
+    assert postings[0].company == "Kinsta"
 ```
 
 ### 3. Open a Pull Request

@@ -26,13 +26,14 @@ CareerForge is designed from the ground up to be **100% offline-first and privat
 | `forge tailor` | ❌ No | None | Re-ranks profile bullets locally using offline knapsack algorithm |
 | `forge apply` | ❌ No | None | Generates DOCX/PDF via local Word COM / LibreOffice |
 | `forge audit` | ❌ No | None | Scans text locally using regex and linguistic rules |
-| `forge match` | ❌ No | None | Compares text against local `skills.yaml` |
+| `forge match` | ❌ No | None | Compares text against local `skills.yaml` and `eligibility_rules.yaml` |
+| `forge eligibility` | ❌ No | None | Evaluates geo-restriction rules strictly offline |
 | `forge dorks` | ❌ No | None | Generates targeted Google search queries locally |
 | `forge track` | ❌ No | None | Reads/writes strictly to local SQLite database (`careerforge.db`) |
 | `forge report` | ❌ No | None | Computes funnel conversion metrics locally from SQLite |
 | `forge ghost` | ❌ No | None | Scores heuristic Ghost Risk locally from stored SQLite jobs |
 | `forge salary` | ❌ No | None | Aggregates salary percentiles locally; uses optional local `rates.yaml` only |
-| `forge scrape` | ✅ Yes | `boards-api.greenhouse.io`, `api.ashbyhq.com`, `remotive.com` | Fetches public job postings only. `--save` stores postings in local SQLite. Never transmits your profile. |
+| `forge scrape` | ✅ Yes | `boards-api.greenhouse.io`, `api.ashbyhq.com`, `api.lever.co`, `remotive.com` | Fetches public job postings only. `--save` stores postings in local SQLite. Never transmits your profile. |
 
 ---
 

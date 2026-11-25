@@ -1,0 +1,33 @@
+[
+  {
+    "id": "lever-kinsta-01",
+    "text": "Junior Data Analyst",
+    "hostedUrl": "https://jobs.lever.co/kinsta/lever-kinsta-01",
+    "workplaceType": "remote",
+    "createdAt": 1762000000000,
+    "categories": {
+      "location": "Remote - Worldwide",
+      "commitment": "Full-time",
+      "department": "Data",
+      "team": "Analytics"
+    },
+    "salaryRange": {
+      "min": 65000,
+      "max": 85000,
+      "currency": "USD"
+    },
+    "descriptionPlain": "Analyze customer metrics using SQL and build interactive dashboards. Fully remote worldwide."
+  },
+  {
+    "id": "lever-kinsta-02",
+    "text": "Senior Staff Architect",
+    "hostedUrl": "https://jobs.lever.co/kinsta/lever-kinsta-02",
+    "workplaceType": "remote",
+    "createdAt": 1762000000000,
+    "categories": {
+      "location": "Remote - Worldwide",
+      "commitment": "Full-time"
+    },
+    "descriptionPlain": "Architecture leadership role."
+  }
+]
