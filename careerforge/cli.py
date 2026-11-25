@@ -9,6 +9,7 @@ import os
 import platform
 import shutil
 import sys
+import time
 from importlib import resources
 
 # Ensure UTF-8 output across all consoles and CI runners to prevent cp1252 UnicodeEncodeError
@@ -25,6 +26,14 @@ try:
     from careerforge.core.dorks import generate_ats_dorks
     from careerforge.core.eligibility import check_eligibility
     from careerforge.core.ghost import analyze_ghost_jobs
+    from careerforge.core.interview import (
+        VALID_ROLES,
+        InterviewError,
+        StoryBank,
+        combine_story_text,
+        draft_stories_from_profile,
+        select_practice_questions,
+    )
     from careerforge.core.matcher import compute_ats_match
     from careerforge.core.page_optimizer import optimize_to_single_page
     from careerforge.core.profile_loader import load_profile
@@ -47,6 +56,14 @@ except ImportError:
     from core.dorks import generate_ats_dorks
     from core.eligibility import check_eligibility
     from core.ghost import analyze_ghost_jobs
+    from core.interview import (
+        VALID_ROLES,
+        InterviewError,
+        StoryBank,
+        combine_story_text,
+        draft_stories_from_profile,
+        select_practice_questions,
+    )
     from core.matcher import compute_ats_match
     from core.page_optimizer import optimize_to_single_page
     from core.profile_loader import load_profile
@@ -1126,6 +1143,273 @@ def cmd_salary(args):
     console.print()
 
 
+def cmd_interview_draft(args):
+    """Drafts honest STAR story outlines from profile.yaml metrics and projects."""
+    prof = _load_profile_or_exit(args.profile)
+    drafts = draft_stories_from_profile(prof, limit=args.limit)
+
+    save_summary = None
+    if args.save:
+        bank = StoryBank(args.stories)
+        save_summary = bank.save_drafts(drafts)
+
+    payload = {
+        "draft_count": len(drafts),
+        "saved": save_summary,
+        "drafts": drafts,
+    }
+    if getattr(args, "json", False):
+        print(json.dumps(payload, indent=2))
+        return
+
+    from rich.console import Console
+    from rich.panel import Panel
+
+    console = Console()
+    if not drafts:
+        console.print("[yellow]No experience bullets or projects found in profile.yaml to draft STAR outlines.[/yellow]")
+        return
+
+    console.print(f"\n[bold cyan]Drafted {len(drafts)} STAR Outlines from profile.yaml[/bold cyan]")
+    console.print("[dim]Facts come strictly from your profile. Unstated elements remain 'TODO: fill in'.[/dim]\n")
+    for idx, d in enumerate(drafts, 1):
+        lines = (
+            f"[bold]Situation:[/bold] {d['situation']}\n"
+            f"[bold]Task:[/bold]      {d['task']}\n"
+            f"[bold]Action:[/bold]    {d['action']}\n"
+            f"[bold]Result:[/bold]    {d['result']}"
+        )
+        console.print(Panel(lines, title=f"Draft #{idx}: {d['title']}", border_style="cyan"))
+
+    if save_summary:
+        console.print(
+            f"[green]Saved {save_summary['added_count']} new outlines to {StoryBank(args.stories).path} "
+            f"(skipped {save_summary['skipped_count']} duplicate titles).[/green]\n"
+        )
+
+
+def cmd_interview_add(args):
+    """Adds a STAR story to the local story bank (stories.yaml)."""
+    bank = StoryBank(args.stories)
+    try:
+        entry = bank.add_story(
+            title=args.title,
+            situation=args.situation,
+            task=args.task,
+            action=args.action,
+            result=args.result,
+            tags=args.tags,
+        )
+    except InterviewError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if getattr(args, "json", False):
+        print(json.dumps({"stories_path": bank.path, "story": entry}, indent=2))
+        return
+
+    print(f"Added STAR story #{entry['id']}: {entry['title']} (saved to {bank.path})")
+
+
+def cmd_interview_list(args):
+    """Lists saved STAR stories from the local story bank."""
+    bank = StoryBank(args.stories)
+    stories = bank.list_stories(tag=args.tag)
+
+    if getattr(args, "json", False):
+        print(json.dumps({"stories_path": bank.path, "count": len(stories), "stories": stories}, indent=2))
+        return
+
+    from rich.console import Console
+    from rich.table import Table
+
+    console = Console()
+    if not stories:
+        console.print("[yellow]No stories found in story bank.[/yellow]")
+        return
+
+    table = Table(title=f"STAR Story Bank ({len(stories)})", show_header=True, header_style="bold cyan")
+    table.add_column("ID", width=5, justify="right")
+    table.add_column("Title", width=36)
+    table.add_column("Tags", width=24)
+    table.add_column("Updated", width=12)
+
+    for s in stories:
+        tags_str = ", ".join(s.get("tags") or []) or "-"
+        updated = str(s.get("updated_at") or "")[:10]
+        table.add_row(str(s.get("id")), str(s.get("title")), tags_str, updated)
+    console.print(table)
+
+
+def cmd_interview_edit(args):
+    """Edits fields of an existing STAR story by ID."""
+    bank = StoryBank(args.stories)
+    try:
+        updated = bank.edit_story(
+            story_id=args.id,
+            title=args.title,
+            situation=args.situation,
+            task=args.task,
+            action=args.action,
+            result=args.result,
+            tags=args.tags,
+        )
+    except InterviewError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if getattr(args, "json", False):
+        print(json.dumps({"stories_path": bank.path, "story": updated}, indent=2))
+        return
+
+    print(f"Updated STAR story #{updated['id']}: {updated['title']}")
+
+
+def cmd_interview_coverage(args):
+    """Audits STAR story bank coverage across standard behavioral categories."""
+    bank = StoryBank(args.stories)
+    report = bank.coverage_report()
+
+    if getattr(args, "json", False):
+        print(json.dumps(report, indent=2))
+        return
+
+    from rich.console import Console
+    from rich.table import Table
+
+    console = Console()
+    console.print(
+        f"\n[bold cyan]Behavioral Category Coverage[/bold cyan]  "
+        f"(Stories: {report['total_stories']}, Incomplete 'TODO' drafts: {report['incomplete_todo_stories']})"
+    )
+
+    table = Table(show_header=True, header_style="bold")
+    table.add_column("Category", width=22)
+    table.add_column("Stories", width=9, justify="right")
+    table.add_column("Status", width=18)
+    table.add_column("Story IDs", width=20)
+
+    for cat in report["categories"]:
+        status = "[green]Covered[/green]" if cat["covered"] else "[bold red]GAP (0 stories)[/bold red]"
+        ids_str = ", ".join(str(x) for x in cat["story_ids"]) or "-"
+        table.add_row(cat["category"], str(cat["count"]), status, ids_str)
+    console.print(table)
+
+    if report["uncovered_categories"]:
+        console.print(
+            f"\n[bold yellow]Missing Categories:[/bold yellow] {', '.join(report['uncovered_categories'])}"
+        )
+    else:
+        console.print("\n[green]All core behavioral categories have at least one story.[/green]")
+    console.print()
+
+
+def cmd_interview_practice(args):
+    """Presents seeded role interview prompts, optional timing, and Anti-AI response audit."""
+    try:
+        selection = select_practice_questions(
+            role=args.role,
+            seed=args.seed,
+            count=args.count,
+            category=args.category,
+        )
+    except InterviewError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    answer_text = ""
+    answer_source = None
+    if args.answer:
+        answer_text = args.answer
+        answer_source = "flag"
+    elif args.answer_file:
+        if not os.path.exists(args.answer_file):
+            print(f"Error: Answer file '{args.answer_file}' not found.", file=sys.stderr)
+            sys.exit(2)
+        with open(args.answer_file, "r", encoding="utf-8") as f:
+            answer_text = f.read().strip()
+        answer_source = args.answer_file
+    elif args.story_id:
+        bank = StoryBank(args.stories)
+        story = bank.get_story(args.story_id)
+        if not story:
+            print(f"Error: Story ID '{args.story_id}' not found.", file=sys.stderr)
+            sys.exit(2)
+        answer_text = combine_story_text(story)
+        answer_source = f"story #{story['id']}"
+
+    elapsed_seconds = None
+    if not answer_text and sys.stdin.isatty() and not getattr(args, "json", False):
+        q = selection["questions"][0]
+        print(f"\nRole: {selection['role']} | Category: {q['category']}")
+        if args.timer:
+            print(f"Target timer: {args.timer}s (type your response and press Enter, or press Enter to skip):")
+        else:
+            print("Enter practice response (or press Enter to skip):")
+        start_t = time.monotonic()
+        try:
+            typed = input("> ").strip()
+        except EOFError:
+            typed = ""
+        elapsed_seconds = round(time.monotonic() - start_t, 2)
+        if typed:
+            answer_text = typed
+            answer_source = "interactive"
+
+    audit_result = audit_text(answer_text) if (args.audit and answer_text) else None
+
+    payload = {
+        "role": selection["role"],
+        "seed": selection["seed"],
+        "timer_seconds": args.timer,
+        "elapsed_seconds": elapsed_seconds,
+        "questions": selection["questions"],
+        "answer_source": answer_source,
+        "audit": audit_result,
+    }
+
+    if getattr(args, "json", False):
+        print(json.dumps(payload, indent=2))
+        if args.audit and audit_result and not audit_result["compliant"]:
+            sys.exit(1)
+        return
+
+    from rich.console import Console
+    from rich.panel import Panel
+
+    console = Console()
+    for idx, q in enumerate(selection["questions"], 1):
+        meta = f"ID: {q['id']} | Category: {q['category']}"
+        if args.timer:
+            meta += f" | Timer budget: {args.timer}s"
+        console.print(
+            Panel(
+                f"{q['prompt']}\n\n[dim]Focus: {q.get('focus', '')}[/dim]",
+                title=f"Practice Prompt #{idx} ({meta})",
+                border_style="cyan",
+            )
+        )
+
+    if elapsed_seconds is not None and args.timer:
+        status = "Within budget" if elapsed_seconds <= args.timer else "Over budget"
+        console.print(f"Elapsed: {elapsed_seconds}s / {args.timer}s ({status})")
+
+    if args.audit:
+        if audit_result is None:
+            console.print("[yellow]No answer text supplied to audit. Pass --answer, --answer-file, or --story-id.[/yellow]")
+        else:
+            comp = "[green]COMPLIANT[/green]" if audit_result["compliant"] else "[red]NON-COMPLIANT[/red]"
+            console.print(
+                f"\nAnti-AI Practice Audit: {comp} | Issues: {audit_result['total_issues']} | "
+                f"Avg Sentence: {audit_result['average_sentence_words']} words | "
+                f"Cadence: {audit_result['burstiness_status']}"
+            )
+            for idx, item in enumerate(audit_result["findings"], 1):
+                console.print(f"  {idx}. [{item['severity']}] {item['rule_id']}: '{item.get('term')}'")
+            if not audit_result["compliant"]:
+                sys.exit(1)
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="careerforge",
@@ -1341,12 +1625,75 @@ def main():
     p_salary.add_argument("--json", action="store_true", help="Output JSON report")
     p_salary.set_defaults(func=cmd_salary)
 
+    # interview
+    p_interview = subparsers.add_parser("interview", help="Prepare STAR behavioral stories and practice role prompts")
+    interview_sub = p_interview.add_subparsers(dest="interview_action", help="Interview prep actions")
+
+    p_i_draft = interview_sub.add_parser("draft", help="Draft honest STAR outlines from profile.yaml metrics and projects")
+    p_i_draft.add_argument("--profile", type=str, default=None, help="Path to profile.yaml")
+    p_i_draft.add_argument("--stories", type=str, default=None, help="Path to stories.yaml bank")
+    p_i_draft.add_argument("--limit", type=int, default=8, help="Max outlines to draft (default: 8)")
+    p_i_draft.add_argument("--save", action="store_true", help="Save drafted outlines into stories.yaml")
+    p_i_draft.add_argument("--json", action="store_true", help="Output JSON")
+    p_i_draft.set_defaults(func=cmd_interview_draft)
+
+    p_i_add = interview_sub.add_parser("add", help="Add a STAR story to stories.yaml")
+    p_i_add.add_argument("--title", type=str, required=True, help="Short title for the story")
+    p_i_add.add_argument("--situation", type=str, default=None, help="Context and role")
+    p_i_add.add_argument("--task", type=str, default=None, help="Specific problem or goal")
+    p_i_add.add_argument("--action", type=str, default=None, help="Steps you took")
+    p_i_add.add_argument("--result", type=str, default=None, help="Measured outcome")
+    p_i_add.add_argument("--tags", type=str, default="", help="Comma-separated STAR categories")
+    p_i_add.add_argument("--stories", type=str, default=None, help="Path to stories.yaml bank")
+    p_i_add.add_argument("--json", action="store_true", help="Output JSON")
+    p_i_add.set_defaults(func=cmd_interview_add)
+
+    p_i_list = interview_sub.add_parser("list", help="List saved STAR stories")
+    p_i_list.add_argument("--tag", type=str, default=None, help="Filter stories by category tag")
+    p_i_list.add_argument("--stories", type=str, default=None, help="Path to stories.yaml bank")
+    p_i_list.add_argument("--json", action="store_true", help="Output JSON")
+    p_i_list.set_defaults(func=cmd_interview_list)
+
+    p_i_edit = interview_sub.add_parser("edit", help="Edit an existing STAR story by ID")
+    p_i_edit.add_argument("id", type=str, help="Story ID")
+    p_i_edit.add_argument("--title", type=str, default=None, help="Updated title")
+    p_i_edit.add_argument("--situation", type=str, default=None, help="Updated Situation")
+    p_i_edit.add_argument("--task", type=str, default=None, help="Updated Task")
+    p_i_edit.add_argument("--action", type=str, default=None, help="Updated Action")
+    p_i_edit.add_argument("--result", type=str, default=None, help="Updated Result")
+    p_i_edit.add_argument("--tags", type=str, default=None, help="Replace tags (comma-separated)")
+    p_i_edit.add_argument("--stories", type=str, default=None, help="Path to stories.yaml bank")
+    p_i_edit.add_argument("--json", action="store_true", help="Output JSON")
+    p_i_edit.set_defaults(func=cmd_interview_edit)
+
+    p_i_cov = interview_sub.add_parser("coverage", help="Audit story coverage across core behavioral categories")
+    p_i_cov.add_argument("--stories", type=str, default=None, help="Path to stories.yaml bank")
+    p_i_cov.add_argument("--json", action="store_true", help="Output JSON")
+    p_i_cov.set_defaults(func=cmd_interview_coverage)
+
+    p_i_prac = interview_sub.add_parser("practice", help="Practice with curated role behavioral questions")
+    p_i_prac.add_argument("--role", choices=list(VALID_ROLES), default="general", help="Role question bank (default: general)")
+    p_i_prac.add_argument("--seed", type=int, default=None, help="Random seed for deterministic prompt selection")
+    p_i_prac.add_argument("--count", type=int, default=1, help="Number of prompts to draw (default: 1)")
+    p_i_prac.add_argument("--category", type=str, default=None, help="Optional behavioral category filter")
+    p_i_prac.add_argument("--timer", type=int, default=None, help="Target answer timer in seconds")
+    p_i_prac.add_argument("--answer", type=str, default=None, help="Practice answer text to check")
+    p_i_prac.add_argument("--answer-file", type=str, default=None, help="File containing written practice answer")
+    p_i_prac.add_argument("--story-id", type=str, default=None, help="Saved STAR story ID to audit")
+    p_i_prac.add_argument("--audit", action="store_true", help="Run Anti-AI linguistic audit on the answer")
+    p_i_prac.add_argument("--stories", type=str, default=None, help="Path to stories.yaml bank")
+    p_i_prac.add_argument("--json", action="store_true", help="Output JSON")
+    p_i_prac.set_defaults(func=cmd_interview_practice)
+
     args = parser.parse_args()
     if not args.command:
         parser.print_help()
         sys.exit(0)
     if args.command == "track" and not getattr(args, "track_action", None):
         p_track.print_help()
+        sys.exit(2)
+    if args.command == "interview" and not getattr(args, "interview_action", None):
+        p_interview.print_help()
         sys.exit(2)
 
     args.func(args)

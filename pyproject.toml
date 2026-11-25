@@ -69,7 +69,7 @@ where = ["."]
 include = ["careerforge*"]
 
 [tool.setuptools.package-data]
-"careerforge.data" = ["*.yaml", "*.yml"]
+"careerforge.data" = ["*.yaml", "*.yml", "questions/*.yaml", "questions/*.yml"]
 
 [tool.ruff]
 line-length = 100
