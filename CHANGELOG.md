@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.0-dev] - 2026-11-25
 
 ### Added
+- **Schema v2 & Local Analytics (`forge report`, `forge ghost`, `forge salary`):**
+  - Added schema v2 migration tracking `description_hash` and `description_changed_at` in `jobs`.
+  - Implemented `forge report` for cumulative funnel conversion rates (`saved` to `offer`), CV SHA-256 performance comparison, terminal sparklines, `--since` filtering, and small-sample warnings.
+  - Implemented `forge ghost` heuristic Ghost Risk scoring (`Low`/`Medium`/`High`) with explicit "not proof" caveats and itemized signal breakdown.
+  - Implemented `forge salary` calculating `min`, `p25`, `median`, `p75`, `max` per currency with user-supplied `--rates` YAML conversion, selection-bias disclosure, and small-sample warnings.
 - **Local SQLite Job & Application Store (`careerforge/core/store.py`):**
   - Implemented stdlib `sqlite3` persistence with `platformdirs` user data path and `CAREERFORGE_DB` environment override.
   - Added `PRAGMA foreign_keys = ON` on every connection and versioned schema migrations via `PRAGMA user_version`.

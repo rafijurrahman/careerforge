@@ -133,6 +133,8 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 ### ✅ Available Now (v0.2.0)
 
+*   **Application Analytics, Ghost Risk & Salary Bands (`forge report`, `forge ghost`, `forge salary`):**  
+    Analyzes local SQLite funnel conversion rates by CV hash and source (`report`), scores heuristic stale/ghost posting signals (`ghost`), and aggregates disclosed salary percentiles with optional local FX conversion (`salary`), completely offline.
 *   **Offline Application Tracker & Kanban TUI (`forge track`):**  
     Tracks scraped or manual job applications locally in SQLite (`jobs`, `applications`, `events`) with CV SHA-256 tracking, follow-up reminders (`due`), stale suggestions (`ghosted`), CSV/Markdown export, and an optional Textual Kanban board (`pip install careerforge[tui]`).
 *   **ATS Parser Fragility Checker (`forge ats-sim`):**  
@@ -160,10 +162,6 @@ Your optimized 1-page CV is written to `output/YourName_Universal_CV.docx` and `
 
 The following advanced utilities are currently under active design. See [`ROADMAP.md`](ROADMAP.md) for milestones:
 
-*   **`forge ghost` (Stale / Ghost Job Detector):**  
-    Calculates Ghost Risk scores based on posting age and repost frequency from ATS APIs.
-*   **`forge salary` (Salary Range Intelligence):**  
-    Aggregates pay transparency disclosures into local SQLite with currency conversion.
 *   **`forge interview` (STAR Story Bank):**  
     Transforms master profile achievement bullets into structured Situation-Task-Action-Result interview talking points with behavioral category coverage tracking.
 
