@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/hero-banner.svg" width="100%" alt="CareerForge — Local-First Job Application Toolkit" />
+<img src="assets/hero-banner.svg" width="100%" alt="CareerForge — The job search that runs on your machine. Pip the courier bird carries an application along a flight path to a destination pin." />
 
 <br/>
 
@@ -11,11 +11,6 @@
 ![No Telemetry](https://img.shields.io/badge/Telemetry-Zero%20(100%25%20Local)-purple?style=flat-square)
 
 <p><strong>Local-first job search toolkit: tailor your CV to any job description, check it reads cleanly, and track every application. No cloud, no subscription, no telemetry.</strong></p>
-
-<p align="center">
-  <img src="assets/animated/tailor.svg" width="100%" alt="Workflow diagram illustrating how CareerForge selects matching bullets from your real experience into a 1-page CV" /><br/>
-  <em>Illustration of how the command works (not a real recording).</em>
-</p>
 
 <p align="center">
   <img src="demo/hero.gif" width="95%" alt="Terminal recording showing forge tailor and forge ats-sim commands running on local machine" /><br/>
@@ -146,11 +141,6 @@ Search public job boards or generate search queries without sharing your search 
 ### 2. Match
 
 Evaluate job postings against your skill profile and check for hidden geographical limitations.
-
-<p align="center">
-  <img src="assets/animated/eligibility.svg" width="100%" alt="Workflow diagram illustrating how CareerForge detects hidden regional restrictions in job descriptions" /><br/>
-  <em>Illustration of how the command works (not a real recording).</em>
-</p>
 
 <p align="center">
   <img src="demo/eligibility.gif" width="95%" alt="Terminal recording of forge eligibility detecting hidden US restrictions" /><br/>
@@ -326,11 +316,6 @@ Generate single-page ATS-ready resumes, verify file structures, and audit prose.
 *Flag AI puffery words and metronomic sentence cadences using published linguistics heuristics.*
 
 <p align="center">
-  <img src="assets/animated/audit.svg" width="100%" alt="Workflow diagram illustrating how CareerForge flags synthetic AI vocabulary and restores human cadence" /><br/>
-  <em>Illustration of how the command works (not a real recording).</em>
-</p>
-
-<p align="center">
   <img src="demo/audit.gif" width="95%" alt="Terminal recording of forge audit analyzing sample AI text" /><br/>
   <em>Real terminal recording, fictional data.</em>
 </p>
@@ -375,11 +360,6 @@ Generate single-page ATS-ready resumes, verify file structures, and audit prose.
 ### 4. Track & Analyze
 
 Manage your applications locally and review conversion analytics.
-
-<p align="center">
-  <img src="assets/animated/track.svg" width="100%" alt="Workflow diagram illustrating how CareerForge tracks application stages and flags ghosted applications" /><br/>
-  <em>Illustration of how the command works (not a real recording).</em>
-</p>
 
 <p align="center">
   <img src="demo/track.gif" width="95%" alt="Terminal recording of forge track list, forge ghost, and forge report" /><br/>
