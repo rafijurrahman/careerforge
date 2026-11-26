@@ -13,8 +13,8 @@
 <p><strong>Local-first job search toolkit: tailor your CV to any job description, check it reads cleanly, and track every application. No cloud, no subscription, no telemetry.</strong></p>
 
 <p align="center">
-  <img src="demo/concept/concept_hero.gif" width="85%" alt="Concept illustration of automated CV tailoring and document optimization" /><br/>
-  <em>Concept visual (AI-generated illustration, not real output)</em>
+  <img src="assets/animated/tailor.svg" width="100%" alt="Workflow diagram illustrating how CareerForge selects matching bullets from your real experience into a 1-page CV" /><br/>
+  <em>Illustration of how the command works (not a real recording).</em>
 </p>
 
 <p align="center">
@@ -148,8 +148,8 @@ Search public job boards or generate search queries without sharing your search 
 Evaluate job postings against your skill profile and check for hidden geographical limitations.
 
 <p align="center">
-  <img src="demo/concept/concept_eligibility.gif" width="85%" alt="Concept illustration of remote geographical eligibility screening" /><br/>
-  <em>Concept visual (AI-generated illustration, not real output)</em>
+  <img src="assets/animated/eligibility.svg" width="100%" alt="Workflow diagram illustrating how CareerForge detects hidden regional restrictions in job descriptions" /><br/>
+  <em>Illustration of how the command works (not a real recording).</em>
 </p>
 
 <p align="center">
@@ -326,8 +326,8 @@ Generate single-page ATS-ready resumes, verify file structures, and audit prose.
 *Flag AI puffery words and metronomic sentence cadences using published linguistics heuristics.*
 
 <p align="center">
-  <img src="demo/concept/concept_audit.gif" width="85%" alt="Concept illustration of automated prose auditing and style analysis" /><br/>
-  <em>Concept visual (AI-generated illustration, not real output)</em>
+  <img src="assets/animated/audit.svg" width="100%" alt="Workflow diagram illustrating how CareerForge flags synthetic AI vocabulary and restores human cadence" /><br/>
+  <em>Illustration of how the command works (not a real recording).</em>
 </p>
 
 <p align="center">
@@ -377,8 +377,8 @@ Generate single-page ATS-ready resumes, verify file structures, and audit prose.
 Manage your applications locally and review conversion analytics.
 
 <p align="center">
-  <img src="demo/concept/concept_track.gif" width="85%" alt="Concept illustration of application pipeline tracking and analytics" /><br/>
-  <em>Concept visual (AI-generated illustration, not real output)</em>
+  <img src="assets/animated/track.svg" width="100%" alt="Workflow diagram illustrating how CareerForge tracks application stages and flags ghosted applications" /><br/>
+  <em>Illustration of how the command works (not a real recording).</em>
 </p>
 
 <p align="center">
@@ -900,7 +900,7 @@ CareerForge is offline-first. Only `forge scrape` and `forge dorks` interact wit
 Stylistic checks are informed by published computational linguistics research, including Kobak et al. (*Science Advances*, 2024), Reinhart et al. (*PNAS*, 2025), and Juzek & Ward (*COLING*, 2025). Full citations and analysis are documented in [docs/RESEARCH.md](docs/RESEARCH.md).
 
 ### 6. Notice of Concept Visuals
-The concept animations in this documentation are AI-generated visual illustrations created to depict the software's workflow. Real terminal recordings are explicitly labeled alongside them.
+The concept diagrams in this documentation are visual workflow illustrations created to depict the software's operations. Real terminal recordings are explicitly labeled alongside them.
 
 ---
 
