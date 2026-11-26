@@ -4,6 +4,7 @@
 
 <br/>
 
+[![PyPI version](https://img.shields.io/pypi/v/careerforge?color=blue&style=flat-square)](https://pypi.org/project/careerforge/)
 [![CI](https://github.com/rafijurrahman/careerforge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/rafijurrahman/careerforge/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?style=flat-square&logo=python)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
@@ -712,11 +713,15 @@ We recommend installing CareerForge through `pipx` so it runs in an isolated env
      ```powershell
      winget install TheDocumentFoundation.LibreOffice
      ```
-4. **Install CareerForge:**
+4. **Install CareerForge from PyPI:**
    ```powershell
-   pipx install git+https://github.com/rafijurrahman/careerforge.git
+   pipx install careerforge
    ```
-5. **(Optional) Enable Word COM fast-path or TUI board:**
+   *Or install directly with optional Word COM and interactive board support:*
+   ```powershell
+   pipx install "careerforge[windows,tui]"
+   ```
+5. **(Optional) Inject Word COM fast-path or TUI board into existing install:**
    ```powershell
    # If you use Microsoft Word:
    pipx inject careerforge pywin32
@@ -751,11 +756,15 @@ We recommend installing CareerForge through `pipx` so it runs in an isolated env
    # Install via Homebrew (https://brew.sh)
    brew install --cask libreoffice
    ```
-4. **Install CareerForge:**
+4. **Install CareerForge from PyPI:**
    ```bash
-   pipx install git+https://github.com/rafijurrahman/careerforge.git
+   pipx install careerforge
    ```
-5. **(Optional) Enable interactive Kanban board:**
+   *Or install directly with optional interactive board support:*
+   ```bash
+   pipx install "careerforge[tui]"
+   ```
+5. **(Optional) Inject interactive Kanban board into existing install:**
    ```bash
    pipx inject careerforge "careerforge[tui]"
    ```
