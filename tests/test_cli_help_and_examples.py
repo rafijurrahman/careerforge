@@ -12,8 +12,8 @@ from careerforge import __version__, cli
 from careerforge.core.store import CareerStore
 
 
-def test_version_is_0_5_0():
-    assert __version__ == "0.5.0"
+def test_version_is_0_5_1():
+    assert __version__ == "0.5.1"
 
 
 def test_grouped_cli_help_renders_all_workflow_sections(monkeypatch, capsys):

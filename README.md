@@ -5,7 +5,7 @@
 <br/>
 
 [![CI](https://github.com/rafijurrahman/careerforge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/rafijurrahman/careerforge/actions/workflows/ci.yml)
-![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue?style=flat-square&logo=python)
+![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?style=flat-square&logo=python)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux%20(Community)-lightgrey?style=flat-square)
 ![No Telemetry](https://img.shields.io/badge/Telemetry-Zero%20(100%25%20Local)-purple?style=flat-square)
@@ -649,7 +649,7 @@ CareerForge runs on Windows, macOS, and Linux.
 
 | Component | Windows | macOS | Linux (Community) |
 | :--- | :--- | :--- | :--- |
-| **Python** | Python 3.10, 3.11, or 3.12 | Python 3.10, 3.11, or 3.12 | Python 3.10, 3.11, or 3.12 |
+| **Python** | Python 3.10, 3.11, 3.12, or 3.13 | Python 3.10, 3.11, 3.12, or 3.13 | Python 3.10, 3.11, 3.12, or 3.13 |
 | **Package Tool** | `pipx` (recommended) or `pip` | `pipx` (recommended) or `pip` | `pipx` (recommended) or `pip` |
 | **Primary PDF Engine** | Microsoft Word COM (`careerforge[windows]`) | LibreOffice (`brew install --cask libreoffice`) | LibreOffice (`libreoffice-writer`) |
 | **Fallback PDF Engine**| LibreOffice (`winget install TheDocumentFoundation.LibreOffice`) | None needed | None needed |
@@ -709,6 +709,9 @@ We recommend installing CareerForge through `pipx` so it runs in an isolated env
    ```
 6. **Verify installation:**
    ```powershell
+   forge --version
+   # Expected output: careerforge 0.5.1
+
    forge doctor
    ```
 
@@ -741,6 +744,9 @@ We recommend installing CareerForge through `pipx` so it runs in an isolated env
    ```
 6. **Verify installation:**
    ```bash
+   forge --version
+   # Expected output: careerforge 0.5.1
+
    forge doctor
    ```
 

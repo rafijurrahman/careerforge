@@ -21,6 +21,7 @@ if hasattr(sys.stdout, "reconfigure"):
         pass
 
 try:
+    from careerforge import __version__
     from careerforge.core.anti_ai_engine import audit_text
     from careerforge.core.ats_sim import AtsSimFileError, run_ats_sim
     from careerforge.core.cover import VALID_OUTREACH_TYPES, CoverError, generate_outreach
@@ -1556,11 +1557,16 @@ class _GroupedHelpFormatter(argparse.RawDescriptionHelpFormatter):
         return super()._format_action(action)
 
 
-def main():
+def main(args=None):
     parser = argparse.ArgumentParser(
         prog="forge",
         description="CareerForge: Offline-first local job search, CV optimization, and application tracker",
         formatter_class=_GroupedHelpFormatter,
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"careerforge {__version__}",
     )
     subparsers = parser.add_subparsers(dest="command", metavar="<command>", title="Commands by Workflow Stage")
 
@@ -1850,18 +1856,18 @@ def main():
     p_cover.add_argument("--json", action="store_true", help="Output JSON")
     p_cover.set_defaults(func=cmd_cover)
 
-    args = parser.parse_args()
-    if not args.command:
+    parsed_args = parser.parse_args(args)
+    if not parsed_args.command:
         parser.print_help()
         sys.exit(0)
-    if args.command == "track" and not getattr(args, "track_action", None):
+    if parsed_args.command == "track" and not getattr(parsed_args, "track_action", None):
         p_track.print_help()
         sys.exit(2)
-    if args.command == "interview" and not getattr(args, "interview_action", None):
+    if parsed_args.command == "interview" and not getattr(parsed_args, "interview_action", None):
         p_interview.print_help()
         sys.exit(2)
 
-    args.func(args)
+    parsed_args.func(parsed_args)
 
 
 if __name__ == "__main__":
