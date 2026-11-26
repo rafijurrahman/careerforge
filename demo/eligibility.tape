@@ -1,22 +1,20 @@
-# CareerForge Terminal Demo: Remote Geo-Eligibility & Match (vhs)
-# To render: vhs demo/eligibility.tape
+Output "demo/eligibility.gif"
 
-Output demo/eligibility.gif
-
-Set Shell "bash"
-Set FontSize 18
-Set Width 1200
-Set Height 720
+Set Shell "powershell"
+Set FontSize 15
+Set Width 1050
+Set Height 600
 Set Theme "Catppuccin Mocha"
 Set WindowBar Colorful
-Set Margin 20
+Set TypingSpeed 20ms
 
-Type "forge match --jd examples/sample_jd.txt --profile examples/profile.example.yaml --my-country BD"
-Sleep 500ms
+Hide
+Type ". C:\demo\setup_env.ps1"
 Enter
-Sleep 4s
+Sleep 1s
+Show
 
-Type "forge eligibility --jd 'Remote anywhere! Candidates must reside in the US and not require visa sponsorship.' --my-country BD"
-Sleep 500ms
+Type "forge eligibility --jd examples/job_restricted.txt --my-country BD"
+Sleep 300ms
 Enter
-Sleep 4s
+Sleep 6s

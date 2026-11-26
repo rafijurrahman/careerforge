@@ -1,0 +1,12 @@
+Title: Staff Cloud Infrastructure Engineer
+Company: Apex Cloud Systems
+Location: 100% Remote (Worldwide)
+
+About the Role:
+Apex Cloud Systems builds distributed orchestration platforms for modern engineering teams worldwide.
+We are looking for a Staff Cloud Infrastructure Engineer to scale our multi-region Kubernetes clusters.
+
+Requirements:
+- Must reside in the United States and be authorized to work in the US without visa sponsorship.
+- 5+ years of experience with Python, Go, Terraform, and AWS.
+- Strong background in container networking and incident response.
