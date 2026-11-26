@@ -1,0 +1,346 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" width="100%" height="100%">
+  <title>CareerForge Audit Engine — Anti-AI &amp; Human Writing Polish</title>
+  <desc>Demonstrates how CareerForge detects synthetic AI vocabulary (delve, leverage) and replaces them with direct, grounded human phrasing while lowering AI likelihood scores.</desc>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --border-accent: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      --accent: #2563eb;
+      --accent-bg: #eff6ff;
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+      --green-border: #86efac;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --red-border: #fca5a5;
+      --font: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b0f17;
+        --card-bg: #111827;
+        --border: #1f2937;
+        --border-accent: #374151;
+        --text: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-dim: #475569;
+        --accent: #3b82f6;
+        --accent-bg: #1e293b;
+        --green: #22c55e;
+        --green-bg: #064e3b;
+        --green-border: #059669;
+        --red: #ef4444;
+        --red-bg: #450a0a;
+        --red-border: #991b1b;
+      }
+    }
+
+    text {
+      font-family: var(--font);
+      user-select: none;
+    }
+
+    .box {
+      fill: var(--card-bg);
+      stroke: var(--border);
+      stroke-width: 1.5;
+      rx: 8;
+    }
+
+    /* Keyframes */
+    @keyframes strikeLineDelve {
+      0%, 20% {
+        stroke-dashoffset: 45;
+      }
+      35%, 88% {
+        stroke-dashoffset: 0;
+      }
+      95%, 100% {
+        stroke-dashoffset: 45;
+      }
+    }
+
+    @keyframes strikeLineLeverage {
+      0%, 25% {
+        stroke-dashoffset: 65;
+      }
+      40%, 88% {
+        stroke-dashoffset: 0;
+      }
+      95%, 100% {
+        stroke-dashoffset: 65;
+      }
+    }
+
+    @keyframes revisedSentenceReveal {
+      0%, 42% {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      52%, 88% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      95%, 100% {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+    }
+
+    @keyframes scoreHighFade {
+      0%, 40% {
+        opacity: 1;
+      }
+      50%, 88% {
+        opacity: 0;
+      }
+      95%, 100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes scoreLowFade {
+      0%, 42% {
+        opacity: 0;
+      }
+      52%, 88% {
+        opacity: 1;
+      }
+      95%, 100% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes meterBarWidth {
+      0%, 40% {
+        width: 170px;
+        fill: var(--red);
+      }
+      52%, 88% {
+        width: 25px;
+        fill: var(--green);
+      }
+      95%, 100% {
+        width: 170px;
+        fill: var(--red);
+      }
+    }
+
+    @keyframes diagnosticsSlide {
+      0%, 30% {
+        opacity: 0.4;
+      }
+      45%, 88% {
+        opacity: 1;
+      }
+      95%, 100% {
+        opacity: 0.4;
+      }
+    }
+
+    .strike-delve {
+      stroke-dasharray: 45;
+      animation: strikeLineDelve 7s infinite ease-in-out;
+    }
+    .strike-leverage {
+      stroke-dasharray: 65;
+      animation: strikeLineLeverage 7s infinite ease-in-out;
+    }
+    .revised-container {
+      animation: revisedSentenceReveal 7s infinite ease-in-out;
+    }
+    .score-high-view {
+      animation: scoreHighFade 7s infinite ease-in-out;
+    }
+    .score-low-view {
+      animation: scoreLowFade 7s infinite ease-in-out;
+    }
+    .meter-bar {
+      animation: meterBarWidth 7s infinite ease-in-out;
+    }
+    .diag-box {
+      animation: diagnosticsSlide 7s infinite ease-in-out;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .strike-delve {
+        stroke-dashoffset: 0 !important;
+        animation: none !important;
+      }
+      .strike-leverage {
+        stroke-dashoffset: 0 !important;
+        animation: none !important;
+      }
+      .revised-container {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      .score-high-view {
+        display: none !important;
+      }
+      .score-low-view {
+        opacity: 1 !important;
+        animation: none !important;
+      }
+      .meter-bar {
+        width: 25px !important;
+        fill: var(--green) !important;
+        animation: none !important;
+      }
+      .diag-box {
+        opacity: 1 !important;
+        animation: none !important;
+      }
+    }
+  </style>
+
+  <!-- Background Base -->
+  <rect width="100%" height="100%" fill="var(--bg)" rx="10" />
+  <rect x="1" y="1" width="798" height="318" fill="none" stroke="var(--border)" stroke-width="1.5" rx="9" />
+
+  <!-- Top Title / Header -->
+  <g transform="translate(30, 26)">
+    <text x="0" y="0" font-size="12" font-weight="700" fill="var(--text)" letter-spacing="0.5">CAREERFORGE :: ANTI-AI VOCABULARY AUDIT</text>
+    <rect x="330" y="-12" width="145" height="18" rx="9" fill="var(--accent-bg)" />
+    <text x="402" y="1" font-size="9" font-weight="600" fill="var(--accent)" text-anchor="middle">PEER-REVIEWED CORPUS</text>
+  </g>
+
+  <!-- LEFT PANEL: Draft Review & Vocabulary Replacement -->
+  <g transform="translate(30, 42)">
+    <rect class="box" width="475" height="236" />
+    <path d="M 0 8 A 8 8 0 0 1 8 0 L 467 0 A 8 8 0 0 1 475 8 L 475 28 L 0 28 Z" fill="var(--border)" opacity="0.25" />
+    <text x="14" y="18" font-size="9.5" font-weight="600" fill="var(--text)">INPUT TEXT AUDIT (forge audit --file cover.txt)</text>
+
+    <!-- SECTION 1: Original Sentence with Flagged AI Buzzwords -->
+    <g transform="translate(14, 38)">
+      <rect width="447" height="54" rx="5" fill="var(--card-bg)" stroke="var(--border)" stroke-width="1.2" />
+      <text x="10" y="15" font-size="8" font-weight="600" fill="var(--text-muted)">FLAGGED ORIGINAL DRAFT:</text>
+
+      <!-- Sentence Flow -->
+      <g transform="translate(10, 34)">
+        <text x="0" y="0" font-size="8.5" fill="var(--text)">In my last role, I was able to </text>
+
+        <!-- Flagged Token 1: delve -->
+        <g transform="translate(152, -12)">
+          <rect width="44" height="17" rx="3" fill="var(--red-bg)" stroke="var(--red-border)" stroke-width="0.8" />
+          <text x="22" y="12" font-size="8.5" font-weight="700" fill="var(--red)" text-anchor="middle">delve</text>
+          <!-- Strike-through line -->
+          <line class="strike-delve" x1="4" y1="8.5" x2="40" y2="8.5" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" />
+        </g>
+
+        <text x="202" y="0" font-size="8.5" fill="var(--text)"> into cache layers to </text>
+
+        <!-- Flagged Token 2: leverage -->
+        <g transform="translate(315, -12)">
+          <rect width="58" height="17" rx="3" fill="var(--red-bg)" stroke="var(--red-border)" stroke-width="0.8" />
+          <text x="29" y="12" font-size="8.5" font-weight="700" fill="var(--red)" text-anchor="middle">leverage</text>
+          <!-- Strike-through line -->
+          <line class="strike-leverage" x1="4" y1="8.5" x2="54" y2="8.5" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" />
+        </g>
+
+        <text x="378" y="0" font-size="8.5" fill="var(--text)"> Redis.</text>
+      </g>
+    </g>
+
+    <!-- SECTION 2: Clean Revised Human Phrasing (Animated Slide-in) -->
+    <g class="revised-container" transform="translate(14, 100)">
+      <rect width="447" height="54" rx="5" fill="var(--green-bg)" stroke="var(--green-border)" stroke-width="1.2" />
+      <text x="10" y="15" font-size="8" font-weight="700" fill="var(--green)">CLEAN HUMAN REVISION (DETERMINISTIC):</text>
+
+      <!-- Revised Sentence Flow -->
+      <g transform="translate(10, 34)">
+        <text x="0" y="0" font-size="8.5" fill="var(--text)">In my last role, I was able to </text>
+
+        <!-- Replaced Token 1: dig into -->
+        <g transform="translate(152, -12)">
+          <rect width="52" height="17" rx="3" fill="var(--green)" />
+          <text x="26" y="12" font-size="8.5" font-weight="700" fill="#ffffff" text-anchor="middle">dig into</text>
+        </g>
+
+        <text x="210" y="0" font-size="8.5" fill="var(--text)"> cache layers to </text>
+
+        <!-- Replaced Token 2: use -->
+        <g transform="translate(300, -12)">
+          <rect width="36" height="17" rx="3" fill="var(--green)" />
+          <text x="18" y="12" font-size="8.5" font-weight="700" fill="#ffffff" text-anchor="middle">use</text>
+        </g>
+
+        <text x="342" y="0" font-size="8.5" fill="var(--text)"> Redis clusters.</text>
+      </g>
+    </g>
+
+    <!-- SECTION 3: Diagnostic Rule Highlights -->
+    <g class="diag-box" transform="translate(14, 164)">
+      <rect width="447" height="60" rx="5" fill="var(--border)" opacity="0.2" />
+      <text x="10" y="15" font-size="8" font-weight="700" fill="var(--text)">HEURISTIC PURGE SUMMARY</text>
+      <line x1="10" y1="20" x2="437" y2="20" stroke="var(--border)" stroke-width="0.8" />
+
+      <text x="10" y="34" font-size="7.5" fill="var(--text-muted)">[AI-001] Synthetic Vocabulary:</text>
+      <text x="145" y="34" font-size="7.5" font-weight="600" fill="var(--red)">'delve' (300% post-2022 LLM surge)</text>
+      <text x="350" y="34" font-size="7.5" font-weight="600" fill="var(--green)">→ 'dig into'</text>
+
+      <text x="10" y="48" font-size="7.5" fill="var(--text-muted)">[AI-002] Copula / Fluff Replacement:</text>
+      <text x="145" y="48" font-size="7.5" font-weight="600" fill="var(--red)">'leverage' (Corporate buzzword)</text>
+      <text x="350" y="48" font-size="7.5" font-weight="600" fill="var(--green)">→ 'use'</text>
+    </g>
+  </g>
+
+  <!-- RIGHT PANEL: AI Risk Scorecard & Gauge -->
+  <g transform="translate(525, 42)">
+    <rect class="box" width="245" height="236" />
+    <path d="M 0 8 A 8 8 0 0 1 8 0 L 237 0 A 8 8 0 0 1 245 8 L 245 28 L 0 28 Z" fill="var(--border)" opacity="0.25" />
+    <text x="14" y="18" font-size="9.5" font-weight="600" fill="var(--text)">AI RISK SCORECARD</text>
+
+    <!-- Progress / Meter Track -->
+    <g transform="translate(14, 42)">
+      <text x="0" y="0" font-size="8" font-weight="600" fill="var(--text-muted)">ESTIMATED AI LIKELIHOOD</text>
+
+      <!-- Meter background bar -->
+      <rect x="0" y="10" width="217" height="14" rx="7" fill="var(--border)" opacity="0.4" />
+      <!-- Animated Active bar -->
+      <rect class="meter-bar" x="0" y="10" width="170" height="14" rx="7" />
+    </g>
+
+    <!-- STATE 1: HIGH RISK VIEW (Animated Cross-fade) -->
+    <g class="score-high-view" transform="translate(14, 76)">
+      <text x="108" y="32" font-size="32" font-weight="800" fill="var(--red)" text-anchor="middle">82%</text>
+      <rect x="25" y="44" width="167" height="20" rx="4" fill="var(--red-bg)" stroke="var(--red-border)" stroke-width="0.8" />
+      <text x="108" y="58" font-size="8" font-weight="700" fill="var(--red)" text-anchor="middle">⚠️ HIGH RISK OF AI FILTERING</text>
+      <text x="108" y="78" font-size="7.5" fill="var(--text-muted)" text-anchor="middle">Multiple synthetic markers identified</text>
+    </g>
+
+    <!-- STATE 2: LOW RISK / CLEAN VIEW (Animated Cross-fade) -->
+    <g class="score-low-view" transform="translate(14, 76)">
+      <text x="108" y="32" font-size="32" font-weight="800" fill="var(--green)" text-anchor="middle">12%</text>
+      <rect x="25" y="44" width="167" height="20" rx="4" fill="var(--green-bg)" stroke="var(--green-border)" stroke-width="0.8" />
+      <text x="108" y="58" font-size="8" font-weight="700" fill="var(--green)" text-anchor="middle">✅ ATS &amp; HUMAN VERIFIED</text>
+      <text x="108" y="78" font-size="7.5" fill="var(--green)" font-weight="600" text-anchor="middle">Grounded human cadence restored</text>
+    </g>
+
+    <!-- Summary Metrics Card -->
+    <g transform="translate(14, 168)">
+      <rect width="217" height="56" rx="5" fill="var(--border)" opacity="0.2" />
+      <text x="8" y="15" font-size="7.5" fill="var(--text-muted)">Synthetic Lexicon:</text>
+      <text x="160" y="15" font-size="7.5" font-weight="700" fill="var(--text)">2 → 0</text>
+
+      <text x="8" y="29" font-size="7.5" fill="var(--text-muted)">Sentence Cadence:</text>
+      <text x="160" y="29" font-size="7.5" font-weight="700" fill="var(--green)">Variable (Human)</text>
+
+      <text x="8" y="43" font-size="7.5" fill="var(--text-muted)">Rule of Three Triads:</text>
+      <text x="160" y="43" font-size="7.5" font-weight="700" fill="var(--text)">0 detected</text>
+    </g>
+  </g>
+
+  <!-- Bottom Global Banner / Tagline -->
+  <g transform="translate(400, 304)">
+    <text x="0" y="0" font-size="11" font-weight="600" fill="var(--text)" text-anchor="middle" letter-spacing="0.2">
+      "Strip AI markers before an ATS flags them."
+    </text>
+  </g>
+</svg>

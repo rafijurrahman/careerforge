@@ -1,0 +1,381 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" width="100%" height="100%">
+  <title>CareerForge Eligibility Engine — Hidden Geo Restriction Detection</title>
+  <desc>Demonstrates how CareerForge scans job listings, detects disguised domestic residency clauses, and warns overseas applicants before applying.</desc>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --border-accent: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      --accent: #2563eb;
+      --accent-bg: #eff6ff;
+      --accent-border: #bfdbfe;
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --red-border: #fca5a5;
+      --badge-neutral-bg: #f1f5f9;
+      --badge-neutral-text: #475569;
+      --font: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b0f17;
+        --card-bg: #111827;
+        --border: #1f2937;
+        --border-accent: #374151;
+        --text: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-dim: #475569;
+        --accent: #3b82f6;
+        --accent-bg: #1e293b;
+        --accent-border: #1d4ed8;
+        --green: #22c55e;
+        --green-bg: #064e3b;
+        --red: #ef4444;
+        --red-bg: #450a0a;
+        --red-border: #991b1b;
+        --badge-neutral-bg: #1e293b;
+        --badge-neutral-text: #94a3b8;
+      }
+    }
+
+    text {
+      font-family: var(--font);
+      user-select: none;
+    }
+
+    .box {
+      fill: var(--card-bg);
+      stroke: var(--border);
+      stroke-width: 1.5;
+      rx: 8;
+    }
+
+    /* Keyframes */
+    @keyframes sweepLaser {
+      0% {
+        transform: translateY(0px);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.9;
+      }
+      50% {
+        transform: translateY(118px);
+        opacity: 0.9;
+      }
+      65%, 85% {
+        transform: translateY(150px);
+        opacity: 0;
+      }
+      95%, 100% {
+        transform: translateY(0px);
+        opacity: 0;
+      }
+    }
+
+    @keyframes flagRow {
+      0%, 35% {
+        fill: var(--card-bg);
+        stroke: var(--border);
+      }
+      45%, 88% {
+        fill: var(--red-bg);
+        stroke: var(--red-border);
+      }
+      95%, 100% {
+        fill: var(--card-bg);
+        stroke: var(--border);
+      }
+    }
+
+    @keyframes flagRowText {
+      0%, 35% {
+        fill: var(--text-muted);
+        font-weight: normal;
+      }
+      45%, 88% {
+        fill: var(--red);
+        font-weight: 600;
+      }
+      95%, 100% {
+        fill: var(--text-muted);
+        font-weight: normal;
+      }
+    }
+
+    @keyframes warnIconFade {
+      0%, 38% {
+        opacity: 0;
+        transform: scale(0.6);
+      }
+      48%, 88% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      95%, 100% {
+        opacity: 0;
+        transform: scale(0.6);
+      }
+    }
+
+    @keyframes verdictBoxPulse {
+      0%, 42% {
+        fill: var(--badge-neutral-bg);
+        stroke: var(--border);
+      }
+      52%, 88% {
+        fill: var(--red-bg);
+        stroke: var(--red-border);
+      }
+      95%, 100% {
+        fill: var(--badge-neutral-bg);
+        stroke: var(--border);
+      }
+    }
+
+    @keyframes statusScanning {
+      0%, 42% {
+        opacity: 1;
+      }
+      50%, 88% {
+        opacity: 0;
+      }
+      95%, 100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes statusRestricted {
+      0%, 45% {
+        opacity: 0;
+      }
+      52%, 88% {
+        opacity: 1;
+      }
+      95%, 100% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes ruleCardSlide {
+      0%, 48% {
+        opacity: 0.3;
+        transform: translateY(4px);
+      }
+      55%, 88% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      95%, 100% {
+        opacity: 0.3;
+        transform: translateY(4px);
+      }
+    }
+
+    .laser-line {
+      animation: sweepLaser 7s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .flag-target {
+      animation: flagRow 7s infinite ease-in-out;
+    }
+    .flag-text {
+      animation: flagRowText 7s infinite ease-in-out;
+    }
+    .warn-badge {
+      animation: warnIconFade 7s infinite ease-in-out;
+    }
+    .verdict-box {
+      animation: verdictBoxPulse 7s infinite ease-in-out;
+    }
+    .lbl-scanning {
+      animation: statusScanning 7s infinite ease-in-out;
+    }
+    .lbl-restricted {
+      animation: statusRestricted 7s infinite ease-in-out;
+    }
+    .rule-card {
+      animation: ruleCardSlide 7s infinite ease-in-out;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .laser-line {
+        display: none !important;
+      }
+      .flag-target {
+        fill: var(--red-bg) !important;
+        stroke: var(--red-border) !important;
+        animation: none !important;
+      }
+      .flag-text {
+        fill: var(--red) !important;
+        font-weight: 600 !important;
+        animation: none !important;
+      }
+      .warn-badge {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      .verdict-box {
+        fill: var(--red-bg) !important;
+        stroke: var(--red-border) !important;
+        animation: none !important;
+      }
+      .lbl-scanning {
+        display: none !important;
+      }
+      .lbl-restricted {
+        opacity: 1 !important;
+        animation: none !important;
+      }
+      .rule-card {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+
+  <!-- Background Base -->
+  <rect width="100%" height="100%" fill="var(--bg)" rx="10" />
+  <rect x="1" y="1" width="798" height="318" fill="none" stroke="var(--border)" stroke-width="1.5" rx="9" />
+
+  <!-- Top Title / Header -->
+  <g transform="translate(30, 26)">
+    <text x="0" y="0" font-size="12" font-weight="700" fill="var(--text)" letter-spacing="0.5">CAREERFORGE :: ELIGIBILITY AUDITOR</text>
+    <rect x="270" y="-12" width="130" height="18" rx="9" fill="var(--accent-bg)" stroke="var(--accent-border)" stroke-width="1" />
+    <text x="335" y="1" font-size="9" font-weight="600" fill="var(--accent)" text-anchor="middle">OFFLINE HEURISTICS</text>
+  </g>
+
+  <!-- LEFT PANEL: Job Description Analysis Card -->
+  <g transform="translate(30, 42)">
+    <rect class="box" width="455" height="236" />
+    <path d="M 0 8 A 8 8 0 0 1 8 0 L 447 0 A 8 8 0 0 1 455 8 L 455 38 L 0 38 Z" fill="var(--border)" opacity="0.25" />
+
+    <!-- Job Header Info -->
+    <text x="16" y="18" font-size="10.5" font-weight="700" fill="var(--text)">Nexus Cloud Systems — Senior Backend Engineer</text>
+    <text x="16" y="30" font-size="8" fill="var(--text-muted)">Posted 2 days ago • Job ID: #NX-9421</text>
+
+    <!-- Apparent Worldwide Tag -->
+    <rect x="315" y="10" width="124" height="20" rx="4" fill="var(--green-bg)" stroke="var(--green)" stroke-width="0.8" />
+    <text x="377" y="23.5" font-size="8.5" font-weight="600" fill="var(--green)" text-anchor="middle">🌍 Worldwide Remote</text>
+
+    <!-- Scan Line Boundary Container -->
+    <g transform="translate(14, 48)">
+      <!-- Line 1: Normal spec -->
+      <g transform="translate(0, 0)">
+        <rect width="427" height="22" rx="4" fill="var(--card-bg)" stroke="var(--border)" stroke-width="1" />
+        <circle cx="10" cy="11" r="2.5" fill="var(--text-dim)" />
+        <text x="20" y="15" font-size="8.5" fill="var(--text-muted)">Design, deploy, and scale high-throughput asynchronous services</text>
+      </g>
+
+      <!-- Line 2: Normal spec -->
+      <g transform="translate(0, 28)">
+        <rect width="427" height="22" rx="4" fill="var(--card-bg)" stroke="var(--border)" stroke-width="1" />
+        <circle cx="10" cy="11" r="2.5" fill="var(--text-dim)" />
+        <text x="20" y="15" font-size="8.5" fill="var(--text-muted)">Collaborate with distributed product engineering pods across timezones</text>
+      </g>
+
+      <!-- Line 3: THE RESTRICTION (Animated Flagging) -->
+      <g transform="translate(0, 56)">
+        <rect class="flag-target" width="427" height="24" rx="4" stroke-width="1.2" />
+        <circle cx="10" cy="12" r="2.5" fill="var(--red)" />
+        <text class="flag-text" x="20" y="16" font-size="8.5">Must be authorized to work in the US without sponsorship</text>
+        <g class="warn-badge" transform="translate(340, 4)">
+          <rect width="78" height="16" rx="3" fill="var(--red)" />
+          <text x="39" y="11.5" font-size="8" font-weight="700" fill="#ffffff" text-anchor="middle">⚠️ RESTRICTED</text>
+        </g>
+      </g>
+
+      <!-- Line 4: Normal spec -->
+      <g transform="translate(0, 86)">
+        <rect width="427" height="22" rx="4" fill="var(--card-bg)" stroke="var(--border)" stroke-width="1" />
+        <circle cx="10" cy="11" r="2.5" fill="var(--text-dim)" />
+        <text x="20" y="15" font-size="8.5" fill="var(--text-muted)">Required: 4+ years Python, FastAPI, Docker, and relational databases</text>
+      </g>
+
+      <!-- Line 5: Normal compensation -->
+      <g transform="translate(0, 114)">
+        <rect width="427" height="22" rx="4" fill="var(--card-bg)" stroke="var(--border)" stroke-width="1" />
+        <circle cx="10" cy="11" r="2.5" fill="var(--text-dim)" />
+        <text x="20" y="15" font-size="8.5" fill="var(--text-muted)">Salary: $135k - $160k USD equivalent + full health and equipment stipend</text>
+      </g>
+
+      <!-- Animated Scanning Laser Beam -->
+      <g class="laser-line" transform="translate(0, 0)">
+        <line x1="0" y1="0" x2="427" y2="0" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+        <rect x="0" y="-3" width="427" height="6" fill="var(--accent)" opacity="0.15" />
+      </g>
+    </g>
+
+    <!-- Bottom summary note inside Left Card -->
+    <text x="16" y="222" font-size="8" fill="var(--text-dim)">Local regex pattern scan: 42 legal &amp; residency compliance checks</text>
+  </g>
+
+  <!-- RIGHT PANEL: Verification Verdict & Diagnostics -->
+  <g transform="translate(505, 42)">
+    <rect class="box" width="265" height="236" />
+    <path d="M 0 8 A 8 8 0 0 1 8 0 L 257 0 A 8 8 0 0 1 265 8 L 265 28 L 0 28 Z" fill="var(--border)" opacity="0.25" />
+    <text x="14" y="18" font-size="9.5" font-weight="600" fill="var(--text)">VERDICT &amp; DIAGNOSTICS</text>
+
+    <!-- Candidate Profile Info -->
+    <g transform="translate(14, 38)">
+      <text x="0" y="0" font-size="8" fill="var(--text-muted)">Applicant Country:</text>
+      <text x="110" y="0" font-size="8.5" font-weight="700" fill="var(--text)">BD (GMT+6)</text>
+
+      <text x="0" y="16" font-size="8" fill="var(--text-muted)">Target Posting:</text>
+      <text x="110" y="16" font-size="8.5" font-weight="600" fill="var(--text)">Nexus Cloud Systems</text>
+    </g>
+
+    <!-- Verdict Badge Box -->
+    <g transform="translate(14, 76)">
+      <rect class="verdict-box" width="237" height="36" rx="6" stroke-width="1.2" />
+
+      <!-- State 1: Scanning... -->
+      <g class="lbl-scanning">
+        <text x="118" y="22" font-size="10" font-weight="600" fill="var(--badge-neutral-text)" text-anchor="middle">SCANNING HEURISTICS...</text>
+      </g>
+
+      <!-- State 2: Restricted -->
+      <g class="lbl-restricted">
+        <text x="118" y="18" font-size="9" font-weight="700" fill="var(--red)" text-anchor="middle">RESTRICTED (HEURISTIC)</text>
+        <text x="118" y="29" font-size="7.5" font-weight="600" fill="var(--red)" text-anchor="middle">Domestic Work Auth Required</text>
+      </g>
+    </g>
+
+    <!-- Triggered Rule Card -->
+    <g class="rule-card" transform="translate(14, 126)">
+      <rect width="237" height="74" rx="5" fill="var(--border)" opacity="0.2" />
+      <text x="10" y="16" font-size="8" font-weight="700" fill="var(--text)">TRIGGERED MATCH DETAILS</text>
+      <line x1="10" y1="21" x2="227" y2="21" stroke="var(--border)" stroke-width="0.8" />
+
+      <text x="10" y="34" font-size="7.5" fill="var(--text-muted)">Rule ID:</text>
+      <text x="65" y="34" font-size="7.5" font-weight="600" fill="var(--text)">US_WORK_AUTH_REQUIRED</text>
+
+      <text x="10" y="48" font-size="7.5" fill="var(--text-muted)">Trigger Phrase:</text>
+      <text x="65" y="48" font-size="7.5" font-weight="600" fill="var(--red)">"without sponsorship"</text>
+
+      <text x="10" y="62" font-size="7.5" fill="var(--text-muted)">False Label:</text>
+      <text x="65" y="62" font-size="7.5" font-weight="600" fill="var(--text-muted)">Masked by "Worldwide Remote"</text>
+    </g>
+
+    <!-- Result Action Recommendation -->
+    <g transform="translate(14, 214)">
+      <rect width="237" height="18" rx="4" fill="var(--red-bg)" stroke="var(--red-border)" stroke-width="0.8" />
+      <text x="118" y="12.5" font-size="7.5" font-weight="600" fill="var(--red)" text-anchor="middle">ACTION: Skip application / save effort</text>
+    </g>
+  </g>
+
+  <!-- Bottom Global Banner / Tagline -->
+  <g transform="translate(400, 304)">
+    <text x="0" y="0" font-size="11" font-weight="600" fill="var(--text)" text-anchor="middle" letter-spacing="0.2">
+      "Catches hidden regional restrictions before you apply."
+    </text>
+  </g>
+</svg>
