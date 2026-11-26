@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-11-26
+
+### Added
+- **CLI Version Flag (`forge --version` / `careerforge --version`):**
+  - Added `--version` action printing `careerforge <version>` with zero side effects.
+- **Python 3.13 Support:**
+  - Expanded GitHub Actions CI test matrix to run unit tests across Ubuntu, macOS, and Windows on Python 3.13.
+  - Added Python 3.13 classifier to `pyproject.toml`.
+- **Accessible Animated SVG Illustrations:**
+  - Added standalone accessible animated SVGs (`assets/animated/{tailor,eligibility,track,audit}.svg`) with `@media (prefers-color-scheme: dark)` and `prefers-reduced-motion` support.
+- **Repository Social Preview:**
+  - Added high-resolution (1280x640) social preview card in `assets/social-preview.png`.
+
+### Changed
+- **README Hero Animation:**
+  - Replaced top concept GIF with accessible animated SVG (`assets/animated/tailor.svg`) to prevent unwanted playback controls, paired directly with real VHS terminal recording.
+
 ## [0.5.0] - 2026-11-25
 
 ### Added
