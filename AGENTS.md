@@ -1,57 +1,47 @@
-# AGENTS.md — AI Tool Compatibility
+# AGENTS.md — Working with AI Coding Assistants
 
-CareerForge works alongside any local AI coding tool. Here is what each tool can do with this codebase.
-
----
-
-## Google Antigravity (Gemini)
-
-Compatible. Antigravity can:
-- Run `python cli.py setup` via terminal
-- Read and edit `profile.yaml` directly
-- Generate tailored bullet points for a specific job description
-- Run `python cli.py audit --file <text>` and interpret the report
-- Scrape and filter job results with `python cli.py scrape`
-
-Recommended use: paste the job description into the chat and ask Antigravity to tailor your profile bullets before running `apply`.
+CareerForge works with local AI coding assistants, including Google Antigravity, Claude Code, OpenAI Codex, and Cursor. This document explains how agents should interact with the codebase and how users can prompt them.
 
 ---
 
-## Claude Code (Anthropic)
+## Supported AI Assistants
 
-Compatible. Claude Code can:
-- Read all source files via its file tools
-- Edit `profile.yaml` to tailor bullet points
-- Run CLI commands via bash tool
-- Extend scrapers by writing new scanner files
-
-Recommended: add an `CLAUDE.md` file at the repo root with your usage context if you use Claude Code regularly.
-
----
-
-## GitHub Copilot / Cursor / Codex
-
-Compatible for code editing and autocomplete. These tools work well for:
-- Extending `board_registry.py` with new company slugs
-- Writing additional scanner modules
-- Editing `cv_builder.py` templates
-
-They do not run CLI commands directly — use the terminal for that.
+### 1. Google Antigravity
+Antigravity operates with terminal and file system access.
+- **Workflow:**
+  1. Have Antigravity run `forge setup` or edit `profile.yaml` directly with your verified career background.
+  2. Paste a job description into chat and ask Antigravity to match your profile using `forge match --jd posting.txt`.
+  3. Ask Antigravity to generate a tailored resume via `forge tailor --jd posting.txt --output output/cv.pdf`.
+  4. Run `forge audit --file output/cv.pdf` to audit candidate statements against anti-AI puffery heuristics.
+- **Sample User Prompt:**
+  > "Read AGENTS.md and my profile.yaml. I saved a job description to job.txt. Run forge match on it, select relevant bullets from my profile, and run forge tailor to build a 1-page CV. Then run forge audit on the generated text."
 
 ---
 
-## Running CareerForge With an AI Assistant
-
-A good workflow:
-
-1. Open the job posting in your browser
-2. Copy the full job description text
-3. Tell your AI assistant: "Here is a job description. Update my profile bullets to match and run `python cli.py apply --role-tag JobTitle`."
-4. The assistant edits `profile.yaml` and runs the command
-5. Output CV is in `output/`
+### 2. Claude Code (Anthropic)
+Claude Code executes shell commands and reads local files.
+- **Workflow:**
+  - Reads `profile.yaml` and repository documentation.
+  - Runs `forge` CLI commands via bash tools.
+  - Helps add new company boards to `careerforge/scrapers/board_registry.py`.
+- **Sample User Prompt:**
+  > "Inspect AGENTS.md and run forge doctor. If healthy, tailor my CV for the job posting in posting.txt using forge tailor."
 
 ---
 
-## What to Keep Private
+### 3. OpenAI Codex, Cursor, and GitHub Copilot
+These tools assist with code navigation, autocomplete, and terminal execution.
+- Edit `careerforge/data/anti_ai_rules.yaml` to adjust or add custom linting heuristics.
+- Extend scraper classes in `careerforge/scrapers/`.
+- Use the built-in terminal to run `forge` commands.
 
-Your `profile.yaml` contains personal information. It is in `.gitignore` and should not be shared with any cloud-based AI tool unless you are comfortable with that. Use local-only AI tools (like a local Ollama model or Antigravity running locally) if privacy is a concern.
+---
+
+## Agent Guidelines & Ground Rules
+
+1. **Zero Metric Invention:**
+   Never invent unverified degrees, job titles, companies, or quantitative statistics. Every bullet point must derive from the user's `profile.yaml`.
+2. **Deterministic Tool Execution:**
+   Always run the built-in `forge` commands (`forge match`, `forge tailor`, `forge ats-sim`, `forge audit`) rather than writing custom one-off scripts.
+3. **Privacy First:**
+   `profile.yaml` contains personal contact information. It is `.gitignore`d by default and must never be committed to source control.
