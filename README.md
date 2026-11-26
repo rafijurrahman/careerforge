@@ -18,6 +18,7 @@
 </p>
 
 <p>
+  <a href="#how-to-use-careerforge">How to Use</a> &bull;
   <a href="#why-careerforge">Why CareerForge</a> &bull;
   <a href="#features">Features</a> &bull;
   <a href="#requirements">Requirements</a> &bull;
@@ -31,6 +32,35 @@
 </p>
 
 </div>
+
+---
+
+## How to Use CareerForge
+
+CareerForge supports two distinct workflows:
+
+### 1. With AI Coding Assistants (Google Antigravity, Claude Code, Cursor, Codex)
+
+Fork or clone the repository and open it inside your preferred coding assistant. CareerForge includes an [`AGENTS.md`](AGENTS.md) guide that teaches AI models how to inspect your profile and run deterministic validation tools safely.
+
+**Example prompts you can give your AI assistant:**
+* *"Read AGENTS.md and my profile.yaml. Match my background against the job description in job.txt and tailor a single-page CV to tailored_cv.pdf."*
+* *"Run forge match on posting.txt and list any missing skills I should address."*
+* *"Run forge audit on my cover letter draft in letter.txt and suggest direct human replacements for flagged buzzwords."*
+
+Because CareerForge uses local CLI checks and your verified `profile.yaml`, your assistant selects from real experience instead of inventing false metrics or leaking data to external servers.
+
+### 2. Standalone Terminal CLI & Windows One-Click Setup
+
+* **Windows (One-Click Setup):** Double-click `install.bat` in the repository root. It verifies Python (>= 3.10), creates a local virtual environment (`.venv`), installs CareerForge, runs system diagnostics (`forge doctor`), and creates a local `forge` launcher shortcut.
+* **Terminal Commands:** Run `forge` directly from PowerShell, Terminal, or Bash:
+  ```powershell
+  forge setup                                        # Create profile.yaml with the interactive wizard
+  forge match --jd posting.txt                       # Check skill coverage against a job description
+  forge tailor --jd posting.txt --output cv.pdf      # Build a single-page ATS-ready CV
+  forge audit --file cv.pdf                          # Scan candidate text for AI buzzwords and cadence
+  forge track add --company "Acme" --role "Analyst"  # Log your application in local SQLite
+  ```
 
 ---
 
@@ -657,7 +687,14 @@ CareerForge runs on Windows, macOS, and Linux.
 
 We recommend installing CareerForge through `pipx` so it runs in an isolated environment available across your entire system.
 
-### Option A: Windows (PowerShell)
+### Option A: Windows (One-Click Installer or PowerShell)
+
+#### Method 1: One-Click Setup (`install.bat`)
+1. Clone or download this repository.
+2. Double-click `install.bat` in the repository folder (or run `.\install.bat` in Command Prompt or PowerShell).
+3. The script verifies Python (>= 3.10), sets up a local `.venv` environment, installs CareerForge, creates a local `forge` launcher, and runs `forge doctor` diagnostics.
+
+#### Method 2: Global Installation via `pipx`
 
 1. **Verify Python version (requires Python >= 3.10):**
    ```powershell
